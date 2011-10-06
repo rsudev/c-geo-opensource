@@ -17,10 +17,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteDoneException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
@@ -74,6 +76,7 @@ public class cgData {
     private static final int dbVersion = 62;
     private static final int customListIdOffset = 10;
     private static final String dbName = "data";
+    private static final String dbFolder = File.separator + ".cgeo" + File.separator;
     private static final String dbTableCaches = "cg_caches";
     private static final String dbTableLists = "cg_lists";
     private static final String dbTableAttributes = "cg_attributes";
@@ -260,7 +263,7 @@ public class cgData {
         if (databaseRW == null || !databaseRW.isOpen()) {
             try {
                 if (dbHelper == null) {
-                    dbHelper = new cgDbHelper(context);
+                    dbHelper = new cgDbHelper(new cgDBContext(context));
                 }
                 databaseRW = dbHelper.getWritableDatabase();
 
@@ -281,7 +284,7 @@ public class cgData {
         if (databaseRO == null || !databaseRO.isOpen()) {
             try {
                 if (dbHelper == null) {
-                    dbHelper = new cgDbHelper(context);
+                    dbHelper = new cgDbHelper(new cgDBContext(context));
                 }
                 databaseRO = dbHelper.getReadableDatabase();
 
@@ -406,10 +409,30 @@ public class cgData {
         return restoreDone;
     }
 
+    private class cgDBContext extends ContextWrapper {
+
+        public cgDBContext(Context base) {
+            super(base);
+        }
+
+        /**
+         * We override the default open/create as it doesn't work on OS 1.6 and
+         * causes issues on other devices too.
+         */
+        @Override
+        public SQLiteDatabase openOrCreateDatabase(String name, int mode,
+                CursorFactory factory) {
+            File f = new File(name);
+            SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(f, factory);
+            return db;
+        }
+
+    }
+
     private static class cgDbHelper extends SQLiteOpenHelper {
 
-        cgDbHelper(Context context) {
-            super(context, dbName, null, dbVersion);
+        cgDbHelper(cgDBContext context) {
+            super(context, Environment.getExternalStorageDirectory() + dbFolder + dbName, null, dbVersion);
         }
 
         @Override
