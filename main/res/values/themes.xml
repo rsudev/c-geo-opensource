@@ -11,6 +11,8 @@
 		<item name="android:buttonStyle">@style/button</item>
 		<item name="android:editTextStyle">@style/edittext</item>
 		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:spinnerStyle">@style/spinner</item>
+		<item name="android:spinnerItemStyle">@style/spinnerItem</item>
 	</style>
 
 	<style name="cgeo_transparent" parent="android:Theme.Dialog">

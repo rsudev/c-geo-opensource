@@ -30,7 +30,17 @@
         <item name="android:gravity">top|left</item>
         <item name="android:capitalize">none</item>
     </style>
-
+    
+    <style name="spinner" parent="@android:style/Widget.Spinner">
+        <item name="android:padding">6dip</item>
+        <item name="android:background">@drawable/spinner_bck_dark</item>
+    </style>
+    <style name="spinnerItem" parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:textSize">22dip</item>
+        <item name="android:textColor">?text_color</item>
+        <item name="android:background">?input</item>
+    </style>
+    
     <!-- own definitions -->
     <!-- actionbar -->
     <style name="action_bar">
