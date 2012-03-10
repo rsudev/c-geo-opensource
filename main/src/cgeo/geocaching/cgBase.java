@@ -1757,6 +1757,25 @@ public class cgBase {
         return params;
     }
 
+    static class GzipDecompressingEntity extends HttpEntityWrapper {
+        public GzipDecompressingEntity(final HttpEntity entity) {
+            super(entity);
+        }
+
+        @Override
+        public InputStream getContent() throws IOException, IllegalStateException {
+            // the wrapped entity's getContent() decides about repeatability
+            InputStream wrappedin = wrappedEntity.getContent();
+            return new GZIPInputStream(wrappedin);
+        }
+
+        @Override
+        public long getContentLength() {
+            // length of ungzipped content is not known
+            return -1;
+        }
+    }
+
     public static void storeCache(Activity activity, cgCache origCache, String geocode, int listId, CancellableHandler handler) {
         try {
             cgCache cache;
