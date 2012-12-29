@@ -1,5 +1,6 @@
 package cgeo.geocaching.activity;
 
+import android.os.Build;
 import cgeo.geocaching.R;
 import cgeo.geocaching.Settings;
 import cgeo.geocaching.cgeo;
@@ -62,13 +63,14 @@ public final class ActivityMixin {
         if (activity == null) {
             return;
         }
-
+if(Build.VERSION.SDK_INT<11) { // TODO
         final ProgressBar progress = (ProgressBar) activity.findViewById(R.id.actionbar_progress);
         if (show) {
             progress.setVisibility(View.VISIBLE);
         } else {
             progress.setVisibility(View.GONE);
         }
+}
     }
 
     public static void setTheme(final Activity activity) {

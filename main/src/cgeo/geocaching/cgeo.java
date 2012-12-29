@@ -49,11 +49,6 @@ import java.util.Locale;
 public class cgeo extends AbstractActivity {
 
     private static final String SCAN_INTENT = "com.google.zxing.client.android.SCAN";
-    private static final int MENU_ABOUT = 0;
-    private static final int MENU_HELPERS = 1;
-    private static final int MENU_SETTINGS = 2;
-    private static final int MENU_HISTORY = 3;
-    private static final int MENU_SCAN = 4;
     private static final int SCAN_REQUEST_CODE = 1;
     private static final int MENU_OPEN_LIST = 100;
 
@@ -320,18 +315,14 @@ public class cgeo extends AbstractActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_SETTINGS, 0, res.getString(R.string.menu_settings)).setIcon(R.drawable.ic_menu_preferences);
-        menu.add(0, MENU_HISTORY, 0, res.getString(R.string.menu_history)).setIcon(R.drawable.ic_menu_recent_history);
-        menu.add(0, MENU_HELPERS, 0, res.getString(R.string.menu_helpers)).setIcon(R.drawable.ic_menu_shopping);
-        menu.add(0, MENU_SCAN, 0, res.getString(R.string.menu_scan_geo)).setIcon(R.drawable.ic_menu_barcode);
-        menu.add(0, MENU_ABOUT, 0, res.getString(R.string.menu_about)).setIcon(R.drawable.ic_menu_info_details);
+        getMenuInflater().inflate(R.menu.main,menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        MenuItem item = menu.findItem(MENU_SCAN);
+        MenuItem item = menu.findItem(R.id.menu_scan);
         if (item != null) {
             item.setEnabled(isIntentAvailable(SCAN_INTENT));
         }
@@ -350,21 +341,27 @@ public class cgeo extends AbstractActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
         switch (id) {
-            case MENU_ABOUT:
+            case R.id.menu_about:
                 showAbout(null);
                 return true;
-            case MENU_HELPERS:
+            case R.id.menu_helpers:
                 startActivity(new Intent(this, UsefulAppsActivity.class));
                 return true;
-            case MENU_SETTINGS:
+            case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
-            case MENU_HISTORY:
+            case R.id.menu_history:
                 cgeocaches.startActivityHistory(this);
                 return true;
-            case MENU_SCAN:
+            case R.id.menu_scan:
                 startScannerApplication();
                 return true;
+            case R.id.menu_actionbar_search:
+                goSearch(null); // TODO null?
+                break;
+            case R.id.menu_actionbar_manual:
+                goManual(null); // TODO null?
+                break;
             default:
                 break;
         }

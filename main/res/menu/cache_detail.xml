@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_calendar"
+          android:title="@string/cache_menu_event"
+          android:icon="@drawable/ic_menu_agenda"
+          />
+    <item android:id="@+id/menu_sub_mapmode"
+            android:title="@string/cache_menu_navigate"
+            android:icon="@drawable/ic_menu_mapmode">
+        <menu  >
+        </menu>
+    </item>
+    <item android:id="@+id/menu_caches_around"
+          android:title="@string/cache_menu_around"
+          android:icon="@drawable/ic_menu_rotate"
+          />
+    <item android:id="@+id/menu_cache_browser"
+          android:title="@string/cache_menu_browser"
+          android:icon="@drawable/ic_menu_globe"
+          />
+
+    <item android:id="@+id/menu_share"
+          android:title="@string/cache_menu_share"
+          android:icon="@drawable/ic_menu_share"
+          />
+
+</menu>
