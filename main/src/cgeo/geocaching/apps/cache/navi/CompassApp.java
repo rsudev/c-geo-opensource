@@ -45,7 +45,7 @@ class CompassApp extends AbstractApp implements CacheNavigationApp, WaypointNavi
 
     @Override
     public boolean isEnabled(cgCache cache) {
-        return cache.getGeocode() != null;
+        return cache!=null && cache.getGeocode() != null;
     }
 
 }

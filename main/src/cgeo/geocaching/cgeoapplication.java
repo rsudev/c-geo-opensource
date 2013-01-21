@@ -9,9 +9,12 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.view.ViewConfiguration;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class cgeoapplication extends Application {
@@ -34,6 +37,20 @@ public class cgeoapplication extends Application {
 
     @Override
     public void onCreate() {
+
+        if (Build.VERSION.SDK_INT > 11) {
+            try {
+                ViewConfiguration config = ViewConfiguration.get(this);
+                Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+                if (menuKeyField != null) {
+                    menuKeyField.setAccessible(true);
+                    menuKeyField.setBoolean(config, false);
+                }
+            } catch (Exception ex) {
+                // Ignore
+            }
+        }
+
         new Thread(statusUpdater).start();
     }
 

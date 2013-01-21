@@ -1,14 +1,19 @@
 package cgeo.geocaching.activity;
 
+import cgeo.geocaching.R;
 import cgeo.geocaching.Settings;
 import cgeo.geocaching.cgeoapplication;
 import cgeo.geocaching.compatibility.Compatibility;
 import cgeo.geocaching.network.Cookies;
 
+import android.annotation.TargetApi;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
@@ -41,6 +46,27 @@ public abstract class AbstractActivity extends FragmentActivity implements IAbst
     @Override
     public void goManual(final View view) {
         ActivityMixin.goManual(this, helpTopic);
+    }
+
+    @TargetApi(11)
+    public void enableV11Actionitems(Menu menu) {
+        if (Build.VERSION.SDK_INT >= 11) {
+            MenuItem item = menu.findItem(R.id.menu_actionbar_search);
+            if (item != null) {
+                item.setVisible(true);
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+            item = menu.findItem(R.id.menu_actionbar_manual);
+            if (item != null) {
+                item.setVisible(true);
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+            item = menu.findItem(R.id.menu_default_navigation);
+            if (item != null) {
+                item.setVisible(true);
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+        }
     }
 
     final public void setTitle(final String title) {

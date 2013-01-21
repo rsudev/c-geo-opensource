@@ -60,6 +60,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -116,11 +117,6 @@ public class CacheDetailActivity extends AbstractViewPagerActivity<CacheDetailAc
     private static final int MENU_FIELD_TRANSLATE = 2;
     private static final int MENU_FIELD_TRANSLATE_EN = 3;
     private static final int MENU_FIELD_SHARE = 4;
-    private static final int MENU_SHARE = 12;
-    private static final int MENU_CALENDAR = 11;
-    private static final int MENU_CACHES_AROUND = 10;
-    private static final int MENU_BROWSER = 7;
-    private static final int MENU_DEFAULT_NAVIGATION = 13;
 
     private static final int CONTEXT_MENU_WAYPOINT_EDIT = 1234;
     private static final int CONTEXT_MENU_WAYPOINT_DUPLICATE = 1235;
@@ -276,19 +272,23 @@ public class CacheDetailActivity extends AbstractViewPagerActivity<CacheDetailAc
             } else if (null != geocode && StringUtils.isNotBlank(geocode)) { // can't be null, but the compiler doesn't understand StringUtils.isNotBlank()
                 title = geocode;
             }
+
             progress.show(this, title, res.getString(R.string.cache_dialog_loading_details), true, loadCacheHandler.cancelMessage());
         } catch (Exception e) {
             // nothing, we lost the window
         }
 
-        ImageView defaultNavigationImageView = (ImageView) findViewById(R.id.defaultNavigation);
-        defaultNavigationImageView.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                startDefaultNavigation2();
-                return true;
-            }
-        });
+        if (Build.VERSION.SDK_INT<11) {
+            // In v11 this is a menu item in the action bar
+            ImageView defaultNavigationImageView = (ImageView) findViewById(R.id.defaultNavigation);
+            defaultNavigationImageView.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    startDefaultNavigation2();
+                    return true;
+                }
+            });
+        }
 
         final int pageToOpen = savedInstanceState != null ?
                 savedInstanceState.getInt(STATE_PAGE_INDEX, 0) :
@@ -524,28 +524,33 @@ public class CacheDetailActivity extends AbstractViewPagerActivity<CacheDetailAc
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.cache_detail,menu);
+        enableV11Actionitems(menu);
+        menu.findItem(R.id.menu_default_navigation).setTitle(NavigationAppFactory.getDefaultNavigationApplication().getName());
         if (null != cache) {
-            menu.add(0, MENU_DEFAULT_NAVIGATION, 0, NavigationAppFactory.getDefaultNavigationApplication().getName()).setIcon(R.drawable.ic_menu_compass); // default navigation tool
 
-            final SubMenu subMenu = menu.addSubMenu(0, 0, 0, res.getString(R.string.cache_menu_navigate)).setIcon(R.drawable.ic_menu_mapmode);
+            final SubMenu subMenu = menu.findItem(R.id.menu_sub_mapmode).getSubMenu();
             NavigationAppFactory.addMenuItems(subMenu, cache);
-
-            menu.add(0, MENU_CALENDAR, 0, res.getString(R.string.cache_menu_event)).setIcon(R.drawable.ic_menu_agenda); // add event to calendar
-            LoggingUI.addMenuItems(menu, cache);
-            menu.add(0, MENU_CACHES_AROUND, 0, res.getString(R.string.cache_menu_around)).setIcon(R.drawable.ic_menu_rotate); // caches around
-            menu.add(0, MENU_BROWSER, 0, res.getString(R.string.cache_menu_browser)).setIcon(R.drawable.ic_menu_globe); // browser
-            menu.add(0, MENU_SHARE, 0, res.getString(R.string.cache_menu_share)).setIcon(R.drawable.ic_menu_share); // share cache
         }
+        LoggingUI.addMenuItems(menu, cache);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (cache != null) {
-            menu.findItem(MENU_DEFAULT_NAVIGATION).setVisible(null != cache.getCoords());
-            menu.findItem(MENU_CALENDAR).setVisible(cache.canBeAddedToCalendar());
-            menu.findItem(MENU_CACHES_AROUND).setVisible(null != cache.getCoords() && cache.supportsCachesAround());
-            menu.findItem(MENU_BROWSER).setVisible(cache.canOpenInBrowser());
+        // TODO In v11 a non-offline-stored cache can be null at this point -why?
+        if (cache==null) {
+            // For whatever reasons, the menu items can't be found
+            menu.findItem(R.id.menu_default_navigation).setVisible(false);
+            menu.findItem(R.id.menu_calendar).setVisible(false);
+            menu.findItem(R.id.menu_caches_around).setVisible(false);
+            menu.findItem(R.id.menu_cache_browser).setVisible(false);
+
+        } else {
+            menu.findItem(R.id.menu_default_navigation).setVisible(null != cache.getCoords());
+            menu.findItem(R.id.menu_calendar).setVisible(cache.canBeAddedToCalendar());
+            menu.findItem(R.id.menu_caches_around).setVisible(null != cache.getCoords() && cache.supportsCachesAround());
+            menu.findItem(R.id.menu_cache_browser).setVisible(cache.canOpenInBrowser());
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -558,19 +563,19 @@ public class CacheDetailActivity extends AbstractViewPagerActivity<CacheDetailAc
             case 0:
                 // no menu selected, but a new sub menu shown
                 return false;
-            case MENU_DEFAULT_NAVIGATION:
+            case R.id.menu_default_navigation:
                 startDefaultNavigation();
                 return true;
-            case MENU_BROWSER:
+            case R.id.menu_cache_browser:
                 cache.openInBrowser(this);
                 return true;
-            case MENU_CACHES_AROUND:
+            case R.id.menu_caches_around:
                 cgeocaches.startActivityCoordinates(this, cache.getCoords());
                 return true;
-            case MENU_CALENDAR:
+            case R.id.menu_calendar:
                 addToCalendarWithIntent();
                 return true;
-            case MENU_SHARE:
+            case R.id.menu_share:
                 if (cache != null) {
                     cache.shareCache(this, res);
                     return true;
@@ -654,7 +659,7 @@ public class CacheDetailActivity extends AbstractViewPagerActivity<CacheDetailAc
         } else {
             setTitle(cache.getGeocode());
         }
-        ((TextView) findViewById(R.id.actionbar_title)).setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(cache.getType().markerId), null, null, null);
+// TODO        ((TextView) findViewById(R.id.actionbar_title)).setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(cache.getType().markerId), null, null, null);
 
         reinitializeViewPager();
 

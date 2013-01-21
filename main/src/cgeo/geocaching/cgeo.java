@@ -255,6 +255,7 @@ public class cgeo extends AbstractActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_options, menu);
+        enableV11Actionitems(menu);
         return true;
     }
 
@@ -294,6 +295,12 @@ public class cgeo extends AbstractActivity {
                 return true;
             case R.id.menu_scan:
                 startScannerApplication();
+                return true;
+            case R.id.menu_actionbar_search:
+                goSearch(null); // TODO null?
+                return true;
+            case R.id.menu_actionbar_manual:
+                goManual(null); // TODO null?
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

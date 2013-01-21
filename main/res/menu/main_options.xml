@@ -1,6 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <item android:id="@+id/menu_actionbar_search"
+          android:icon="@drawable/actionbar_search"
+          android:visible="false"
+          />
+    <item android:id="@+id/menu_actionbar_manual"
+          android:icon="@drawable/actionbar_manual"
+          android:visible="false"
+          />
+    
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_menu_preferences"

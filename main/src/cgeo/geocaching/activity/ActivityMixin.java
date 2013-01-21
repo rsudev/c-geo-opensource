@@ -7,12 +7,14 @@ import cgeo.geocaching.compatibility.Compatibility;
 
 import org.apache.commons.lang3.StringUtils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,9 +49,15 @@ public final class ActivityMixin {
         }
     }
 
+    @TargetApi(11)
     public static void setTitle(final Activity activity, final String text) {
         if (StringUtils.isBlank(text)) {
             return;
+        }
+
+        if (Build.VERSION.SDK_INT >= 11) {
+            activity.getActionBar().setTitle(text);
+            //Api 14: activity.getActionBar().setHomeButtonEnabled(true);
         }
 
         final TextView title = (TextView) activity.findViewById(R.id.actionbar_title);
@@ -62,13 +70,15 @@ public final class ActivityMixin {
         if (activity == null) {
             return;
         }
-
+if(Build.VERSION.SDK_INT<11) { // TODO
         final ProgressBar progress = (ProgressBar) activity.findViewById(R.id.actionbar_progress);
         if (show) {
             progress.setVisibility(View.VISIBLE);
         } else {
             progress.setVisibility(View.GONE);
         }
+}
+        // Checkout: http://stackoverflow.com/questions/9162481/styling-indeterminate-progressbar-on-actionbar
     }
 
     public static void setTheme(final Activity activity) {
