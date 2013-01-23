@@ -141,7 +141,7 @@ public class GPXParserTest extends AbstractResourceInstrumentationTestCase {
         assertFalse(cache.isDisabled());
         assertFalse(cache.isEventCache());
         assertFalse(cache.isPremiumMembersOnly());
-        assertFalse(cache.isOwn());
+        assertFalse(cache.isOwner());
         assertTrue(cache.isFound());
         assertEquals("Station3: Der zerbrochene Stein zählt doppelt.\nFinal: Oben neben dem Tor", cache.getHint());
         // logs
@@ -167,7 +167,7 @@ public class GPXParserTest extends AbstractResourceInstrumentationTestCase {
     private static void assertGc31j2hWaypoints(final cgCache cache) {
         assertNotNull(cache.getWaypoints());
         assertEquals(2, cache.getWaypoints().size());
-        Waypoint wp = cache.getWaypoints().get(1);
+        Waypoint wp = cache.getWaypoints().get(0);
         assertEquals("GC31J2H", wp.getGeocode());
         assertEquals("00", wp.getPrefix());
         assertEquals("---", wp.getLookup());
@@ -177,7 +177,7 @@ public class GPXParserTest extends AbstractResourceInstrumentationTestCase {
         assertEquals(49.317517, wp.getCoords().getLatitude(), 0.000001);
         assertEquals(8.545083, wp.getCoords().getLongitude(), 0.000001);
 
-        wp = cache.getWaypoints().get(0);
+        wp = cache.getWaypoints().get(1);
         assertEquals("GC31J2H", wp.getGeocode());
         assertEquals("S1", wp.getPrefix());
         assertEquals("---", wp.getLookup());
