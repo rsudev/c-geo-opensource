@@ -11,6 +11,7 @@ import cgeo.geocaching.enumerations.WaypointType;
 import cgeo.geocaching.geopoint.DistanceParser;
 import cgeo.geocaching.geopoint.Geopoint;
 import cgeo.geocaching.geopoint.GeopointFormatter;
+import cgeo.geocaching.ui.dialog.CoordinatesInputDialog;
 import cgeo.geocaching.utils.BaseUtils;
 import cgeo.geocaching.utils.GeoDirHandler;
 import cgeo.geocaching.utils.Log;
@@ -113,9 +114,9 @@ public class EditWaypointActivity extends AbstractActivity {
         // get parameters
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            geocode = extras.getString("geocode");
-            wpCount = extras.getInt("count", 0);
-            id = extras.getInt("waypoint");
+            geocode = extras.getString(Intents.EXTRA_GEOCODE);
+            wpCount = extras.getInt(Intents.EXTRA_COUNT, 0);
+            id = extras.getInt(Intents.EXTRA_WAYPOINT_ID);
         }
 
         if (StringUtils.isBlank(geocode) && id <= 0) {
@@ -292,9 +293,9 @@ public class EditWaypointActivity extends AbstractActivity {
                 gp = gpTemp;
             }
             cgCache cache = cgData.loadCache(geocode, LoadFlags.LOAD_WAYPOINTS);
-            cgeocoords coordsDialog = new cgeocoords(EditWaypointActivity.this, cache, gp, app.currentGeo());
+            CoordinatesInputDialog coordsDialog = new CoordinatesInputDialog(EditWaypointActivity.this, cache, gp, app.currentGeo());
             coordsDialog.setCancelable(true);
-            coordsDialog.setOnCoordinateUpdate(new cgeocoords.CoordinateUpdate() {
+            coordsDialog.setOnCoordinateUpdate(new CoordinatesInputDialog.CoordinateUpdate() {
                 @Override
                 public void update(final Geopoint gp) {
                     ((Button) findViewById(R.id.buttonLatitude)).setText(gp.format(GeopointFormatter.Format.LAT_DECMINUTE));
@@ -521,12 +522,12 @@ public class EditWaypointActivity extends AbstractActivity {
 
     public static void startActivityEditWaypoint(final Context context, final int waypointId) {
         context.startActivity(new Intent(context, EditWaypointActivity.class)
-                .putExtra("waypoint", waypointId));
+                .putExtra(Intents.EXTRA_WAYPOINT_ID, waypointId));
     }
 
     public static void startActivityAddWaypoint(final Context context, final cgCache cache) {
         context.startActivity(new Intent(context, EditWaypointActivity.class)
-                .putExtra("geocode", cache.getGeocode())
-                .putExtra("count", cache.getWaypoints().size()));
+                .putExtra(Intents.EXTRA_GEOCODE, cache.getGeocode())
+                .putExtra(Intents.EXTRA_COUNT, cache.getWaypoints().size()));
     }
 }

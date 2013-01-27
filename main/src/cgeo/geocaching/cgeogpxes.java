@@ -10,20 +10,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 public class cgeogpxes extends FileList<GPXListAdapter> {
-    private static final String EXTRAS_LIST_ID = "list";
 
     public cgeogpxes() {
         super(new String[] { "gpx", "loc", "zip" });
     }
-
-    private int listId = StoredList.STANDARD_LIST_ID;
 
     @Override
     protected GPXListAdapter getAdapter(List<File> files) {
@@ -36,26 +32,13 @@ public class cgeogpxes extends FileList<GPXListAdapter> {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            listId = extras.getInt(EXTRAS_LIST_ID);
-        }
-        if (listId <= StoredList.TEMPORARY_LIST_ID) {
-            listId = StoredList.STANDARD_LIST_ID;
-        }
-    }
-
-    @Override
     protected void setTitle() {
         setTitle(res.getString(R.string.gpx_import_title));
     }
 
     public static void startSubActivity(Activity fromActivity, int listId) {
         final Intent intent = new Intent(fromActivity, cgeogpxes.class);
-        intent.putExtra(EXTRAS_LIST_ID, listId);
+        intent.putExtra(Intents.EXTRA_LIST_ID, listId);
         fromActivity.startActivityForResult(intent, 0);
     }
 

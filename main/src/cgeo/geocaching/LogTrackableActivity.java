@@ -7,8 +7,8 @@ import cgeo.geocaching.enumerations.StatusCode;
 import cgeo.geocaching.network.Network;
 import cgeo.geocaching.network.Parameters;
 import cgeo.geocaching.twitter.Twitter;
-import cgeo.geocaching.ui.DateDialog;
 import cgeo.geocaching.ui.Formatter;
+import cgeo.geocaching.ui.dialog.DateDialog;
 import cgeo.geocaching.utils.Log;
 import cgeo.geocaching.utils.LogTemplateProvider.LogContext;
 
@@ -119,11 +119,11 @@ public class LogTrackableActivity extends AbstractLoggingActivity implements Dat
         // get parameters
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            geocode = extras.getString("geocode");
-            guid = extras.getString("guid");
+            geocode = extras.getString(Intents.EXTRA_GEOCODE);
+            guid = extras.getString(Intents.EXTRA_GUID);
 
-            if (StringUtils.isNotBlank(extras.getString("trackingcode"))) {
-                ((EditText) findViewById(R.id.tracking)).setText(extras.getString("trackingcode"));
+            if (StringUtils.isNotBlank(extras.getString(Intents.EXTRA_TRACKING_CODE))) {
+                ((EditText) findViewById(R.id.tracking)).setText(extras.getString(Intents.EXTRA_TRACKING_CODE));
             }
         }
 
@@ -357,9 +357,9 @@ public class LogTrackableActivity extends AbstractLoggingActivity implements Dat
 
     public static void startActivity(final Context context, final Trackable trackable) {
         final Intent logTouchIntent = new Intent(context, LogTrackableActivity.class);
-        logTouchIntent.putExtra("geocode", trackable.getGeocode());
-        logTouchIntent.putExtra("guid", trackable.getGuid());
-        logTouchIntent.putExtra("trackingcode", trackable.getTrackingcode());
+        logTouchIntent.putExtra(Intents.EXTRA_GEOCODE, trackable.getGeocode());
+        logTouchIntent.putExtra(Intents.EXTRA_GUID, trackable.getGuid());
+        logTouchIntent.putExtra(Intents.EXTRA_TRACKING_CODE, trackable.getTrackingcode());
         context.startActivity(logTouchIntent);
     }
 

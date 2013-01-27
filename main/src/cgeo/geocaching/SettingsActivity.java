@@ -973,8 +973,8 @@ public class SettingsActivity extends AbstractActivity {
 
         switch (requestCode) {
             case SELECT_MAPFILE_REQUEST:
-                if (data.hasExtra("mapfile")) {
-                    final String mapFile = data.getStringExtra("mapfile");
+                if (data.hasExtra(Intents.EXTRA_MAP_FILE)) {
+                    final String mapFile = data.getStringExtra(Intents.EXTRA_MAP_FILE);
                     Settings.setMapFile(mapFile);
                     if (!Settings.isValidMapFile(Settings.getMapFile())) {
                         showToast(res.getString(R.string.warn_invalid_mapfile));
@@ -1019,10 +1019,7 @@ public class SettingsActivity extends AbstractActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        // we may come back from either our selfmade chooser or from the Open Intent manager
-        final String directory = data.hasExtra(SimpleDirChooser.EXTRA_CHOSEN_DIR) ?
-                data.getStringExtra(SimpleDirChooser.EXTRA_CHOSEN_DIR) :
-                new File(data.getData().getPath()).getAbsolutePath();
+        final String directory = new File(data.getData().getPath()).getAbsolutePath();
         if (StringUtils.isNotBlank(directory)) {
             runnableSetDir.run(directory);
             EditText directoryText = (EditText) findViewById(textField);
@@ -1032,19 +1029,18 @@ public class SettingsActivity extends AbstractActivity {
     }
 
     private void selectDirectory(String startDirectory, int directoryKind) {
-        Intent dirChooser;
         try {
-            dirChooser = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+            final Intent dirChooser = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
             if (StringUtils.isNotBlank(startDirectory)) {
-                dirChooser.setData(Uri.parse("file://" + new File(startDirectory).getAbsolutePath()));
+                dirChooser.setData(Uri.fromFile(new File(startDirectory)));
             }
             dirChooser.putExtra(FileManagerIntents.EXTRA_TITLE, res.getString(R.string.simple_dir_chooser_title));
             dirChooser.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, res.getString(android.R.string.ok));
             startActivityForResult(dirChooser, directoryKind);
         } catch (android.content.ActivityNotFoundException ex) {
             // OI file manager not available
-            dirChooser = new Intent(this, SimpleDirChooser.class);
-            dirChooser.putExtra(SimpleDirChooser.START_DIR, startDirectory);
+            final Intent dirChooser = new Intent(this, SimpleDirChooser.class);
+            dirChooser.putExtra(Intents.EXTRA_START_DIR, startDirectory);
             startActivityForResult(dirChooser, directoryKind);
         }
     }
