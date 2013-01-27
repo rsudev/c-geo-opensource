@@ -3,6 +3,7 @@ package cgeo.geocaching.activity;
 import cgeo.geocaching.R;
 import cgeo.geocaching.Settings;
 import cgeo.geocaching.cgeoapplication;
+import cgeo.geocaching.apps.cache.navi.NavigationAppFactory;
 import cgeo.geocaching.compatibility.Compatibility;
 import cgeo.geocaching.network.Cookies;
 
@@ -46,6 +47,27 @@ public abstract class AbstractActivity extends FragmentActivity implements IAbst
     @Override
     public void goManual(final View view) {
         ActivityMixin.goManual(this, helpTopic);
+    }
+
+    @TargetApi(11)
+    public void addV11Actionitems(Menu menu, boolean navigation, boolean manual) {
+        if (Build.VERSION.SDK_INT >= 11) {
+            MenuItem item = menu.add(0, R.id.menu_default_navigation, 0, NavigationAppFactory.getDefaultNavigationApplication().getName()).setIcon(R.drawable.ic_menu_compass); // default navigation tool
+            if (item != null) {
+                item.setVisible(true);
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+            item = menu.findItem(R.id.menu_actionbar_manual);
+            if (item != null) {
+                item.setVisible(true);
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+            item = menu.findItem(R.id.menu_default_navigation);
+            if (item != null) {
+                item.setVisible(true);
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+        }
     }
 
     @TargetApi(11)
