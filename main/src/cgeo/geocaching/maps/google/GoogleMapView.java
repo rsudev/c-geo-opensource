@@ -14,8 +14,7 @@ import cgeo.geocaching.maps.interfaces.OnMapDragListener;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.Log;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapView;
+import com.google.android.gms.maps.MapView;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 
@@ -46,8 +45,8 @@ public class GoogleMapView extends MapView implements MapViewImpl {
         gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
-    public GoogleMapView(Context context, String apiKey) {
-        super(context, apiKey);
+    public GoogleMapView(Context context) {
+        super(context);
         gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
@@ -190,5 +189,29 @@ public class GoogleMapView extends MapView implements MapViewImpl {
     @Override
     public void setMapTheme() {
         // Not supported
+    }
+
+    @Override
+    public void setBuiltInZoomControls(boolean b) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void preLoad() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public int getLatitudeSpan() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getLongitudeSpan() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

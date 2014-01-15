@@ -5,25 +5,18 @@ import cgeo.geocaching.maps.AbstractMap;
 import cgeo.geocaching.maps.CGeoMap;
 import cgeo.geocaching.maps.interfaces.MapActivityImpl;
 
-import com.google.android.maps.MapActivity;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class GoogleMapActivity extends MapActivity implements MapActivityImpl, FilteredActivity {
+public class GoogleMapActivity extends Activity implements MapActivityImpl, FilteredActivity {
 
     private AbstractMap mapBase;
 
     public GoogleMapActivity() {
         mapBase = new CGeoMap(this);
-    }
-
-    @Override
-    protected boolean isRouteDisplayed() {
-        return false;
     }
 
     @Override
