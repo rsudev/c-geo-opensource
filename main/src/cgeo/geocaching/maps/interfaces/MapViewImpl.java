@@ -18,8 +18,6 @@ public interface MapViewImpl {
 
     void displayZoomControls(boolean b);
 
-    void preLoad();
-
     void clearOverlays();
 
     MapControllerImpl getMapController();

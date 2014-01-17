@@ -11,10 +11,13 @@ import cgeo.geocaching.maps.interfaces.MapControllerImpl;
 import cgeo.geocaching.maps.interfaces.MapProjectionImpl;
 import cgeo.geocaching.maps.interfaces.MapViewImpl;
 import cgeo.geocaching.maps.interfaces.OnMapDragListener;
+import cgeo.geocaching.maps.interfaces.OverlayImpl;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.Log;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 
@@ -30,31 +33,38 @@ import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import android.widget.ZoomButtonsController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GoogleMapView extends MapView implements MapViewImpl {
     private GestureDetector gestureDetector;
     private OnMapDragListener onDragListener;
-    private final GoogleMapController mapController = new GoogleMapController(getController());
+    private final GoogleMapController mapController;
+    private final List<OverlayImpl> overlays = new ArrayList<OverlayImpl>();
 
     public GoogleMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
         gestureDetector = new GestureDetector(context, new GestureListener());
+        mapController = new GoogleMapController(getMap());
     }
 
     public GoogleMapView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         gestureDetector = new GestureDetector(context, new GestureListener());
+        mapController = new GoogleMapController(getMap());
     }
 
     public GoogleMapView(Context context) {
         super(context);
         gestureDetector = new GestureDetector(context, new GestureListener());
+        mapController = new GoogleMapController(getMap());
     }
 
     @Override
     public void draw(final Canvas canvas) {
         try {
             if (getMapZoomLevel() > 22) { // to avoid too close zoom level (mostly on Samsung Galaxy S series)
-                getController().setZoom(22);
+                mapController.setZoom(22);
             }
 
             super.draw(canvas);
@@ -74,7 +84,7 @@ public class GoogleMapView extends MapView implements MapViewImpl {
             final ZoomButtonsController controller = (ZoomButtonsController) MethodUtils.invokeMethod(this, "getZoomButtonsController");
             controller.getZoomControls().setLayoutParams(zoomParams);
 
-            super.displayZoomControls(takeFocus);
+            //super.displayZoomControls(takeFocus);
         } catch (NoSuchMethodException e) {
             Log.w("GoogleMapView.displayZoomControls: unable to explicitly place the zoom buttons");
         } catch (Exception e) {
@@ -89,30 +99,30 @@ public class GoogleMapView extends MapView implements MapViewImpl {
 
     @Override
     public GeoPointImpl getMapViewCenter() {
-        GeoPoint point = getMapCenter();
-        return new GoogleGeoPoint(point.getLatitudeE6(), point.getLongitudeE6());
+        LatLng point = mapController.getMapCenter();
+        return new GoogleGeoPoint(point);
     }
 
     @Override
     public Viewport getViewport() {
-        return new Viewport(getMapViewCenter(), getLatitudeSpan() / 1e6, getLongitudeSpan() / 1e6);
+        return mapController.getViewport();
     }
 
     @Override
     public void clearOverlays() {
-        getOverlays().clear();
+        overlays.clear();
     }
 
     @Override
     public MapProjectionImpl getMapProjection() {
-        return new GoogleMapProjection(getProjection());
+        return new GoogleMapProjection(getMap().getProjection());
     }
 
     @Override
     public CachesOverlay createAddMapOverlay(Context context, Drawable drawable) {
 
         GoogleCacheOverlay ovl = new GoogleCacheOverlay(context, drawable);
-        getOverlays().add(ovl);
+        overlays.add(ovl);
         return ovl.getBase();
     }
 
@@ -120,18 +130,22 @@ public class GoogleMapView extends MapView implements MapViewImpl {
     public PositionAndScaleOverlay createAddPositionAndScaleOverlay(Activity activity) {
 
         GoogleOverlay ovl = new GoogleOverlay(activity);
-        getOverlays().add(ovl);
+        overlays.add(ovl);
         return (PositionAndScaleOverlay) ovl.getBase();
     }
 
     @Override
     public int getMapZoomLevel() {
-        return getZoomLevel();
+        return Math.round(getMap().getCameraPosition().zoom);
     }
 
     @Override
     public void setMapSource() {
-        setSatellite(GoogleMapProvider.isSatelliteSource(Settings.getMapSource()));
+        if (GoogleMapProvider.isSatelliteSource(Settings.getMapSource())) {
+            getMap().setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        } else {
+            getMap().setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
     }
 
     @Override
@@ -158,7 +172,7 @@ public class GoogleMapView extends MapView implements MapViewImpl {
     private class GestureListener extends SimpleOnGestureListener {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            getController().zoomInFixing((int) e.getX(), (int) e.getY());
+            mapController.zoomInFixing((int) e.getX(), (int) e.getY());
             if (onDragListener != null) {
                 onDragListener.onDrag();
             }
@@ -198,20 +212,12 @@ public class GoogleMapView extends MapView implements MapViewImpl {
     }
 
     @Override
-    public void preLoad() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public int getLatitudeSpan() {
-        // TODO Auto-generated method stub
-        return 0;
+        return mapController.getLatitudeSpan();
     }
 
     @Override
     public int getLongitudeSpan() {
-        // TODO Auto-generated method stub
-        return 0;
+        return mapController.getLongitudeSpan();
     }
 }

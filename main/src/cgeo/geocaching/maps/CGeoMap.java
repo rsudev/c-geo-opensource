@@ -423,7 +423,6 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
         mapView.setMapSource();
         mapView.setBuiltInZoomControls(true);
         mapView.displayZoomControls(true);
-        mapView.preLoad();
         mapView.setOnDragListener(this);
 
         // initialize overlays

@@ -25,7 +25,11 @@ public final class Viewport {
     }
 
     public Viewport(final @NonNull ICoordinates center, final double latSpan, final double lonSpan) {
-        this.center = center.getCoords();
+        this(center.getCoords(), latSpan, lonSpan);
+    }
+
+    public Viewport(final @NonNull Geopoint centerIn, final double latSpan, final double lonSpan) {
+        this.center = centerIn;
         final double centerLat = this.center.getLatitude();
         final double centerLon = this.center.getLongitude();
         final double latHalfSpan = Math.abs(latSpan) / 2;
@@ -86,7 +90,7 @@ public final class Viewport {
 
     /**
      * Check whether another viewport is fully included into the current one.
-     * 
+     *
      * @param vp
      *            the other viewport
      * @return true if the viewport is fully included into this one, false otherwise

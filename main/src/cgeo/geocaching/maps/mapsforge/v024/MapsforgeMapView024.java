@@ -139,11 +139,6 @@ public class MapsforgeMapView024 extends MapView implements MapViewImpl {
         return span;
     }
 
-    @Override
-    public void preLoad() {
-        // Nothing to do here
-    }
-
     /**
      * Get the map zoom level which is compatible with Google Maps.
      *

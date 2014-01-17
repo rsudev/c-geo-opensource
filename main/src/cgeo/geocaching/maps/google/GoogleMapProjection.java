@@ -3,8 +3,7 @@ package cgeo.geocaching.maps.google;
 import cgeo.geocaching.maps.interfaces.GeoPointImpl;
 import cgeo.geocaching.maps.interfaces.MapProjectionImpl;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.Projection;
+import com.google.android.gms.maps.Projection;
 
 import android.graphics.Point;
 
@@ -18,7 +17,9 @@ public class GoogleMapProjection implements MapProjectionImpl {
 
     @Override
     public void toPixels(GeoPointImpl leftGeo, Point left) {
-        projection.toPixels((GeoPoint) leftGeo, left);
+        Point temp = projection.toScreenLocation(((GoogleGeoPoint) leftGeo).getLatLng());
+        left.x = temp.x;
+        left.y = temp.y;
     }
 
     @Override
