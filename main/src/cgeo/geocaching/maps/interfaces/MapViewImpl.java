@@ -7,12 +7,25 @@ import cgeo.geocaching.maps.PositionAndScaleOverlay;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 
 /**
  * Defines common functions of the provider-specific
  * MapView implementations
  */
 public interface MapViewImpl {
+
+    void onCreate(Bundle savedInstanceState);
+
+    void onResume();
+
+    void onPause();
+
+    void onDestroy();
+
+    void onSaveInstanceState(Bundle outState);
+
+    void onLowMemory();
 
     void setBuiltInZoomControls(boolean b);
 
@@ -71,7 +84,7 @@ public interface MapViewImpl {
     /**
      * Indicates if the current map view supports different themes
      * for map rendering
-     * 
+     *
      * @return true - supports custom themes, false - does not support custom themes
      */
     boolean hasMapThemes();

@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -285,5 +286,41 @@ public class MapsforgeMapView extends MapView implements MapViewImpl {
     @Override
     public boolean needsInvertedColors() {
         return false;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onResume() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onPause() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onDestroy() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onLowMemory() {
+        // TODO Auto-generated method stub
+
     }
 }

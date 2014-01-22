@@ -33,7 +33,6 @@ import cgeo.geocaching.maps.interfaces.MapViewImpl;
 import cgeo.geocaching.maps.interfaces.OnMapDragListener;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.ui.dialog.LiveMapInfoDialogBuilder;
-import cgeo.geocaching.utils.AngleUtils;
 import cgeo.geocaching.utils.CancellableHandler;
 import cgeo.geocaching.utils.GeoDirHandler;
 import cgeo.geocaching.utils.LeastRecentlyUsedSet;
@@ -153,8 +152,8 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
     //Interthread communication flag
     private volatile boolean downloaded = false;
     // overlays
-    private CachesOverlay overlayCaches = null;
-    private PositionAndScaleOverlay overlayPositionAndScale = null;
+    //private CachesOverlay overlayCaches = null;
+    //private PositionAndScaleOverlay overlayPositionAndScale = null;
     // data for overlays
     private static final int[][] INSET_RELIABLE = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } }; // center, 33x40 / 45x51 / 60x68
     private static final int[][] INSET_TYPE = { { 5, 8, 6, 10 }, { 4, 4, 5, 11 }, { 4, 4, 5, 11 } }; // center, 22x22 / 36x36
@@ -348,12 +347,13 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
 
     @Override
     public void onSaveInstanceState(final Bundle outState) {
+        mapView.onSaveInstanceState(outState);
         outState.putInt(BUNDLE_MAP_SOURCE, currentSourceId);
         outState.putIntArray(BUNDLE_MAP_STATE, currentMapState());
         outState.putBoolean(BUNDLE_LIVE_ENABLED, isLiveEnabled);
-        if (overlayPositionAndScale != null) {
-            outState.putParcelableArrayList(BUNDLE_TRAIL_HISTORY, overlayPositionAndScale.getHistory());
-        }
+        //        if (overlayPositionAndScale != null) {
+        //            outState.putParcelableArrayList(BUNDLE_TRAIL_HISTORY, overlayPositionAndScale.getHistory());
+        //        }
     }
 
     @Override
@@ -420,24 +420,25 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
 
         // initialize map
         mapView = (MapViewImpl) activity.findViewById(mapProvider.getMapViewId());
-        mapView.setMapSource();
-        mapView.setBuiltInZoomControls(true);
-        mapView.displayZoomControls(true);
+        mapView.onCreate(savedInstanceState);
+        //mapView.setMapSource();
+        //mapView.setBuiltInZoomControls(true);
+        //mapView.displayZoomControls(true);
         mapView.setOnDragListener(this);
 
         // initialize overlays
         mapView.clearOverlays();
 
-        if (overlayCaches == null) {
-            overlayCaches = mapView.createAddMapOverlay(mapView.getContext(), getResources().getDrawable(R.drawable.marker));
-        }
-
-        if (overlayPositionAndScale == null) {
-            overlayPositionAndScale = mapView.createAddPositionAndScaleOverlay(activity);
-            if (trailHistory != null) {
-                overlayPositionAndScale.setHistory(trailHistory);
-            }
-        }
+        //        if (overlayCaches == null) {
+        //            overlayCaches = mapView.createAddMapOverlay(mapView.getContext(), getResources().getDrawable(R.drawable.marker));
+        //        }
+        //
+        //        if (overlayPositionAndScale == null) {
+        //            overlayPositionAndScale = mapView.createAddPositionAndScaleOverlay(activity);
+        //            if (trailHistory != null) {
+        //                overlayPositionAndScale.setHistory(trailHistory);
+        //            }
+        //        }
 
         mapView.repaintRequired(null);
 
@@ -448,9 +449,9 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
             followMyLocation = mapMode == MapMode.LIVE;
         } else {
             followMyLocation = 1 == mapStateIntent[3];
-            if ((overlayCaches.getCircles() ? 1 : 0) != mapStateIntent[4]) {
-                overlayCaches.switchCircles();
-            }
+            //            if ((overlayCaches.getCircles() ? 1 : 0) != mapStateIntent[4]) {
+            //                overlayCaches.switchCircles();
+            //            }
         }
         if (geocodeIntent != null || searchIntent != null || coordsIntent != null || mapStateIntent != null) {
             centerMap(geocodeIntent, searchIntent, coordsIntent, mapStateIntent);
@@ -495,6 +496,8 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
     public void onResume() {
         super.onResume();
 
+        mapView.onResume();
+
         addGeoDirObservers();
 
         if (!CollectionUtils.isEmpty(dirtyCaches)) {
@@ -534,6 +537,8 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
         }
 
         overlaysCache.clear();
+
+        mapView.onPause();
 
         super.onPause();
     }
@@ -586,11 +591,11 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
             menu.findItem(R.id.menu_store_caches).setEnabled(!isLoading() && CollectionUtils.isNotEmpty(geocodesInViewport) && new SearchResult(geocodesInViewport).hasUnsavedCaches());
 
             item = menu.findItem(R.id.menu_circle_mode); // show circles
-            if (overlayCaches != null && overlayCaches.getCircles()) {
-                item.setTitle(res.getString(R.string.map_circles_hide));
-            } else {
+            //            if (overlayCaches != null && overlayCaches.getCircles()) {
+            //                item.setTitle(res.getString(R.string.map_circles_hide));
+            //            } else {
                 item.setTitle(res.getString(R.string.map_circles_show));
-            }
+            //            }
 
             item = menu.findItem(R.id.menu_theme_mode); // show theme selection
             item.setVisible(mapView.hasMapThemes());
@@ -625,7 +630,7 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
         switch (id) {
             case R.id.menu_trail_mode:
                 Settings.setMapTrail(!Settings.isMapTrail());
-                mapView.repaintRequired(overlayPositionAndScale);
+                //                mapView.repaintRequired(overlayPositionAndScale);
                 ActivityMixin.invalidateOptionsMenu(activity);
                 return true;
             case R.id.menu_map_live:
@@ -673,12 +678,12 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
                 }
                 return true;
             case R.id.menu_circle_mode:
-                if (overlayCaches == null) {
-                    return false;
-                }
-
-                overlayCaches.switchCircles();
-                mapView.repaintRequired(overlayCaches);
+                //                if (overlayCaches == null) {
+                //                    return false;
+                //                }
+                //
+                //                overlayCaches.switchCircles();
+                //                mapView.repaintRequired(overlayCaches);
                 ActivityMixin.invalidateOptionsMenu(activity);
                 return true;
             case R.id.menu_mycaches_mode:
@@ -860,7 +865,7 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
                 mapCenter.getLongitudeE6(),
                 mapView.getMapZoomLevel(),
                 followMyLocation ? 1 : 0,
-                overlayCaches.getCircles() ? 1 : 0
+        //                overlayCaches.getCircles() ? 1 : 0
         };
     }
 
@@ -932,24 +937,24 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
 
                 try {
                     if (mapView != null) {
-                        if (overlayPositionAndScale == null) {
-                            overlayPositionAndScale = mapView.createAddPositionAndScaleOverlay(activity);
-                        }
-
-                        boolean needsRepaintForDistance = needsRepaintForDistance();
-                        boolean needsRepaintForHeading = needsRepaintForHeading();
-
-                        if (needsRepaintForDistance) {
-                            if (followMyLocation) {
-                                centerMap(new Geopoint(currentLocation));
-                            }
-                        }
-
-                        if (needsRepaintForDistance || needsRepaintForHeading) {
-                            overlayPositionAndScale.setCoordinates(currentLocation);
-                            overlayPositionAndScale.setHeading(currentHeading);
-                            mapView.repaintRequired(overlayPositionAndScale);
-                        }
+                        //                        if (overlayPositionAndScale == null) {
+                        //                            overlayPositionAndScale = mapView.createAddPositionAndScaleOverlay(activity);
+                        //                        }
+                        //
+                        //                        boolean needsRepaintForDistance = needsRepaintForDistance();
+                        //                        boolean needsRepaintForHeading = needsRepaintForHeading();
+                        //
+                        //                        if (needsRepaintForDistance) {
+                        //                            if (followMyLocation) {
+                        //                                centerMap(new Geopoint(currentLocation));
+                        //                            }
+                        //                        }
+                        //
+                        //                        if (needsRepaintForDistance || needsRepaintForHeading) {
+                        //                            overlayPositionAndScale.setCoordinates(currentLocation);
+                        //                            overlayPositionAndScale.setHeading(currentHeading);
+                        //                            mapView.repaintRequired(overlayPositionAndScale);
+                        //                        }
                     }
                 } catch (RuntimeException e) {
                     Log.w("Failed to update location.");
@@ -958,32 +963,32 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
         }
 
         boolean needsRepaintForHeading() {
-            return Math.abs(AngleUtils.difference(currentHeading, overlayPositionAndScale.getHeading())) > MIN_HEADING_DELTA;
+            return false; //return Math.abs(AngleUtils.difference(currentHeading, overlayPositionAndScale.getHeading())) > MIN_HEADING_DELTA;
         }
 
         boolean needsRepaintForDistance() {
 
-            if (!locationValid) {
+            //            if (!locationValid) {
                 return false;
-            }
-
-            final Location lastLocation = overlayPositionAndScale.getCoordinates();
-
-            float dist = Float.MAX_VALUE;
-            if (lastLocation != null) {
-                dist = currentLocation.distanceTo(lastLocation);
-            }
-
-            final float[] mapDimension = new float[1];
-            if (mapView.getWidth() < mapView.getHeight()) {
-                final double span = mapView.getLongitudeSpan() / 1e6;
-                Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), currentLocation.getLatitude(), currentLocation.getLongitude() + span, mapDimension);
-            } else {
-                final double span = mapView.getLatitudeSpan() / 1e6;
-                Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), currentLocation.getLatitude() + span, currentLocation.getLongitude(), mapDimension);
-            }
-
-            return dist > (mapDimension[0] * MIN_LOCATION_DELTA);
+            //            }
+            //
+            //            final Location lastLocation = overlayPositionAndScale.getCoordinates();
+            //
+            //            float dist = Float.MAX_VALUE;
+            //            if (lastLocation != null) {
+            //                dist = currentLocation.distanceTo(lastLocation);
+            //            }
+            //
+            //            final float[] mapDimension = new float[1];
+            //            if (mapView.getWidth() < mapView.getHeight()) {
+            //                final double span = mapView.getLongitudeSpan() / 1e6;
+            //                Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), currentLocation.getLatitude(), currentLocation.getLongitude() + span, mapDimension);
+            //            } else {
+            //                final double span = mapView.getLatitudeSpan() / 1e6;
+            //                Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), currentLocation.getLatitude() + span, currentLocation.getLongitude(), mapDimension);
+            //            }
+            //
+            //            return dist > (mapDimension[0] * MIN_LOCATION_DELTA);
         }
     }
 
@@ -1253,11 +1258,11 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
                         itemsToDisplay.add(getCacheItem(cache));
                     }
 
-                    overlayCaches.updateItems(itemsToDisplay);
+                    //                    overlayCaches.updateItems(itemsToDisplay);
                     displayHandler.sendEmptyMessage(INVALIDATE_MAP);
 
                 } else {
-                    overlayCaches.updateItems(itemsToDisplay);
+                    //                    overlayCaches.updateItems(itemsToDisplay);
                     displayHandler.sendEmptyMessage(INVALIDATE_MAP);
                 }
 
@@ -1287,7 +1292,7 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
                 waypoint.setCoords(coordsIntent);
 
                 final CachesOverlayItemImpl item = getWaypointItem(waypoint);
-                overlayCaches.updateItems(item);
+                //                overlayCaches.updateItems(item);
                 displayHandler.sendEmptyMessage(INVALIDATE_MAP);
 
                 cachesCnt = 1;

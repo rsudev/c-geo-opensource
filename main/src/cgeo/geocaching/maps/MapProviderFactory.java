@@ -1,15 +1,11 @@
 package cgeo.geocaching.maps;
 
-import cgeo.geocaching.CgeoApplication;
 import cgeo.geocaching.R;
 import cgeo.geocaching.maps.google.GoogleMapProvider;
 import cgeo.geocaching.maps.interfaces.MapProvider;
 import cgeo.geocaching.maps.interfaces.MapSource;
 import cgeo.geocaching.maps.mapsforge.MapsforgeMapProvider;
 import cgeo.geocaching.settings.Settings;
-import cgeo.geocaching.utils.Log;
-
-import org.apache.commons.lang3.StringUtils;
 
 import android.view.Menu;
 import android.view.SubMenu;
@@ -31,17 +27,17 @@ public class MapProviderFactory {
 
     public static boolean isGoogleMapsInstalled() {
         // Check if API key is available
-        if (StringUtils.isBlank(CgeoApplication.getInstance().getString(R.string.maps_api_key))) {
-            Log.w("No Google API key available.");
-            return false;
-        }
-
-        // Check if API is available
-        try {
-            Class.forName("com.google.android.maps.MapActivity");
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        //        if (StringUtils.isBlank(CgeoApplication.getInstance().getString(R.string.maps_api_key))) {
+        //            Log.w("No Google API key available.");
+        //            return false;
+        //        }
+        //
+        //        // Check if API is available
+        //        try {
+        //            Class.forName("com.google.android.maps.MapActivity");
+        //        } catch (ClassNotFoundException e) {
+        //            return false;
+        //        }
 
         // Assume that Google Maps is available and working
         return true;
