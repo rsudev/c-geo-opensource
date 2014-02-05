@@ -20,7 +20,8 @@ public enum WaypointType {
     STAGE("stage", R.string.wp_stage, R.drawable.waypoint_stage),
     TRAILHEAD("trailhead", R.string.wp_trailhead, R.drawable.waypoint_trailhead),
     WAYPOINT("waypoint", R.string.wp_waypoint, R.drawable.waypoint_waypoint),
-    ORIGINAL("original", R.string.wp_original, R.drawable.waypoint_waypoint);
+    ORIGINAL("original", R.string.wp_original, R.drawable.waypoint_waypoint),
+    USERCOORDS("user-coords", R.string.wp_usercoords, R.drawable.waypoint_flag);
 
     public final String id;
     public final int stringId;

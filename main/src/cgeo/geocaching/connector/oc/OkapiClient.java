@@ -510,6 +510,9 @@ final class OkapiClient {
         if ("poi".equalsIgnoreCase(wptType)) {
             return WaypointType.TRAILHEAD;
         }
+        if ("user-coords".equalsIgnoreCase(wptType)) {
+            return WaypointType.USERCOORDS;
+        }
         return WaypointType.WAYPOINT;
     }
 
