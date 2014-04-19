@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="cgeo_main" parent="android:style/Theme.Wallpaper.NoTitleBar">
+    <style name="cgeo_main" parent="@style/Theme.AppCompat">
 
         <!-- system elements -->
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <style name="cgeo" parent="android:style/Theme.NoTitleBar">
+    <style name="cgeo" parent="@style/Theme.AppCompat">
 
         <!-- system elements -->
         <item name="android:buttonStyle">@style/button</item>
@@ -80,7 +80,7 @@
         <item name="compass">1</item>
     </style>
 
-    <style name="cgeo_popup" parent="android:style/Theme.Dialog">
+    <style name="cgeo_popup" parent="android:Theme.Dialog">
 
         <!-- system elements -->
         <item name="android:buttonStyle">@style/button</item>

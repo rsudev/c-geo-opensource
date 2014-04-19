@@ -83,6 +83,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -376,6 +377,8 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         setTheme();
         setContentView(R.layout.cacheslist_activity);
 
@@ -397,20 +400,20 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
         }
 
         // Add the list selection in code. This way we can leave the XML layout of the action bar the same as for other activities.
-        final View titleBar = findViewById(R.id.actionbar_title);
-        titleBar.setClickable(true);
-        titleBar.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                selectList();
-            }
-        });
+        //        final View titleBar = findViewById(R.id.actionbar_title);
+        //        titleBar.setClickable(true);
+        //        titleBar.setOnClickListener(new View.OnClickListener() {
+        //
+        //            @Override
+        //            public void onClick(View v) {
+        //                selectList();
+        //            }
+        //        });
 
         setTitle(title);
         initAdapter();
 
-        prepareFilterBar();
+        //prepareFilterBar();
 
         currentLoader = (AbstractSearchLoader) getSupportLoaderManager().initLoader(type.getLoaderId(), extras, this);
 
@@ -616,6 +619,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_map:
+                goMap();
+                return true;
             case R.id.menu_switch_select_mode:
                 adapter.switchSelectMode();
                 invalidateOptionsMenuCompatible();
@@ -1380,11 +1386,7 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
         });
     }
 
-    /**
-     * @param view
-     *            unused here but needed since this method is referenced from XML layout
-     */
-    public void goMap(View view) {
+    public void goMap() {
         if (!cacheToShow()) {
             return;
         }

@@ -10,11 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,12 +43,13 @@ public final class ActivityMixin {
             return;
         }
 
-        final ProgressBar progress = (ProgressBar) activity.findViewById(R.id.actionbar_progress);
-        if (show) {
-            progress.setVisibility(View.VISIBLE);
-        } else {
-            progress.setVisibility(View.GONE);
-        }
+        ((ActionBarActivity) activity).setProgressBarIndeterminateVisibility(show);
+        //        final ProgressBar progress = (ProgressBar) activity.findViewById(R.id.actionbar_progress);
+        //        if (show) {
+        //            progress.setVisibility(View.VISIBLE);
+        //        } else {
+        //            progress.setVisibility(View.GONE);
+        //        }
     }
 
     public static void setTheme(final Activity activity) {

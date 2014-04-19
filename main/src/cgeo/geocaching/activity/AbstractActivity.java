@@ -13,20 +13,21 @@ import cgeo.geocaching.utils.TranslationUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
+
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
 
 import java.util.Locale;
 
-public abstract class AbstractActivity extends FragmentActivity implements IAbstractActivity {
+public abstract class AbstractActivity extends ActionBarActivity implements IAbstractActivity {
 
     protected CgeoApplication app = null;
     protected Resources res = null;

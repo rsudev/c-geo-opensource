@@ -10,6 +10,9 @@ import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 
 import android.app.Application;
+import android.view.ViewConfiguration;
+
+import java.lang.reflect.Field;
 
 public class CgeoApplication extends Application {
 
@@ -102,4 +105,18 @@ public class CgeoApplication extends Application {
         forceRelog = true;
     }
 
+    @Override
+    public void onCreate() {
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+
+            if (menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception ex) {
+            // Ignore
+        }
+    }
 }
