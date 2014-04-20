@@ -709,6 +709,12 @@ public class Geocache implements ICache, IWaypoint {
             return;
         }
 
+        final Intent intent = getIntent();
+
+        fromActivity.startActivity(Intent.createChooser(intent, res.getText(R.string.action_bar_share_title)));
+    }
+
+    public Intent getIntent() {
         final StringBuilder subject = new StringBuilder("Geocache ");
         subject.append(geocode);
         if (StringUtils.isNotBlank(name)) {

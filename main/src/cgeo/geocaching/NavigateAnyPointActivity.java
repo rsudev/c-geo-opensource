@@ -4,6 +4,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
 
+import cgeo.geocaching.activity.AbstractActionBarActivity;
 import cgeo.geocaching.activity.AbstractActivity;
 import cgeo.geocaching.apps.cache.navi.NavigationAppFactory;
 import cgeo.geocaching.geopoint.DistanceParser;
@@ -44,7 +45,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class NavigateAnyPointActivity extends AbstractActivity {
+public class NavigateAnyPointActivity extends AbstractActionBarActivity {
 
     @InjectView(R.id.historyList) protected ListView historyListView;
 
@@ -363,7 +364,7 @@ public class NavigateAnyPointActivity extends AbstractActivity {
                 NavigationAppFactory.showNavigationMenu(this, null, null, coords);
                 return true;
             default:
-                return false;
+                return super.onOptionsItemSelected(item);
         }
     }
 
