@@ -18,7 +18,6 @@ public class AbstractActionBarActivity extends AbstractActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initFeatures();
         initUpAction();
     }
 

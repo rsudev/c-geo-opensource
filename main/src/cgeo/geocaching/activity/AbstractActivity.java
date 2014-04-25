@@ -101,6 +101,12 @@ public abstract class AbstractActivity extends ActionBarActivity implements IAbs
         super.onPause();
     }
 
+    @Override
+    public void onResume() {
+        showProgress(false);
+        super.onResume();
+    }
+
     protected static void disableSuggestions(final EditText edit) {
         EditUtils.disableSuggestions(edit);
     }

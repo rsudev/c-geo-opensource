@@ -36,7 +36,6 @@ public final class ActivityMixin {
 
         // FIXME: I have no idea why it works in some activities and horrible breaks in ohters
         try {
-            activity.setSupportProgressBarIndeterminate(show);
             activity.setSupportProgressBarIndeterminateVisibility(show);
         } catch (NullPointerException npe) {
             npe.printStackTrace();

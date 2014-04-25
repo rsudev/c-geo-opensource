@@ -228,6 +228,7 @@ public class MainActivity extends AbstractActionBarActivity {
         updateUserInfoHandler.sendEmptyMessage(-1);
         startBackgroundLogin();
         init();
+        showProgress(false);
     }
 
     private void startBackgroundLogin() {

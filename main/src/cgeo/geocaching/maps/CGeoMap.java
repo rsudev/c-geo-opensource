@@ -304,8 +304,7 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
                 }
             }
             if (Build.VERSION.SDK_INT >= 11) {
-                activity.setProgressBarIndeterminate(show);
-                activity.setProgressBarIndeterminateVisibility(true);
+                activity.setProgressBarIndeterminateVisibility(show);
             }
         }
     };
