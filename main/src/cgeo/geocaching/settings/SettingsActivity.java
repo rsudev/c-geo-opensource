@@ -92,6 +92,16 @@ public class SettingsActivity extends PreferenceActivity {
 
         Intent intent = getIntent();
         openInitialScreen(intent.getIntExtra(INTENT_OPEN_SCREEN, 0));
+
+        /* Remove the show overflow preference on Android version where the platform always or never
+         * shows the overflow menu and the app cannot influence the behaviour
+         */
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB || Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            Preference pref = findPreference(getString(R.string.pref_alwaysshowoverflowmenu));
+            PreferenceScreen appearence = (PreferenceScreen) findPreference(getString(R.string.pref_appearance));
+            appearence.removePreference(pref);
+
+        }
     }
 
     private void openInitialScreen(int initialScreen) {
