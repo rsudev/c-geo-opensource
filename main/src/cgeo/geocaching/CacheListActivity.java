@@ -33,6 +33,7 @@ import cgeo.geocaching.loaders.OfflineGeocacheListLoader;
 import cgeo.geocaching.loaders.OwnerGeocacheListLoader;
 import cgeo.geocaching.loaders.PocketGeocacheListLoader;
 import cgeo.geocaching.loaders.RemoveFromHistoryLoader;
+import cgeo.geocaching.maps.CGeoMap;
 import cgeo.geocaching.network.Cookies;
 import cgeo.geocaching.network.Network;
 import cgeo.geocaching.network.Parameters;
@@ -280,7 +281,7 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
         else {
             getSupportActionBar().setSubtitle(StringUtils.join(numbers, '/'));
         }
-        
+
         refreshSpinnerAdapter();
     }
 
@@ -493,8 +494,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
             if (list.getCount() >= 0) {
                 holder.subtitle.setVisibility(View.VISIBLE);
                 holder.subtitle.setText(getCacheNumberString(mContext.getResources(),list.getCount()));
-            } else
+            } else {
                 holder.subtitle.setVisibility(View.GONE);
+            }
 
             return convertView;
         }
@@ -510,8 +512,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
             @Override
             public boolean onNavigationItemSelected(int i, long l) {
                 int newListId = mCacheListSpinnerAdapter.getItem(i).id;
-                if (newListId != listId)
+                if (newListId != listId) {
                     switchListById(newListId);
+                }
                 return true;
             }
         });
@@ -525,8 +528,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
 
         AbstractList list = AbstractList.getListById(listId);
 
-        for (AbstractList l: StoredList.UserInterface.getMenuLists(false, PseudoList.NEW_LIST.id))
+        for (AbstractList l: StoredList.UserInterface.getMenuLists(false, PseudoList.NEW_LIST.id)) {
             mCacheListSpinnerAdapter.add(l);
+        }
 
         getSupportActionBar().setSelectedNavigationItem(mCacheListSpinnerAdapter.getPosition(list));
     }
@@ -719,6 +723,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
         if (super.onOptionsItemSelected(item))
             return true;
         switch (item.getItemId()) {
+            case R.id.menu_show_on_map:
+                goMap();
+                return true;
             case R.id.menu_switch_select_mode:
                 adapter.switchSelectMode();
                 invalidateOptionsMenuCompatible();
@@ -1483,6 +1490,21 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
                 removeListInternal();
             }
         });
+    }
+
+    public void goMap() {
+        if (!cacheToShow()) {
+            return;
+        }
+
+        // apply filter settings (if there's a filter)
+        final SearchResult searchToUse = getFilteredSearch();
+        final int count = searchToUse.getCount();
+        String mapTitle = title;
+        if (count > 0) {
+            mapTitle = title + " [" + count + "]";
+        }
+        CGeoMap.startActivitySearch(this, searchToUse, mapTitle);
     }
 
     private void refreshCurrentList() {

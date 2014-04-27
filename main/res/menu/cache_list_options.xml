@@ -3,6 +3,12 @@
     xmlns:cgeo="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_show_on_map"
+        android:icon="@drawable/actionbar_map"
+        cgeo:showAsAction="ifRoom"
+        android:title="@string/caches_on_map">
+    </item>
+    <item
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_menu_filter"
         cgeo:showAsAction="ifRoom|withText"
