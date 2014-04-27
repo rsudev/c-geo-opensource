@@ -364,7 +364,7 @@ public class NavigateAnyPointActivity extends AbstractActionBarActivity {
                 NavigationAppFactory.showNavigationMenu(this, null, null, coords);
                 return true;
             default:
-                return false;
+                return super.onOptionsItemSelected(item);
         }
     }
 
