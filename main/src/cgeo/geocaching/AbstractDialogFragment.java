@@ -1,11 +1,14 @@
 package cgeo.geocaching;
 
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.internal.view.SupportMenuInflater;
 import android.support.v7.widget.PopupMenu;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -84,6 +87,11 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
                 showPopup(v);
             }
         });
+        /* Use a context menu instead popup where the popup menu is not working */
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            registerForContextMenu(overflowActionBar);
+        }
+
     }
 
     final public void setTitle(final CharSequence title) {
@@ -101,13 +109,44 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
         init();
     }
 
+
     protected void showPopup(View view)
+    {
+        // For reason I totally not understand the PopupMenu from Appcompat is broken beyond
+        // repair. Chicken out here and show the old menu on Gingerbread.
+        // The "correct" way of implementing this is stil in
+        // showPopupCompat(view)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+            view.showContextMenu();
+        else
+            showPopupHoneycomb(view);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void showPopupHoneycomb(View view) {
+        android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(getActivity(), view);
+        CacheMenuHandler.addMenuItems(new MenuInflater(getActivity()), popupMenu.getMenu(), cache);
+        popupMenu.setOnMenuItemClickListener(
+                new android.widget.PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                       return AbstractDialogFragment.this.onMenuItemClick(item);
+                    }
+                }
+        );
+        popupMenu.show();
+    }
+
+    protected void showPopupCompat(View view)
     {
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
 
         // Directly instantiate SupportMenuInflater instead of getActivity().getMenuinflator
         // getMenuinflator will throw a NPE since it tries to get the not displayed ActionBar
-        CacheMenuHandler.addMenuItems(new SupportMenuInflater(getActivity()), popupMenu.getMenu(), cache);
+        // menuinflator = getActivity().getMenuInflater();
+        MenuInflater menuinflator = new SupportMenuInflater(getActivity());
+        CacheMenuHandler.addMenuItems(popupMenu.getMenuInflater(), popupMenu.getMenu(), cache);
         popupMenu.setOnMenuItemClickListener(this);
         popupMenu.show();
     }
@@ -195,6 +234,7 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
 
         // more details
         final Button buttonMore = (Button) getView().findViewById(R.id.more_details);
+
         buttonMore.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -203,6 +243,9 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
                 getActivity().finish();
             }
         });
+
+        /* Only working combination as it seems */
+        registerForContextMenu(buttonMore);
     }
 
     public final void showToast(String text) {
@@ -233,6 +276,17 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
         super.onCreateOptionsMenu(menu, inflater);
         CacheMenuHandler.addMenuItems(inflater, menu, cache);
 
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        CacheMenuHandler.addMenuItems(new MenuInflater(getActivity()), menu, cache);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return onOptionsItemSelected(item);
     }
 
     @Override

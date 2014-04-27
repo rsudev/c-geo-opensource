@@ -82,7 +82,9 @@ public class CacheMenuHandler extends AbstractUIFactory {
         MenuItem shareItem = menu.findItem(R.id.menu_share);
         ShareActionProvider shareActionProvider = (ShareActionProvider)
                 MenuItemCompat.getActionProvider(shareItem);
-        shareActionProvider.setShareIntent(cache.getIntent());
+        if(shareActionProvider != null)
+            shareActionProvider.setShareIntent(cache.getIntent());
+
     }
 
     public static void addMenuItems(MenuInflater inflater, Menu menu, Geocache cache) {
