@@ -148,7 +148,6 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
     private ContextMenuInfo lastMenuInfo;
     private String contextMenuGeocode = "";
     private Subscription resumeSubscription;
-    private ViewGroup mCustomTitleView;
 
     // FIXME: This method has mostly been replaced by the loaders. But it still contains a license agreement check.
     public void handleCachesLoaded() {
@@ -522,8 +521,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
 
     private void refreshSpinnerAdapter() {
         /* If the activity does not use the Spinner this will be null */
-        if (mCacheListSpinnerAdapter==null)
+        if (mCacheListSpinnerAdapter==null) {
             return;
+        }
         mCacheListSpinnerAdapter.clear();
 
         AbstractList list = AbstractList.getListById(listId);

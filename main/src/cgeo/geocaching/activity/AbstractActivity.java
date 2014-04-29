@@ -13,10 +13,10 @@ import cgeo.geocaching.utils.TranslationUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
-import android.annotation.TargetApi;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.nfc.NdefMessage;
@@ -31,8 +31,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.Toast;
-
 
 import java.util.Locale;
 
@@ -217,8 +215,9 @@ public abstract class AbstractActivity extends ActionBarActivity implements IAbs
     }
 
     protected void initializeAndroidBeam(ActivitySharingInterface sharingInterface) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             initializeICSAndroidBeam(sharingInterface);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
