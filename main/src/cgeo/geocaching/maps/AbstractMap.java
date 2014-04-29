@@ -5,7 +5,6 @@ import cgeo.geocaching.maps.interfaces.MapActivityImpl;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;

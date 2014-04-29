@@ -1,6 +1,5 @@
 package cgeo.geocaching.maps.mapsforge;
 
-import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.activity.FilteredActivity;
 import cgeo.geocaching.maps.AbstractMap;
 import cgeo.geocaching.maps.CGeoMap;
@@ -32,8 +31,9 @@ public class MapsforgeMapActivity extends MapActivity implements MapActivityImpl
     @Override
     protected void onCreate(Bundle icicle) {
         // TODO: Move to a more sane place
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
             requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        }
         mapBase.onCreate(icicle);
     }
 

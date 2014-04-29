@@ -1,6 +1,5 @@
 package cgeo.geocaching.utils;
 
-import cgeo.geocaching.activity.AbstractActivity;
 import cgeo.geocaching.network.Network;
 
 import org.apache.commons.lang3.StringUtils;

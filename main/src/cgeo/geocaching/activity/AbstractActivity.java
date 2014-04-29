@@ -3,19 +3,20 @@ package cgeo.geocaching.activity;
 import butterknife.ButterKnife;
 
 import cgeo.geocaching.CgeoApplication;
-import cgeo.geocaching.MainActivity;
 import cgeo.geocaching.R;
 import cgeo.geocaching.network.Cookies;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.ClipboardUtils;
 import cgeo.geocaching.utils.EditUtils;
 import cgeo.geocaching.utils.HtmlUtils;
-import cgeo.geocaching.utils.TextUtils;
 import cgeo.geocaching.utils.TranslationUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import android.annotation.TargetApi;
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
+
 import android.content.Intent;
 import android.content.res.Resources;
 import android.nfc.NdefMessage;
@@ -24,8 +25,6 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -34,8 +33,6 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
 
 import java.util.Locale;
 

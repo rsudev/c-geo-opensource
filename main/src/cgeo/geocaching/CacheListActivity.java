@@ -720,8 +720,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (super.onOptionsItemSelected(item))
+        if (super.onOptionsItemSelected(item)) {
             return true;
+        }
         switch (item.getItemId()) {
             case R.id.menu_show_on_map:
                 goMap();
