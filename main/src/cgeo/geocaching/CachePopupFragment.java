@@ -11,6 +11,7 @@ import cgeo.geocaching.utils.CancellableHandler;
 import cgeo.geocaching.utils.Log;
 
 import org.apache.commons.lang3.StringUtils;
+
 import rx.Scheduler.Inner;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -22,10 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.internal.view.SupportMenuInflater;
-import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -219,6 +217,7 @@ public class CachePopupFragment extends AbstractDialogFragment {
         context.startActivity(popupIntent);
     }
 
+    @Override
     protected Geopoint getCoordinates() {
         if (cache == null) {
             return null;

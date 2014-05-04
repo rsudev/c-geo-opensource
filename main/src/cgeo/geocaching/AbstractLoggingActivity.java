@@ -1,7 +1,6 @@
 package cgeo.geocaching;
 
 import cgeo.geocaching.activity.AbstractActionBarActivity;
-import cgeo.geocaching.activity.AbstractActivity;
 import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.connector.ConnectorFactory;
 import cgeo.geocaching.connector.gc.GCConnector;

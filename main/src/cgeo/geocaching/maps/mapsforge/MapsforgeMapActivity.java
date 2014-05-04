@@ -1,6 +1,5 @@
 package cgeo.geocaching.maps.mapsforge;
 
-import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.activity.FilteredActivity;
 import cgeo.geocaching.maps.AbstractMap;
 import cgeo.geocaching.maps.CGeoMap;

@@ -123,8 +123,9 @@ public final class StoredList extends AbstractList {
                     lists.add(PseudoList.HISTORY_LIST);
                 }
             }
-            if (exceptListId != PseudoList.NEW_LIST.id)
+            if (exceptListId != PseudoList.NEW_LIST.id) {
                 lists.add(PseudoList.NEW_LIST);
+            }
             return lists;
         }
 
@@ -203,6 +204,7 @@ public final class StoredList extends AbstractList {
      *
      * @return
      */
+    @Override
     public String getTitle() {
         return title;
     }

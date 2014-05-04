@@ -33,6 +33,7 @@ import cgeo.geocaching.loaders.OfflineGeocacheListLoader;
 import cgeo.geocaching.loaders.OwnerGeocacheListLoader;
 import cgeo.geocaching.loaders.PocketGeocacheListLoader;
 import cgeo.geocaching.loaders.RemoveFromHistoryLoader;
+import cgeo.geocaching.maps.CGeoMap;
 import cgeo.geocaching.network.Cookies;
 import cgeo.geocaching.network.Network;
 import cgeo.geocaching.network.Parameters;
@@ -147,7 +148,6 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
     private ContextMenuInfo lastMenuInfo;
     private String contextMenuGeocode = "";
     private Subscription resumeSubscription;
-    private ViewGroup mCustomTitleView;
 
     // FIXME: This method has mostly been replaced by the loaders. But it still contains a license agreement check.
     public void handleCachesLoaded() {
@@ -461,104 +461,33 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
+            return getCustomView(position, convertView);
         }
 
 
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
+            return getCustomView(position, convertView);
         }
 
-        public View getCustomView(int position, View convertView, ViewGroup parent) {
+        public View getCustomView(final int position, final View convertView) {
+
+            View resultView = convertView;
 
             LayoutInflater inflater =
                     (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
             ViewHolder holder;
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.cachelist_spinneritem, null);
+            if (resultView == null) {
+                resultView = inflater.inflate(R.layout.cachelist_spinneritem, null);
                 holder = new ViewHolder();
-                holder.title = (TextView) convertView.findViewById(android.R.id.text1);
-                holder.subtitle = (TextView) convertView.findViewById(android.R.id.text2);
+                holder.title = (TextView) resultView.findViewById(android.R.id.text1);
+                holder.subtitle = (TextView) resultView.findViewById(android.R.id.text2);
 
-                convertView.setTag(holder);
+                resultView.setTag(holder);
             } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            AbstractList list = getItem(position);
-            holder.title.setText(list.getTitle());
-            if (list.getCount() >= 0) {
-                holder.subtitle.setVisibility(View.VISIBLE);
-                holder.subtitle.setText(getCacheNumberString(mContext.getResources(),list.getCount()));
-            } else
-                holder.subtitle.setVisibility(View.GONE);
-
-            return convertView;
-        }
-    }
-
-    CacheArrayAdapter mCacheListSpinnerAdapter;
-
-    private void initActionBarSpinner() {
-        mCacheListSpinnerAdapter = new CacheArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item);
-        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setListNavigationCallbacks(mCacheListSpinnerAdapter, new ActionBar.OnNavigationListener() {
-            @Override
-            public boolean onNavigationItemSelected(int i, long l) {
-                int newListId = mCacheListSpinnerAdapter.getItem(i).id;
-                if (newListId != listId)
-                    switchListById(newListId);
-                return true;
-            }
-        });
-    }
-
-    static class CacheArrayAdapter extends ArrayAdapter<AbstractList> {
-
-        static class ViewHolder {
-            TextView title;
-            TextView subtitle;
-        }
-
-        private final Context mContext;
-
-        public CacheArrayAdapter(Context context, int resource) {
-            super(context, resource);
-            mContext = context;
-        }
-
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-        public View getCustomView(int position, View convertView, ViewGroup parent) {
-
-            LayoutInflater inflater =
-                    (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-
-            ViewHolder holder;
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.cachelist_spinneritem, null);
-                holder = new ViewHolder();
-                holder.title = (TextView) convertView.findViewById(android.R.id.text1);
-                holder.subtitle = (TextView) convertView.findViewById(android.R.id.text2);
-
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
+                holder = (ViewHolder) resultView.getTag();
             }
 
             AbstractList list = getItem(position);
@@ -570,7 +499,7 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
                 holder.subtitle.setVisibility(View.GONE);
             }
 
-            return convertView;
+            return resultView;
         }
     }
 
@@ -594,8 +523,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
 
     private void refreshSpinnerAdapter() {
         /* If the activity does not use the Spinner this will be null */
-        if (mCacheListSpinnerAdapter==null)
+        if (mCacheListSpinnerAdapter==null) {
             return;
+        }
         mCacheListSpinnerAdapter.clear();
 
         AbstractList list = AbstractList.getListById(listId);
@@ -792,8 +722,9 @@ public class CacheListActivity extends AbstractListActivity implements FilteredA
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (super.onOptionsItemSelected(item))
+        if (super.onOptionsItemSelected(item)) {
             return true;
+        }
         switch (item.getItemId()) {
             case R.id.menu_show_on_map:
                 goMap();

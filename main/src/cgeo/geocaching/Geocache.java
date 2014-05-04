@@ -726,7 +726,7 @@ public class Geocache implements ICache, IWaypoint {
         intent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
         intent.putExtra(Intent.EXTRA_TEXT, getUrl());
 
-        fromActivity.startActivity(Intent.createChooser(intent, res.getText(R.string.action_bar_share_title)));
+        return intent;
     }
 
     public String getUrl() {

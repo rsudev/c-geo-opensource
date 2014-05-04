@@ -66,8 +66,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -265,8 +263,9 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
             titleview.setText(title);
 
         }
-        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB))
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
             setTitleHoneyComb(title);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -402,6 +401,7 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -586,6 +586,7 @@ public class CGeoMap extends AbstractMap implements OnMapDragListener, ViewFacto
         super.onPause();
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // menu inflation happens in Google/Mapsforge specific classes

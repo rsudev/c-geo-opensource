@@ -43,14 +43,14 @@ public final class CalendarActivity extends Activity {
 
     /**
      * Adds the cache to the Android-calendar if it is an event.
-     * 
+     *
      * @param entry
      */
     private void selectCalendarForAdding(final CalendarEntry entry) {
         final String[] projection = new String[] { "_id", "displayName" };
         final Uri calendarProvider = Compatibility.getCalendarProviderURI();
 
-        final Cursor cursor = managedQuery(calendarProvider, projection, "selected=1", null, null);
+        final Cursor cursor = managedQueryWrapper(projection, calendarProvider);
 
         if (cursor == null || cursor.getCount() <= 0) {
             showToast(R.string.event_fail);
@@ -108,6 +108,11 @@ public final class CalendarActivity extends Activity {
             }
         });
         builder.create().show();
+    }
+
+    @SuppressWarnings("deprecation")
+    private Cursor managedQueryWrapper(final String[] projection, final Uri calendarProvider) {
+        return managedQuery(calendarProvider, projection, "selected=1", null, null);
     }
 
     public final void showToast(final int res) {

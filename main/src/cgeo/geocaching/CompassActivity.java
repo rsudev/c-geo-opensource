@@ -4,7 +4,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 import cgeo.geocaching.activity.AbstractActionBarActivity;
-import cgeo.geocaching.activity.AbstractActivity;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.geopoint.Geopoint;
 import cgeo.geocaching.geopoint.Units;

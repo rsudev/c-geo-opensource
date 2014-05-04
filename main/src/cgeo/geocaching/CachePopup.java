@@ -1,5 +1,10 @@
 package cgeo.geocaching;
 
+import cgeo.geocaching.activity.AbstractActivity;
+import cgeo.geocaching.activity.ActivityMixin;
+
+import org.apache.commons.lang3.StringUtils;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,11 +12,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
-
-import org.apache.commons.lang3.StringUtils;
-
-import cgeo.geocaching.activity.AbstractActivity;
-import cgeo.geocaching.activity.ActivityMixin;
 
 /**
  * Created by arne on 23.04.2014.
@@ -37,7 +37,6 @@ public class CachePopup extends AbstractActivity {
         newFragment.show(ft, "dialog");
     }
 
-    @SuppressWarnings("ResourceType")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,7 +1,6 @@
 package cgeo.geocaching;
 
 import cgeo.geocaching.activity.AbstractActionBarActivity;
-import cgeo.geocaching.activity.AbstractActivity;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.utils.Log;
 

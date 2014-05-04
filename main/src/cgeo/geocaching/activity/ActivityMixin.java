@@ -5,23 +5,15 @@ import cgeo.geocaching.R;
 import cgeo.geocaching.compatibility.Compatibility;
 import cgeo.geocaching.settings.Settings;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
-import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public final class ActivityMixin {
@@ -64,9 +56,8 @@ public final class ActivityMixin {
         // The compat theme should fix this
         if (Settings.isLightSkin()) {
             return R.style.popup_light;
-        } else {
-            return R.style.popup_dark;
         }
+        return R.style.popup_dark;
     }
 
     public static void showToast(final Activity activity, final int resId) {

@@ -4,7 +4,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 import cgeo.geocaching.activity.AbstractActionBarActivity;
-import cgeo.geocaching.activity.AbstractActivity;
 import cgeo.geocaching.files.LocalStorage;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.ui.dialog.Dialogs;

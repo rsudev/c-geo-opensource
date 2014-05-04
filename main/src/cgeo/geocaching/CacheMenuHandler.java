@@ -5,7 +5,6 @@ import cgeo.geocaching.apps.cache.navi.NavigationAppFactory;
 import cgeo.geocaching.ui.AbstractUIFactory;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -36,10 +35,11 @@ public class CacheMenuHandler extends AbstractUIFactory {
     public static boolean onMenuItemSelected(MenuItem item, CacheMenuHandler.ActivityInterface activityInterface, Geocache cache) {
         assert activityInterface instanceof Activity || activityInterface instanceof Fragment;
         final Activity activity;
-        if (activityInterface instanceof Activity)
+        if (activityInterface instanceof Activity) {
             activity = (Activity) activityInterface;
-        else
+        } else {
             activity = ((Fragment)activityInterface).getActivity();
+        }
 
         switch (item.getItemId()) {
             case R.id.menu_default_navigation:
@@ -82,8 +82,9 @@ public class CacheMenuHandler extends AbstractUIFactory {
         MenuItem shareItem = menu.findItem(R.id.menu_share);
         ShareActionProvider shareActionProvider = (ShareActionProvider)
                 MenuItemCompat.getActionProvider(shareItem);
-        if(shareActionProvider != null)
+        if(shareActionProvider != null) {
             shareActionProvider.setShareIntent(cache.getIntent());
+        }
 
     }
 
