@@ -32,7 +32,6 @@ import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import rx.util.async.Async;
 
 import android.app.Activity;
@@ -427,7 +426,7 @@ public class DataStore {
                 final String message = success ? fromActivity.getString(R.string.init_dbmove_success) : fromActivity.getString(R.string.init_dbmove_failed);
                 Dialogs.message(fromActivity, R.string.init_dbmove_dbmove, message);
             }
-        }, Schedulers.io());
+        });
     }
 
     private static File databasePath(final boolean internal) {

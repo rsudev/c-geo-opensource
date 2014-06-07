@@ -8,10 +8,10 @@ import cgeo.geocaching.ui.dialog.Dialogs;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
 import rx.functions.Func0;
-import rx.schedulers.Schedulers;
 import rx.util.async.Async;
 
 import android.app.ProgressDialog;
@@ -23,11 +23,11 @@ import android.util.AttributeSet;
 
 public abstract class AbstractCheckCredentialsPreference extends AbstractClickablePreference {
 
-    public AbstractCheckCredentialsPreference(Context context, AttributeSet attrs) {
+    public AbstractCheckCredentialsPreference(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public AbstractCheckCredentialsPreference(Context context, AttributeSet attrs, int defStyle) {
+    public AbstractCheckCredentialsPreference(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractCheckCredentialsPreference extends AbstractClickab
         }
 
         @Override
-        public boolean onPreferenceClick(Preference preference) {
+        public boolean onPreferenceClick(final Preference preference) {
             final Resources res = activity.getResources();
             final ImmutablePair<String, String> credentials = getCredentials();
 
@@ -86,7 +86,7 @@ public abstract class AbstractCheckCredentialsPreference extends AbstractClickab
                     }
                     activity.initBasicMemberPreferences();
                 }
-            }, Schedulers.io());
+            });
 
             return false; // no shared preference has to be changed
         }

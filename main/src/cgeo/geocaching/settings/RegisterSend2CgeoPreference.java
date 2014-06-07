@@ -8,12 +8,13 @@ import cgeo.geocaching.ui.dialog.Dialogs;
 import cgeo.geocaching.utils.Log;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
+
 import org.apache.commons.lang3.StringUtils;
+
 import rx.Observable;
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
 import rx.functions.Func0;
-import rx.schedulers.Schedulers;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -22,11 +23,11 @@ import android.util.AttributeSet;
 
 public class RegisterSend2CgeoPreference extends AbstractClickablePreference {
 
-    public RegisterSend2CgeoPreference(Context context, AttributeSet attrs) {
+    public RegisterSend2CgeoPreference(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public RegisterSend2CgeoPreference(Context context, AttributeSet attrs, int defStyle) {
+    public RegisterSend2CgeoPreference(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -34,7 +35,7 @@ public class RegisterSend2CgeoPreference extends AbstractClickablePreference {
     protected OnPreferenceClickListener getOnPreferenceClickListener(final SettingsActivity activity) {
         return new OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            public boolean onPreferenceClick(final Preference preference) {
                 // satisfy static code analysis
                 if (activity == null) {
                     return true;
@@ -60,7 +61,7 @@ public class RegisterSend2CgeoPreference extends AbstractClickablePreference {
                         final String cod = StringUtils.defaultString(deviceCode);
 
                         final Parameters params = new Parameters("name", nam, "code", cod);
-                        HttpResponse response = Network.getRequest("http://send2.cgeo.org/auth.html", params);
+                        final HttpResponse response = Network.getRequest("http://send2.cgeo.org/auth.html", params);
 
                         if (response != null && response.getStatusLine().getStatusCode() == 200) {
                             //response was OK
@@ -87,7 +88,7 @@ public class RegisterSend2CgeoPreference extends AbstractClickablePreference {
                             Dialogs.message(activity, R.string.init_sendToCgeo, R.string.init_sendToCgeo_register_fail);
                         }
                     }
-                }, Schedulers.io());
+                });
 
                 return true;
             }

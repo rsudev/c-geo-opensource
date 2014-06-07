@@ -7,7 +7,6 @@ import cgeo.geocaching.utils.Log;
 import rx.Subscription;
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -77,7 +76,7 @@ public class StatusFragment extends Fragment {
                             statusGroup.setClickable(false);
                         }
                     }
-                }, Schedulers.io());
+        });
         return statusGroup;
     }
 

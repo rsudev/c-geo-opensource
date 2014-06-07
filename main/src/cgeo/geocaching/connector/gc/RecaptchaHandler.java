@@ -6,11 +6,11 @@ import cgeo.geocaching.network.Network;
 import cgeo.geocaching.utils.Log;
 
 import org.apache.commons.io.IOUtils;
+
 import rx.Observable;
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
 import rx.functions.Func0;
-import rx.schedulers.Schedulers;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -67,12 +67,12 @@ public class RecaptchaHandler extends Handler {
             public void call(final Throwable throwable) {
                 // Do nothing
             }
-        }, Schedulers.io());
+        });
         reloadButton.setEnabled(true);
     }
 
     @Override
-    public void handleMessage(Message msg) {
+    public void handleMessage(final Message msg) {
         if (msg.what == SHOW_CAPTCHA) {
             final AlertDialog.Builder dlg = new AlertDialog.Builder(activity);
             final View view = activity.getLayoutInflater().inflate(R.layout.recaptcha_dialog, null);
@@ -83,7 +83,7 @@ public class RecaptchaHandler extends Handler {
             reloadButton.setEnabled(false);
             reloadButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     recaptchaReceiver.fetchChallenge();
                     loadChallenge(imageView, reloadButton);
                 }
@@ -95,7 +95,7 @@ public class RecaptchaHandler extends Handler {
             dlg.setView(view);
             dlg.setNeutralButton(activity.getString(R.string.caches_recaptcha_continue), new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int id) {
+                public void onClick(final DialogInterface dialog, final int id) {
                     final String text = ((EditText) view.findViewById(R.id.text)).getText().toString();
                     recaptchaReceiver.setText(text);
                     dialog.cancel();

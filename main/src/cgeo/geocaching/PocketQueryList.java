@@ -4,12 +4,12 @@ import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.connector.gc.GCParser;
 
 import org.apache.commons.collections4.CollectionUtils;
+
 import rx.Observable;
 import rx.Observable.OnSubscribe;
 import rx.Subscriber;
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -58,7 +58,7 @@ public final class PocketQueryList {
                 waitDialog.dismiss();
                 selectFromPocketQueries(activity, pocketQueryLists, runAfterwards);
             }
-        }, Schedulers.io());
+        });
     }
     private static void selectFromPocketQueries(final Activity activity, final List<PocketQueryList> pocketQueryList, final Action1<PocketQueryList> runAfterwards) {
         if (CollectionUtils.isEmpty(pocketQueryList)) {

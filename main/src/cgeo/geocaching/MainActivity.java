@@ -33,7 +33,6 @@ import rx.Observable.OnSubscribe;
 import rx.Subscriber;
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 
 import android.app.AlertDialog;
@@ -577,7 +576,7 @@ public class MainActivity extends AbstractActionBarActivity {
                                 public void call(final String address) {
                                     navLocation.setText(address);
                                 }
-                            }, Schedulers.io());
+                            });
                 }
             } else {
                 navLocation.setText(geo.getCoords().toString());
