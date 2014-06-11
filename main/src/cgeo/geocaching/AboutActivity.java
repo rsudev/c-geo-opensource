@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -69,11 +70,13 @@ public class AboutActivity extends AbstractViewPagerActivity<AboutActivity.Page>
         public ScrollView getDispatchedView() {
             final ScrollView view = (ScrollView) getLayoutInflater().inflate(R.layout.about_changes_page, null);
             ButterKnife.inject(this, view);
+            changeLogRelease.setText(Html.fromHtml(getString(R.string.changelog_release)));
             changeLogRelease.setMovementMethod(AnchorAwareLinkMovementMethod.getInstance());
             final String changeLogMasterString = getString(R.string.changelog_master);
             if (StringUtils.isBlank(changeLogMasterString)) {
                 changeLogMaster.setVisibility(View.GONE);
             } else {
+                changeLogMaster.setText(Html.fromHtml(changeLogMasterString));
                 changeLogMaster.setMovementMethod(AnchorAwareLinkMovementMethod.getInstance());
             }
             return view;
@@ -145,7 +148,7 @@ public class AboutActivity extends AbstractViewPagerActivity<AboutActivity.Page>
         super.onCreate(savedInstanceState, R.layout.viewpager_activity);
 
         int startPage = Page.VERSION.ordinal();
-        Bundle extras = getIntent().getExtras();
+        final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             startPage = extras.getInt(EXTRA_ABOUT_STARTPAGE, startPage);
         }
@@ -217,7 +220,7 @@ public class AboutActivity extends AbstractViewPagerActivity<AboutActivity.Page>
         return result;
     }
 
-    public static void showChangeLog(Context fromActivity) {
+    public static void showChangeLog(final Context fromActivity) {
         final Intent intent = new Intent(fromActivity, AboutActivity.class);
         intent.putExtra(EXTRA_ABOUT_STARTPAGE, Page.CHANGELOG.ordinal());
         fromActivity.startActivity(intent);

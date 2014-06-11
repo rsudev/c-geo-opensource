@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!-- changelog for the release branch -->
-  <string name="changelog_release" translatable="false">\n
-    <b>Next bugfix release:</b>\n
-    · Fix: New gc.com GPX waypoint types recognized\n
-    · Fix: Do not crop static maps to prevent the copyright notice being cut off\n
-    \n
-    <b>2014.05.14:</b>\n
-    · Fix: Adapting to changes on geocaching.com\n
-    \n
-    <b>2014.04.30:</b>\n
-    · New: Support new cache type: Giga Event\n
-    · New: Integrate with MapsWithMe\n
-    · New: Import external spoiler images from a Garmin-style file structure\n
-    · New: Support more details in GPX export\n
-    · Fix: A number of crash scenarios/instabilities due to memory issues\n
-    · Fix: Problems when calling some external navigation apps\n
-    · Fix: Crash when starting with a readonly cache directory\n
-    · New: Have <b>attended</b> as default log type on day of event\n
-    \n
-    \n
-    <a href="https://github.com/cgeo/cgeo/issues?milestone=30&amp;state=closed">Detailed list of all changes</a>\n
-    \n
-    <b>Old releases</b>\n
-    · Please refer to the release notes on the <a href="http://www.cgeo.org">c:geo-website</a>.\n
-    \n
-    \n
-    <b>Known Limitations/Bugs:</b>\n
-    · Live map:\n
-      Approximated coords due to limitations on the GC-website\n
-      Be aware: If navigation is started directly from live map it may also use the approximated coords!\n
-      In fast mode the cache type might be wrong in rare cases\n
-      On low zoom owned/found caches may not be hidden anymore\n
+  <string name="changelog_release" translatable="false">
+    <![CDATA[
+    <b>Next bugfix release:</b><br />
+    · Fix: New gc.com GPX waypoint types recognized<br />
+    · Fix: Do not crop static maps to prevent the copyright notice being cut off<br />
+    <br />
+    <b>2014.05.14:</b><br />
+    · Fix: Adapting to changes on geocaching.com<br />
+    <br />
+    <b>2014.04.30:</b><br />
+    · New: Support new cache type: Giga Event<br />
+    · New: Integrate with MapsWithMe<br />
+    · New: Import external spoiler images from a Garmin-style file structure<br />
+    · New: Support more details in GPX export<br />
+    · Fix: A number of crash scenarios/instabilities due to memory issues<br />
+    · Fix: Problems when calling some external navigation apps<br />
+    · Fix: Crash when starting with a readonly cache directory<br />
+    · New: Have <b>attended</b> as default log type on day of event<br />
+    <br />
+    <br />
+    <a href="https://github.com/cgeo/cgeo/issues?milestone=30&amp;state=closed">Detailed list of all changes</a><br />
+    <br />
+    <b>Old releases</b><br />
+    · Please refer to the release notes on the <a href="http://www.cgeo.org">c:geo-website</a>.<br />
+    <br />
+    <br />
+    <b>Known Limitations/Bugs:</b><br />
+    · Live map:<br />
+      Approximated coords due to limitations on the GC-website<br />
+      Be aware: If navigation is started directly from live map it may also use the approximated coords!<br />
+      In fast mode the cache type might be wrong in rare cases<br />
+      On low zoom owned/found caches may not be hidden anymore<br />]]>
 </string>
 </resources>
