@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:padding="4dip" >
+
+    <LinearLayout
+        android:id="@+id/maps_list"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
+</HorizontalScrollView>
