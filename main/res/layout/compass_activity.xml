@@ -29,6 +29,14 @@
             android:textColor="?text_color"
             android:textSize="14sp" />
 
+        <ToggleButton
+            android:id="@+id/use_compass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textOn="@string/attribute_compass_yes"
+            android:textOff="@string/attribute_compass_no" />
+
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
@@ -54,6 +62,7 @@
                 android:text="@null"
                 android:textColor="?text_color"
                 android:textSize="26sp" />
+
         </RelativeLayout>
     </LinearLayout>
 

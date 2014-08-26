@@ -36,7 +36,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +57,7 @@ public class CompassActivity extends AbstractActionBarActivity {
     @InjectView(R.id.rose) protected CompassView compassView;
     @InjectView(R.id.destination) protected TextView destinationTextView;
     @InjectView(R.id.cacheinfo) protected TextView cacheInfoView;
+    @InjectView(R.id.use_compass) protected ToggleButton useCompassSwitch;
 
     private static final String EXTRAS_COORDS = "coords";
     private static final String EXTRAS_NAME = "name";
@@ -116,6 +119,13 @@ public class CompassActivity extends AbstractActionBarActivity {
 
         ButterKnife.inject(this);
 
+        useCompassSwitch.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                Settings.setUseCompass(((ToggleButton) view).isChecked());
+            }
+        });
+
         // make sure we can control the TTS volume
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
@@ -124,6 +134,8 @@ public class CompassActivity extends AbstractActionBarActivity {
     public void onResume() {
         super.onResume(geoDirHandler.start(GeoDirHandler.UPDATE_GEODIR),
                 app.gpsStatusObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(gpsStatusHandler));
+        useCompassSwitch.setVisibility(hasMagneticFieldSensor ? View.VISIBLE : View.INVISIBLE);
+        useCompassSwitch.setChecked(Settings.isUseCompass());
         forceRefresh();
     }
 
@@ -157,7 +169,6 @@ public class CompassActivity extends AbstractActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.compass_activity_options, menu);
-        menu.findItem(R.id.menu_compass_sensor).setVisible(hasMagneticFieldSensor);
         final SubMenu subMenu = menu.findItem(R.id.menu_select_destination).getSubMenu();
         if (coordinates.size() > 1) {
             for (int i = 0; i < coordinates.size(); i++) {
@@ -176,12 +187,6 @@ public class CompassActivity extends AbstractActionBarActivity {
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (Settings.isUseCompass()) {
-            menu.findItem(R.id.menu_compass_sensor_magnetic).setChecked(true);
-        }
-        else {
-            menu.findItem(R.id.menu_compass_sensor_gps).setChecked(true);
-        }
         menu.findItem(R.id.menu_tts_start).setVisible(!SpeechService.isRunning());
         menu.findItem(R.id.menu_tts_stop).setVisible(SpeechService.isRunning());
         return true;
@@ -193,14 +198,6 @@ public class CompassActivity extends AbstractActionBarActivity {
         switch (id) {
             case R.id.menu_map:
                 CGeoMap.startActivityCoords(this, dstCoords, null, null);
-                return true;
-            case R.id.menu_compass_sensor_gps:
-                Settings.setUseCompass(false);
-                invalidateOptionsMenuCompatible();
-                return true;
-            case R.id.menu_compass_sensor_magnetic:
-                Settings.setUseCompass(true);
-                invalidateOptionsMenuCompatible();
                 return true;
             case R.id.menu_tts_start:
                 SpeechService.startService(this, dstCoords);
