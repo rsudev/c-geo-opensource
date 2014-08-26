@@ -1255,6 +1255,10 @@
     </plurals>
     <string name="tts_one_oclock">one o\'clock</string>
     <string name="tts_oclock">%s o\'clock</string>
+    <!-- magnetic compass state for compass view -->
+    <string name="magnetic_compass_off">Off</string>
+    <string name="magnetic_compass_on">On</string>
+    <string name="description_magnetic_compass_state">magnetic compass</string>
 
     <!-- various -->
     <string name="clipboard_copy_ok">Copied to clipboard</string>

@@ -13,29 +13,59 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/destination"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/info1a"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="?text_color"
-            android:textSize="14sp" />
+            android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/cacheinfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="?text_color"
-            android:textSize="14sp" />
+            <LinearLayout
+                android:id="@+id/info1b"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
 
-        <ToggleButton
-            android:id="@+id/use_compass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textOn="@string/attribute_compass_yes"
-            android:textOff="@string/attribute_compass_no" />
+                <ToggleButton
+                    android:id="@+id/use_compass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textOff="@string/magnetic_compass_off"
+                    android:textOn="@string/magnetic_compass_on" />
+
+                <LinearLayout
+                    android:id="@+id/info1c"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/destination"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="?text_color"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/cacheinfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="?text_color"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/compass_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:textColor="?text_color"
+                android:textSize="14sp"
+                android:text="@string/description_magnetic_compass_state" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -62,7 +92,6 @@
                 android:text="@null"
                 android:textColor="?text_color"
                 android:textSize="26sp" />
-
         </RelativeLayout>
     </LinearLayout>
 
