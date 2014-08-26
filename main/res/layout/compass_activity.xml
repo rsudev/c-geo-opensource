@@ -13,59 +13,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:id="@+id/info1a"
-            android:layout_width="fill_parent"
+        <TextView
+            android:id="@+id/destination"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_gravity="center"
+            android:textColor="?text_color"
+            android:textSize="14sp" />
 
-            <LinearLayout
-                android:id="@+id/info1b"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <ToggleButton
-                    android:id="@+id/use_compass"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textOff="@string/magnetic_compass_off"
-                    android:textOn="@string/magnetic_compass_on" />
-
-                <LinearLayout
-                    android:id="@+id/info1c"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/destination"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:textColor="?text_color"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/cacheinfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:textColor="?text_color"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/compass_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:textColor="?text_color"
-                android:textSize="14sp"
-                android:text="@string/description_magnetic_compass_state" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/cacheinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="?text_color"
+            android:textSize="14sp" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -103,6 +65,31 @@
         android:layout_marginLeft="6dip"
         android:layout_marginRight="6dip"
         android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/info2b"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ToggleButton
+                android:id="@+id/use_compass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textOff="@string/magnetic_compass_off"
+                android:textOn="@string/magnetic_compass_on" />
+
+            <TextView
+                android:id="@+id/compass_state"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="@string/description_magnetic_compass_state"
+                android:textColor="?text_color"
+                android:layout_marginLeft="3dp"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/nav_location"
