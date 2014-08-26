@@ -55,6 +55,8 @@ public class Settings {
 
     private final static int unitsMetric = 1;
 
+    private static boolean useCompass = true;
+
     // twitter api keys
     private final static @NonNull String keyConsumerPublic = CryptUtils.rot13("ESnsCvAv3kEupF1GCR3jGj");
     private final static @NonNull String keyConsumerSecret = CryptUtils.rot13("7vQWceACV9umEjJucmlpFe9FCMZSeqIqfkQ2BnhV9x");
@@ -129,7 +131,6 @@ public class Settings {
             e.putBoolean(getKey(R.string.pref_ratingwanted), old.getBoolean(getKey(R.string.pref_ratingwanted), true));
             e.putBoolean(getKey(R.string.pref_friendlogswanted), old.getBoolean(getKey(R.string.pref_friendlogswanted), true));
             e.putBoolean(getKey(R.string.pref_useenglish), old.getBoolean(getKey(R.string.pref_useenglish), false));
-            e.putBoolean(getKey(R.string.pref_usecompass), 0 != old.getInt(getKey(R.string.pref_usecompass), 1));
             e.putBoolean(getKey(R.string.pref_trackautovisit), old.getBoolean(getKey(R.string.pref_trackautovisit), false));
             e.putBoolean(getKey(R.string.pref_sigautoinsert), old.getBoolean(getKey(R.string.pref_sigautoinsert), false));
             e.putBoolean(getKey(R.string.pref_logimages), old.getBoolean(getKey(R.string.pref_logimages), false));
@@ -696,11 +697,11 @@ public class Settings {
     }
 
     public static boolean isUseCompass() {
-        return getBoolean(R.string.pref_usecompass, true);
+        return useCompass;
     }
 
-    public static void setUseCompass(final boolean useCompass) {
-        putBoolean(R.string.pref_usecompass, useCompass);
+    public static void setUseCompass(final boolean value) {
+        useCompass = value;
     }
 
     public static boolean isLightSkin() {

@@ -100,7 +100,6 @@
     <string name="pref_twitter_token_secret">tokensecret</string>
     <string name="pref_twitter_token_public">tokenpublic</string>
     <string name="pref_version">version</string>
-    <string name="pref_usecompass">usecompass</string>
     <string name="pref_mapfile">mfmapfile</string>
     <string name="pref_memberstatus">memberstatus</string>
     <string name="pref_coordinputformat">coordinputformat</string>
