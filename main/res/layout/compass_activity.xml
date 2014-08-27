@@ -66,30 +66,14 @@
         android:layout_marginRight="6dip"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:id="@+id/info2b"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
             <ToggleButton
                 android:id="@+id/use_compass"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textOff="@string/magnetic_compass_off"
                 android:textOn="@string/magnetic_compass_on" />
 
-            <TextView
-                android:id="@+id/compass_state"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="@string/description_magnetic_compass_state"
-                android:textColor="?text_color"
-                android:layout_marginLeft="3dp"
-                android:textSize="14sp" />
-        </LinearLayout>
 
         <TextView
             android:id="@+id/nav_location"
