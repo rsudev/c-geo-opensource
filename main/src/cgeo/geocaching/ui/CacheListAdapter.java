@@ -671,4 +671,8 @@ public class CacheListAdapter extends ArrayAdapter<Geocache> {
             }
         }
     }
+
+    public boolean isEventsOnly() {
+        return eventsOnly;
+    }
 }
