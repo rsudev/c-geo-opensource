@@ -481,6 +481,16 @@ public class CGeoMap extends AbstractMap implements ViewFactory {
         }
         prepareFilterBar();
 
+        final View overflowActionBar = ButterKnife.findById(activity, R.id.overflowActionBar);
+        if (overflowActionBar != null) {
+            overflowActionBar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    getActivity().openOptionsMenu();
+                }
+            });
+        }
+
         if (!app.isLiveMapHintShownInThisSession() && Settings.getLiveMapHintShowCount() <= 3) {
             LiveMapInfoDialogBuilder.create(activity).show();
         }
@@ -557,7 +567,7 @@ public class CGeoMap extends AbstractMap implements ViewFactory {
         super.onStop();
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // menu inflation happens in Google/Mapsforge specific classes
@@ -569,7 +579,7 @@ public class CGeoMap extends AbstractMap implements ViewFactory {
         subMenuStrategy.setHeaderTitle(res.getString(R.string.map_strategy_title));
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             /* if we have an Actionbar find the my position toggle */
             final MenuItem item = menu.findItem(R.id.menu_toggle_mypos);
             myLocSwitch = new CheckBox(activity);
