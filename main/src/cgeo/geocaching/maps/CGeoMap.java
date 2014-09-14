@@ -49,7 +49,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 
 import android.annotation.TargetApi;
@@ -1001,13 +1000,13 @@ public class CGeoMap extends AbstractMap implements ViewFactory {
      */
 
     private Subscription startTimer() {
-        if (coordsIntent != null) {
-            // display just one point
-            displayPoint(coordsIntent);
+        //        if (coordsIntent != null) {
+        //            // display just one point
+        //            displayPoint(coordsIntent);
             loadTimer = Subscriptions.empty();
-        } else {
-            loadTimer = Schedulers.newThread().createWorker().schedulePeriodically(new LoadTimerAction(this), 0, 250, TimeUnit.MILLISECONDS);
-        }
+        //        } else {
+        //            loadTimer = Schedulers.newThread().createWorker().schedulePeriodically(new LoadTimerAction(this), 0, 250, TimeUnit.MILLISECONDS);
+        //        }
         return loadTimer;
     }
 

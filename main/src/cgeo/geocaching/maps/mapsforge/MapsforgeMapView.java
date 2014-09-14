@@ -12,8 +12,6 @@ import cgeo.geocaching.maps.interfaces.OnMapDragListener;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.Log;
 
-import com.google.android.maps.Overlay;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
@@ -206,8 +204,8 @@ public class MapsforgeMapView extends MapView implements MapViewImpl {
     @Override
     public void setMapSource() {
 
-        this.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
-        this.getModel().mapViewPosition.setZoomLevel((byte) 12);
+        //        this.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
+        //        this.getModel().mapViewPosition.setZoomLevel((byte) 12);
 
         // tile renderer layer using internal render theme
         this.tileRendererLayer = new TileRendererLayer(tileCache,
@@ -283,20 +281,20 @@ public class MapsforgeMapView extends MapView implements MapViewImpl {
     @Override
     public void repaintRequired(final GeneralOverlay overlay) {
 
-        if (null == overlay) {
+        //        if (null == overlay) {
             invalidate();
-        } else {
-            try {
-                final Overlay ovl = (Overlay) overlay.getOverlayImpl();
-
-                if (ovl != null) {
-                    //                    ovl.requestRedraw();
-                }
-
-            } catch (final Exception e) {
-                Log.e("MapsforgeMapView.repaintRequired", e);
-            }
-        }
+        //        } else {
+        //            try {
+        //                final Overlay ovl = (Overlay) overlay.getOverlayImpl();
+        //
+        //                if (ovl != null) {
+        //                    //                    ovl.requestRedraw();
+        //                }
+        //
+        //            } catch (final Exception e) {
+        //                Log.e("MapsforgeMapView.repaintRequired", e);
+        //            }
+        //        }
     }
 
     @Override
