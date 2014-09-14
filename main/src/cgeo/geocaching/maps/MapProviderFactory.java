@@ -2,7 +2,6 @@ package cgeo.geocaching.maps;
 
 import cgeo.geocaching.CgeoApplication;
 import cgeo.geocaching.R;
-import cgeo.geocaching.maps.google.v1.GoogleMapProvider;
 import cgeo.geocaching.maps.interfaces.MapProvider;
 import cgeo.geocaching.maps.interfaces.MapSource;
 import cgeo.geocaching.maps.mapsforge.MapsforgeMapProvider;
@@ -24,10 +23,6 @@ public class MapProviderFactory {
     private final static ArrayList<MapSource> mapSources = new ArrayList<>();
 
     static {
-        // add GoogleMapProvider only if google api is available in order to support x86 android emulator
-        if (isGoogleMapsInstalled()) {
-            GoogleMapProvider.getInstance();
-        }
         MapsforgeMapProvider.getInstance();
     }
 

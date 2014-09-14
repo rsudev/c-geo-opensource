@@ -9,8 +9,8 @@ import cgeo.geocaching.connector.gc.GCConstants;
 import cgeo.geocaching.geopoint.Geopoint;
 import cgeo.geocaching.utils.TextUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.mapsforge.core.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

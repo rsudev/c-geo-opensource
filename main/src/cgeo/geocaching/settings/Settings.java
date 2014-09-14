@@ -14,7 +14,6 @@ import cgeo.geocaching.geopoint.Geopoint;
 import cgeo.geocaching.list.StoredList;
 import cgeo.geocaching.maps.CGeoMap.MapMode;
 import cgeo.geocaching.maps.MapProviderFactory;
-import cgeo.geocaching.maps.google.v1.GoogleMapProvider;
 import cgeo.geocaching.maps.interfaces.GeoPointImpl;
 import cgeo.geocaching.maps.interfaces.MapProvider;
 import cgeo.geocaching.maps.interfaces.MapSource;
@@ -53,7 +52,7 @@ public class Settings {
     private static final char HISTORY_SEPARATOR = ',';
     public static final int SHOW_WP_THRESHOLD_DEFAULT = 10;
     public static final int SHOW_WP_THRESHOLD_MAX = 50;
-    private static final int MAP_SOURCE_DEFAULT = GoogleMapProvider.GOOGLE_MAP_ID.hashCode();
+    private static final int MAP_SOURCE_DEFAULT = MapsforgeMapProvider.MAPSFORGE_CYCLEMAP_ID.hashCode(); // GoogleMapProvider.GOOGLE_MAP_ID.hashCode();
 
     public static final boolean HW_ACCEL_DISABLED_BY_DEFAULT =
             Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1 ||
@@ -718,10 +717,10 @@ public class Settings {
         final int id = Integer.parseInt(getString(R.string.pref_mapsource,
                 String.valueOf(MAP_SOURCE_DEFAULT)));
         switch (id) {
-            case GOOGLEMAP_BASEID + MAP:
-                return GoogleMapProvider.GOOGLE_MAP_ID.hashCode();
-            case GOOGLEMAP_BASEID + SATELLITE:
-                return GoogleMapProvider.GOOGLE_SATELLITE_ID.hashCode();
+        //            case GOOGLEMAP_BASEID + MAP:
+        //                return GoogleMapProvider.GOOGLE_MAP_ID.hashCode();
+        //            case GOOGLEMAP_BASEID + SATELLITE:
+        //                return GoogleMapProvider.GOOGLE_SATELLITE_ID.hashCode();
             case MFMAP_BASEID + MAPNIK:
                 return MapsforgeMapProvider.MAPSFORGE_MAPNIK_ID.hashCode();
             case MFMAP_BASEID + CYCLEMAP:

@@ -5,30 +5,26 @@ import cgeo.geocaching.maps.interfaces.GeneralOverlay;
 import cgeo.geocaching.maps.interfaces.MapViewImpl;
 import cgeo.geocaching.maps.interfaces.OverlayImpl;
 
-import org.mapsforge.android.maps.Projection;
-import org.mapsforge.android.maps.overlay.Overlay;
-
 import android.graphics.Canvas;
 import android.graphics.Point;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class MapsforgeOverlay extends Overlay implements OverlayImpl {
+public class MapsforgeOverlay /* extends Overlay */implements OverlayImpl {
 
     private PositionAndScaleOverlay overlayBase = null;
-    private Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
     public MapsforgeOverlay() {
         overlayBase = new PositionAndScaleOverlay(this);
     }
 
-    @Override
-    protected void drawOverlayBitmap(Canvas canvas, Point drawPosition,
-            Projection projection, byte drawZoomLevel) {
+    protected void drawOverlayBitmap(final Canvas canvas, final Point drawPosition,
+            /* Projection projection, */final byte drawZoomLevel) {
 
         if (overlayBase != null) {
-            overlayBase.drawOverlayBitmap(canvas, drawPosition, new MapsforgeMapProjection(projection), drawZoomLevel);
+            overlayBase.drawOverlayBitmap(canvas, drawPosition, new MapsforgeMapProjection(), drawZoomLevel);
         }
     }
 
@@ -48,7 +44,7 @@ public class MapsforgeOverlay extends Overlay implements OverlayImpl {
 
     @Override
     public MapViewImpl getMapViewImpl() {
-        return (MapViewImpl) internalMapView;
+        return null; //(MapViewImpl) internalMapView;
     }
 
 }

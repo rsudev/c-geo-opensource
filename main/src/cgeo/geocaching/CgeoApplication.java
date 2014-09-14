@@ -17,6 +17,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -84,6 +85,8 @@ public class CgeoApplication extends Application {
             menuKeyField.setBoolean(config, false);
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException ignored) {
         }
+
+        AndroidGraphicFactory.createInstance(this);
 
         // Set language to English if the user decided so.
         Settings.setLanguage(Settings.isUseEnglish());

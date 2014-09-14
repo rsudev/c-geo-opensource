@@ -17,13 +17,13 @@ public class PositionAndScaleOverlay implements GeneralOverlay {
     PositionDrawer positionDrawer = null;
     ScaleDrawer scaleDrawer = null;
 
-    public PositionAndScaleOverlay(OverlayImpl ovlImpl) {
+    public PositionAndScaleOverlay(final OverlayImpl ovlImpl) {
         this.ovlImpl = ovlImpl;
         positionDrawer = new PositionDrawer();
         scaleDrawer = new ScaleDrawer();
     }
 
-    public void setCoordinates(Location coordinatesIn) {
+    public void setCoordinates(final Location coordinatesIn) {
         positionDrawer.setCoordinates(coordinatesIn);
     }
 
@@ -31,7 +31,7 @@ public class PositionAndScaleOverlay implements GeneralOverlay {
         return positionDrawer.getCoordinates();
     }
 
-    public void setHeading(float bearingNow) {
+    public void setHeading(final float bearingNow) {
         positionDrawer.setHeading(bearingNow);
     }
 
@@ -40,21 +40,21 @@ public class PositionAndScaleOverlay implements GeneralOverlay {
     }
 
     @Override
-    public void drawOverlayBitmap(Canvas canvas, Point drawPosition,
-            MapProjectionImpl projection, byte drawZoomLevel) {
+    public void drawOverlayBitmap(final Canvas canvas, final Point drawPosition,
+            final MapProjectionImpl projection, final byte drawZoomLevel) {
 
         drawInternal(canvas, projection, getOverlayImpl().getMapViewImpl());
     }
 
     @Override
-    public void draw(Canvas canvas, MapViewImpl mapView, boolean shadow) {
+    public void draw(final Canvas canvas, final MapViewImpl mapView, final boolean shadow) {
 
         drawInternal(canvas, mapView.getMapProjection(), mapView);
     }
 
-    private void drawInternal(Canvas canvas, MapProjectionImpl projection, MapViewImpl mapView) {
-        positionDrawer.drawPosition(canvas, projection);
-        scaleDrawer.drawScale(canvas, mapView);
+    private void drawInternal(final Canvas canvas, final MapProjectionImpl projection, final MapViewImpl mapView) {
+        //        positionDrawer.drawPosition(canvas, projection);
+        //        scaleDrawer.drawScale(canvas, mapView);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class PositionAndScaleOverlay implements GeneralOverlay {
         return positionDrawer.getHistory();
     }
 
-    public void setHistory(ArrayList<Location> history) {
+    public void setHistory(final ArrayList<Location> history) {
         positionDrawer.setHistory(history);
     }
 }

@@ -29,7 +29,6 @@ import android.content.res.Resources.NotFoundException;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Point;
 import android.location.Location;
@@ -43,13 +42,13 @@ public class CachesOverlay extends AbstractItemizedOverlay {
     private List<CachesOverlayItemImpl> items = new ArrayList<>();
     private Context context = null;
     private boolean displayCircles = false;
-    private Progress progress = new Progress();
+    private final Progress progress = new Progress();
     private Paint blockedCircle = null;
     private PaintFlagsDrawFilter setFilter = null;
     private PaintFlagsDrawFilter removeFilter = null;
     private MapItemFactory mapItemFactory = null;
 
-    public CachesOverlay(ItemizedOverlayImpl ovlImpl, Context contextIn) {
+    public CachesOverlay(final ItemizedOverlayImpl ovlImpl, final Context contextIn) {
         super(ovlImpl);
 
         populate();
@@ -60,19 +59,19 @@ public class CachesOverlay extends AbstractItemizedOverlay {
         mapItemFactory = mapProvider.getMapItemFactory();
     }
 
-    void updateItems(CachesOverlayItemImpl item) {
-        List<CachesOverlayItemImpl> itemsPre = new ArrayList<>();
+    void updateItems(final CachesOverlayItemImpl item) {
+        final List<CachesOverlayItemImpl> itemsPre = new ArrayList<>();
         itemsPre.add(item);
 
         updateItems(itemsPre);
     }
 
-    void updateItems(List<CachesOverlayItemImpl> itemsPre) {
+    void updateItems(final List<CachesOverlayItemImpl> itemsPre) {
         if (itemsPre == null) {
             return;
         }
 
-        for (CachesOverlayItemImpl item : itemsPre) {
+        for (final CachesOverlayItemImpl item : itemsPre) {
             item.setMarker(boundCenterBottom(item.getMarker(0)));
         }
 
@@ -97,7 +96,7 @@ public class CachesOverlay extends AbstractItemizedOverlay {
     }
 
     @Override
-    public void draw(Canvas canvas, MapViewImpl mapView, boolean shadow) {
+    public void draw(final Canvas canvas, final MapViewImpl mapView, final boolean shadow) {
 
         drawInternal(canvas, mapView.getMapProjection());
 
@@ -105,52 +104,52 @@ public class CachesOverlay extends AbstractItemizedOverlay {
     }
 
     @Override
-    public void drawOverlayBitmap(Canvas canvas, Point drawPosition,
-            MapProjectionImpl projection, byte drawZoomLevel) {
+    public void drawOverlayBitmap(final Canvas canvas, final Point drawPosition,
+            final MapProjectionImpl projection, final byte drawZoomLevel) {
 
         drawInternal(canvas, projection);
 
         super.drawOverlayBitmap(canvas, drawPosition, projection, drawZoomLevel);
     }
 
-    private void drawInternal(Canvas canvas, MapProjectionImpl projection) {
+    private void drawInternal(final Canvas canvas, final MapProjectionImpl projection) {
         if (!displayCircles || items.isEmpty()) {
             return;
         }
 
         // prevent content changes
-        getOverlayImpl().lock();
-        try {
-            lazyInitializeDrawingObjects();
-            canvas.setDrawFilter(setFilter);
-            final int height = canvas.getHeight();
-            final int width = canvas.getWidth();
-
-            final int radius = calculateDrawingRadius(projection);
-            final Point center = new Point();
-
-            for (CachesOverlayItemImpl item : items) {
-                if (item.applyDistanceRule()) {
-                    final Geopoint itemCoord = item.getCoord().getCoords();
-                    final GeoPointImpl itemGeo = mapItemFactory.getGeoPointBase(itemCoord);
-                    projection.toPixels(itemGeo, center);
-                    if (center.x > -radius && center.y > -radius && center.x < width + radius && center.y < height + radius) {
-                        // dashed circle around the waypoint
-                        blockedCircle.setColor(0x66BB0000);
-                        blockedCircle.setStyle(Style.STROKE);
-                        canvas.drawCircle(center.x, center.y, radius, blockedCircle);
-
-                        // filling the circle area with a transparent color
-                        blockedCircle.setColor(0x44BB0000);
-                        blockedCircle.setStyle(Style.FILL);
-                        canvas.drawCircle(center.x, center.y, radius, blockedCircle);
-                    }
-                }
-            }
-            canvas.setDrawFilter(removeFilter);
-        } finally {
-            getOverlayImpl().unlock();
-        }
+        //        getOverlayImpl().lock();
+        //        try {
+        //            lazyInitializeDrawingObjects();
+        //            canvas.setDrawFilter(setFilter);
+        //            final int height = canvas.getHeight();
+        //            final int width = canvas.getWidth();
+        //
+        //            final int radius = calculateDrawingRadius(projection);
+        //            final Point center = new Point();
+        //
+        //            for (CachesOverlayItemImpl item : items) {
+        //                if (item.applyDistanceRule()) {
+        //                    final Geopoint itemCoord = item.getCoord().getCoords();
+        //                    final GeoPointImpl itemGeo = mapItemFactory.getGeoPointBase(itemCoord);
+        //                    projection.toPixels(itemGeo, center);
+        //                    if (center.x > -radius && center.y > -radius && center.x < width + radius && center.y < height + radius) {
+        //                        // dashed circle around the waypoint
+        //                        blockedCircle.setColor(0x66BB0000);
+        //                        blockedCircle.setStyle(Style.STROKE);
+        //                        canvas.drawCircle(center.x, center.y, radius, blockedCircle);
+        //
+        //                        // filling the circle area with a transparent color
+        //                        blockedCircle.setColor(0x44BB0000);
+        //                        blockedCircle.setStyle(Style.FILL);
+        //                        canvas.drawCircle(center.x, center.y, radius, blockedCircle);
+        //                    }
+        //                }
+        //            }
+        //            canvas.setDrawFilter(removeFilter);
+        //        } finally {
+        //            getOverlayImpl().unlock();
+        //        }
     }
 
     /**
@@ -161,8 +160,8 @@ public class CachesOverlay extends AbstractItemizedOverlay {
      * @param projection
      * @return
      */
-    private int calculateDrawingRadius(MapProjectionImpl projection) {
-        float[] distanceArray = new float[1];
+    private int calculateDrawingRadius(final MapProjectionImpl projection) {
+        final float[] distanceArray = new float[1];
         final Geopoint itemCoord = items.get(0).getCoord().getCoords();
 
         Location.distanceBetween(itemCoord.getLatitude(), itemCoord.getLongitude(),
@@ -202,7 +201,7 @@ public class CachesOverlay extends AbstractItemizedOverlay {
     }
 
     @Override
-    public boolean onTap(int index) {
+    public boolean onTap(final int index) {
 
         try {
             if (items.size() <= index) {
@@ -232,7 +231,7 @@ public class CachesOverlay extends AbstractItemizedOverlay {
             if (StringUtils.equalsIgnoreCase(coordType, "cache") && StringUtils.isNotBlank(coordinate.getGeocode())) {
                 final Geocache cache = DataStore.loadCache(coordinate.getGeocode(), LoadFlags.LOAD_CACHE_OR_DB);
                 if (cache != null) {
-                    RequestDetailsThread requestDetailsThread = new RequestDetailsThread(cache);
+                    final RequestDetailsThread requestDetailsThread = new RequestDetailsThread(cache);
                     if (!requestDetailsThread.requestRequired()) {
                         // don't show popup if we have enough details
                         progress.dismiss();
@@ -253,7 +252,7 @@ public class CachesOverlay extends AbstractItemizedOverlay {
             }
 
             progress.dismiss();
-        } catch (NotFoundException e) {
+        } catch (final NotFoundException e) {
             Log.e("CachesOverlay.onTap", e);
             if (progress != null) {
                 progress.dismiss();
@@ -264,10 +263,10 @@ public class CachesOverlay extends AbstractItemizedOverlay {
     }
 
     @Override
-    public CachesOverlayItemImpl createItem(int index) {
+    public CachesOverlayItemImpl createItem(final int index) {
         try {
             return items.get(index);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Log.e("CachesOverlay.createItem", e);
         }
 
@@ -278,7 +277,7 @@ public class CachesOverlay extends AbstractItemizedOverlay {
     public int size() {
         try {
             return items.size();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Log.e("CachesOverlay.size", e);
         }
 
