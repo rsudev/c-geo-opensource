@@ -1,0 +1,54 @@
+package cgeo.geocaching.maps.mapsforge.v5;
+
+import cgeo.geocaching.models.Waypoint;
+import cgeo.geocaching.enumerations.WaypointType;
+import cgeo.geocaching.location.Geopoint;
+import cgeo.geocaching.utils.AndroidRxUtils;
+
+import org.mapsforge.map.layer.Layer;
+
+import rx.functions.Action0;
+
+import android.os.Handler;
+
+public class SinglePointOverlay extends AbstractCachesOverlay {
+
+    private final Geopoint coords;
+    private final WaypointType type;
+
+    public SinglePointOverlay(final Geopoint coords, final WaypointType type, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler, final Handler showProgressHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler, showProgressHandler);
+
+        this.coords = coords;
+        this.type = type;
+
+        AndroidRxUtils.computationScheduler.createWorker().schedule(new Action0() {
+
+            @Override
+            public void call() {
+                fill();
+            }
+
+        });
+    }
+
+    private void fill() {
+        try {
+            showProgress();
+
+            clearLayers();
+
+            // construct waypoint
+            final Waypoint waypoint = new Waypoint("", type, false);
+            waypoint.setCoords(coords);
+
+            addItem(waypoint);
+
+            addLayers();
+
+            repaint();
+        } finally {
+            hideProgress();
+        }
+    }
+}
