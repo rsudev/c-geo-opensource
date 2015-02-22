@@ -5,7 +5,6 @@ import cgeo.geocaching.R;
 import cgeo.geocaching.maps.google.v1.GoogleMapProvider;
 import cgeo.geocaching.maps.interfaces.MapProvider;
 import cgeo.geocaching.maps.interfaces.MapSource;
-import cgeo.geocaching.maps.mapsforge.MapsforgeMapProvider;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.Log;
 
@@ -28,7 +27,6 @@ public class MapProviderFactory {
         if (isGoogleMapsInstalled()) {
             GoogleMapProvider.getInstance();
         }
-        MapsforgeMapProvider.getInstance();
     }
 
     public static boolean isGoogleMapsInstalled() {
@@ -109,12 +107,5 @@ public class MapProviderFactory {
      * remove offline map sources after changes of the settings
      */
     public static void deleteOfflineMapSources() {
-        final ArrayList<MapSource> deletion = new ArrayList<>();
-        for (final MapSource mapSource : mapSources) {
-            if (mapSource instanceof MapsforgeMapProvider.OfflineMapSource) {
-                deletion.add(mapSource);
-            }
-        }
-        mapSources.removeAll(deletion);
     }
 }

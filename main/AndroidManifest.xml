@@ -250,6 +250,10 @@
             android:label="@string/map_map" >
         </activity>
         <activity
+            android:name=".maps.mapsforge.v5.NewMap"
+            android:label="@string/map_map" >
+        </activity>
+        <activity
             android:name=".maps.mapsforge.v024.MapsforgeMapActivity024"
             android:label="@string/map_map" >
         </activity>

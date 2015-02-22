@@ -32,10 +32,10 @@
             android:visibility="gone" />
 
         <view
-            android:id="@+id/mfmap"
+            android:id="@+id/mfmapv5"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            class="cgeo.geocaching.maps.mapsforge.MapsforgeMapView"
+            class="cgeo.geocaching.maps.mapsforge.v5.MfMapView"
             android:clickable="true"
             android:enabled="true"
             android:keepScreenOn="true" />

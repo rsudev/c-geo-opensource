@@ -13,6 +13,7 @@
     <item name="cache_app_gcc" type="id"/>
     <item name="cache_app_radar" type="id"/>
     <item name="cache_app_internal_map" type="id"/>
+    <item name="cache_app_internal_new_map" type="id"/>
     <item name="cache_app_navigon" type="id"/>
     <item name="cache_app_orux_maps" type="id"/>
     <item name="cache_app_street_view" type="id"/>

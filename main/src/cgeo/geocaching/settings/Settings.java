@@ -11,14 +11,12 @@ import cgeo.geocaching.enumerations.LogType;
 import cgeo.geocaching.list.StoredList;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.maps.CGeoMap.MapMode;
-import cgeo.geocaching.maps.MapProviderFactory;
 import cgeo.geocaching.maps.LivemapStrategy;
+import cgeo.geocaching.maps.MapProviderFactory;
 import cgeo.geocaching.maps.google.v1.GoogleMapProvider;
 import cgeo.geocaching.maps.interfaces.GeoPointImpl;
 import cgeo.geocaching.maps.interfaces.MapProvider;
 import cgeo.geocaching.maps.interfaces.MapSource;
-import cgeo.geocaching.maps.mapsforge.MapsforgeMapProvider;
-import cgeo.geocaching.maps.mapsforge.MapsforgeMapProvider.OfflineMapSource;
 import cgeo.geocaching.utils.CryptUtils;
 import cgeo.geocaching.utils.FileUtils;
 import cgeo.geocaching.utils.FileUtils.FileSelector;
@@ -495,7 +493,7 @@ public class Settings {
 
     public static void setMapFileDirectory(final String mapFileDirectory) {
         putString(R.string.pref_mapDirectory, mapFileDirectory);
-        MapsforgeMapProvider.getInstance().updateOfflineMaps();
+        //        MapsforgeMapProvider.getInstance().updateOfflineMaps();
     }
 
     public static boolean isValidMapFile() {
@@ -503,7 +501,7 @@ public class Settings {
     }
 
     public static boolean isValidMapFile(final String mapFileIn) {
-        return MapsforgeMapProvider.isValidMapFile(mapFileIn);
+        return true; // MapsforgeMapProvider.isValidMapFile(mapFileIn);
     }
 
     public static boolean isScaleMapsforgeText() {
@@ -696,9 +694,9 @@ public class Settings {
         mapSource = MapProviderFactory.getMapSource(id);
         if (mapSource != null) {
             // don't use offline maps if the map file is not valid
-            if (!(mapSource instanceof OfflineMapSource) || isValidMapFile()) {
+            //if (!(mapSource instanceof OfflineMapSource) || isValidMapFile()) {
                 return mapSource;
-            }
+            //}
         }
         // fallback to first available map
         return MapProviderFactory.getDefaultSource();
@@ -725,10 +723,10 @@ public class Settings {
                 return GoogleMapProvider.GOOGLE_MAP_ID.hashCode();
             case GOOGLEMAP_BASEID + SATELLITE:
                 return GoogleMapProvider.GOOGLE_SATELLITE_ID.hashCode();
-            case MFMAP_BASEID + MAPNIK:
-                return MapsforgeMapProvider.MAPSFORGE_MAPNIK_ID.hashCode();
-            case MFMAP_BASEID + CYCLEMAP:
-                return MapsforgeMapProvider.MAPSFORGE_CYCLEMAP_ID.hashCode();
+                //            case MFMAP_BASEID + MAPNIK:
+                //                return MapsforgeMapProvider.MAPSFORGE_MAPNIK_ID.hashCode();
+                //            case MFMAP_BASEID + CYCLEMAP:
+                //                return MapsforgeMapProvider.MAPSFORGE_CYCLEMAP_ID.hashCode();
             case MFMAP_BASEID + OFFLINE: {
                 final String mapFile = Settings.getMapFile();
                 if (StringUtils.isNotEmpty(mapFile)) {
@@ -744,9 +742,9 @@ public class Settings {
 
     public static synchronized void setMapSource(final MapSource newMapSource) {
         putString(R.string.pref_mapsource, String.valueOf(newMapSource.getNumericalId()));
-        if (newMapSource instanceof OfflineMapSource) {
-            setMapFile(((OfflineMapSource) newMapSource).getFileName());
-        }
+        //        if (newMapSource instanceof OfflineMapSource) {
+        //            setMapFile(((OfflineMapSource) newMapSource).getFileName());
+        //        }
         // cache the value
         mapSource = newMapSource;
     }

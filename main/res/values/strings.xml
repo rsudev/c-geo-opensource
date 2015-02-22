@@ -710,6 +710,7 @@
     <string name="cache_menu_maps_directions">Google Maps Directions</string>
     <string name="cache_menu_radar">Radar</string>
     <string name="cache_menu_map">Map</string>
+    <string name="cache_menu_new_map">New Map</string>
     <string name="cache_menu_map_static">Static Maps</string>
     <string name="cache_menu_download_map_static">Download Static Maps</string>
     <string name="cache_menu_rmaps">Rmaps</string>
