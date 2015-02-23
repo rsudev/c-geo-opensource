@@ -16,6 +16,7 @@ import cgeo.geocaching.utils.AngleUtils;
 import cgeo.geocaching.utils.Log;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jdt.annotation.NonNull;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.graphics.AndroidResourceBitmap;
@@ -34,6 +35,10 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -53,6 +58,8 @@ public class NewMap extends AbstractActionBarActivity {
      * initialization with an empty subscription to make static code analysis tools more happy
      */
     private Subscription resumeSubscription = Subscriptions.empty();
+    private CheckBox myLocSwitch;
+    private static boolean followMyLocation;
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -93,6 +100,27 @@ public class NewMap extends AbstractActionBarActivity {
         tileCache = AndroidUtil.createTileCache(this, "mapcache",
                 mapView.getModel().displayModel.getTileSize(), 1f,
                 this.mapView.getModel().frameBufferModel.getOverdrawFactor());
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        final boolean result = super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.map_activity, menu);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            /* if we have an Actionbar find the my position toggle */
+            final MenuItem item = menu.findItem(R.id.menu_toggle_mypos);
+            myLocSwitch = new CheckBox(this);
+            myLocSwitch.setButtonDrawable(R.drawable.ic_menu_myposition);
+            item.setActionView(myLocSwitch);
+            initMyLocationSwitchButton(myLocSwitch);
+        } else {
+            // Already on the fake Actionbar
+            menu.removeItem(R.id.menu_toggle_mypos);
+        }
+
+        return result;
     }
 
     @Override
@@ -147,6 +175,52 @@ public class NewMap extends AbstractActionBarActivity {
         loc.setLatitude(center.latitude);
         loc.setLongitude(center.longitude);
         return loc;
+    }
+
+    private void initMyLocationSwitchButton(final CheckBox locSwitch) {
+        myLocSwitch = locSwitch;
+        /*
+         * TODO: Switch back to ImageSwitcher for animations?
+         * myLocSwitch.setFactory(this);
+         * myLocSwitch.setInAnimation(activity, android.R.anim.fade_in);
+         * myLocSwitch.setOutAnimation(activity, android.R.anim.fade_out);
+         */
+        myLocSwitch.setOnClickListener(new MyLocationListener(this));
+        switchMyLocationButton();
+    }
+
+    // switch My Location button image
+    private void switchMyLocationButton() {
+        // FIXME: temporary workaround for the absence of "follow my location" on Android 3.x (see issue #4289).
+        if (myLocSwitch != null) {
+            myLocSwitch.setChecked(followMyLocation);
+            //            if (followMyLocation) {
+            //                myLocationInMiddle(Sensors.getInstance().currentGeo());
+            //            }
+        }
+    }
+
+    // set my location listener
+    private static class MyLocationListener implements View.OnClickListener {
+
+        private final WeakReference<NewMap> mapRef;
+
+        public MyLocationListener(@NonNull final NewMap map) {
+            mapRef = new WeakReference<>(map);
+        }
+
+        @Override
+        public void onClick(final View view) {
+            final NewMap map = mapRef.get();
+            if (map != null) {
+                map.onFollowMyLocationClicked();
+            }
+        }
+    }
+
+    private void onFollowMyLocationClicked() {
+        followMyLocation = !followMyLocation;
+        switchMyLocationButton();
     }
 
     private static File getMapFile() {
@@ -222,9 +296,9 @@ public class NewMap extends AbstractActionBarActivity {
                         final boolean needsRepaintForHeading = needsRepaintForHeading();
 
                         if (needsRepaintForDistanceOrAccuracy) {
-                            //                            if (CGeoMap.followMyLocation) {
-                            map.centerMap(new Geopoint(currentLocation));
-                            //                            }
+                            if (NewMap.followMyLocation) {
+                                map.centerMap(new Geopoint(currentLocation));
+                            }
                         }
 
                         //                        if (needsRepaintForDistanceOrAccuracy || needsRepaintForHeading) {
