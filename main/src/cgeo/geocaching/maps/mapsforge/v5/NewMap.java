@@ -48,6 +48,7 @@ public class NewMap extends AbstractActionBarActivity {
     private MfMapView mapView;
     private TileCache tileCache;
     private TileRendererLayer tileRendererLayer;
+    private PositionLayer positionLayer;
 
     private String mapTitle;
     private String geocodeIntent;
@@ -142,6 +143,10 @@ public class NewMap extends AbstractActionBarActivity {
         // only once a layer is associated with a mapView the rendering starts
         this.mapView.getLayerManager().getLayers().add(tileRendererLayer);
 
+        // Position layer
+        positionLayer = new PositionLayer();
+        this.mapView.getLayerManager().getLayers().add(positionLayer);
+
         resumeSubscription = Subscriptions.from(geoDirUpdate.start(GeoDirHandler.UPDATE_GEODIR));
     }
 
@@ -153,6 +158,7 @@ public class NewMap extends AbstractActionBarActivity {
 
         this.mapView.getLayerManager().getLayers().remove(this.tileRendererLayer);
         this.tileRendererLayer.onDestroy();
+        this.mapView.getLayerManager().getLayers().remove(this.positionLayer);
     }
 
     @Override
@@ -194,9 +200,9 @@ public class NewMap extends AbstractActionBarActivity {
         // FIXME: temporary workaround for the absence of "follow my location" on Android 3.x (see issue #4289).
         if (myLocSwitch != null) {
             myLocSwitch.setChecked(followMyLocation);
-            //            if (followMyLocation) {
-            //                myLocationInMiddle(Sensors.getInstance().currentGeo());
-            //            }
+            if (followMyLocation) {
+                myLocationInMiddle(Sensors.getInstance().currentGeo());
+            }
         }
     }
 
@@ -221,6 +227,13 @@ public class NewMap extends AbstractActionBarActivity {
     private void onFollowMyLocationClicked() {
         followMyLocation = !followMyLocation;
         switchMyLocationButton();
+    }
+
+    // Set center of map to my location if appropriate.
+    private void myLocationInMiddle(final GeoData geo) {
+        if (followMyLocation) {
+            centerMap(geo.getCoords());
+        }
     }
 
     private static File getMapFile() {
@@ -301,12 +314,12 @@ public class NewMap extends AbstractActionBarActivity {
                             }
                         }
 
-                        //                        if (needsRepaintForDistanceOrAccuracy || needsRepaintForHeading) {
-                        //
-                        //                            map.overlayPositionAndScale.setCoordinates(currentLocation);
-                        //                            map.overlayPositionAndScale.setHeading(currentHeading);
-                        //                            map.mapView.repaintRequired(map.overlayPositionAndScale);
-                        //                        }
+                        if (needsRepaintForDistanceOrAccuracy || needsRepaintForHeading) {
+
+                            map.positionLayer.setCoordinates(currentLocation);
+                            map.positionLayer.setHeading(currentHeading);
+                            map.positionLayer.requestRedraw();
+                        }
                     }
                 } catch (final RuntimeException e) {
                     Log.w("Failed to update location", e);
@@ -315,11 +328,11 @@ public class NewMap extends AbstractActionBarActivity {
         }
 
         boolean needsRepaintForHeading() {
-            //            final NewMap map = mapRef.get();
-            //            if (map == null) {
-            return false;
-            //            }
-            //            return Math.abs(AngleUtils.difference(currentHeading, map.overlayPositionAndScale.getHeading())) > MIN_HEADING_DELTA;
+            final NewMap map = mapRef.get();
+            if (map == null) {
+                return false;
+            }
+            return Math.abs(AngleUtils.difference(currentHeading, map.positionLayer.getHeading())) > MIN_HEADING_DELTA;
         }
 
         boolean needsRepaintForDistanceOrAccuracy() {
