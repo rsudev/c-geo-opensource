@@ -39,7 +39,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -54,6 +56,8 @@ public class NewMap extends AbstractActionBarActivity {
     private PositionLayer positionLayer;
     private NavigationLayer navigationLayer;
     private DistanceView distanceView;
+
+    private DragHandler dragHandler;
 
     private String mapTitle;
     private String geocodeIntent;
@@ -106,6 +110,10 @@ public class NewMap extends AbstractActionBarActivity {
         tileCache = AndroidUtil.createTileCache(this, "mapcache",
                 mapView.getModel().displayModel.getTileSize(), 1f,
                 this.mapView.getModel().frameBufferModel.getOverdrawFactor());
+
+        // attach drag handler
+        dragHandler = new DragHandler(this);
+        mapView.setOnTouchListener(dragHandler);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -385,4 +393,26 @@ public class NewMap extends AbstractActionBarActivity {
         }
     }
 
+    private static class DragHandler implements OnTouchListener {
+
+        private final WeakReference<NewMap> mapRef;
+
+        public DragHandler(final NewMap parent) {
+            mapRef = new WeakReference<>(parent);
+        }
+
+        @Override
+        public boolean onTouch(final View v, final MotionEvent event) {
+
+            if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
+                final NewMap map = mapRef.get();
+                if (map != null && NewMap.followMyLocation) {
+                    NewMap.followMyLocation = false;
+                    map.switchMyLocationButton();
+                }
+            }
+
+            return false;
+        }
+    }
 }
