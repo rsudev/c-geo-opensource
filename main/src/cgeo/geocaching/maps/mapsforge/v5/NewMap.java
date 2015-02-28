@@ -41,6 +41,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -52,6 +53,7 @@ public class NewMap extends AbstractActionBarActivity {
     private TileRendererLayer tileRendererLayer;
     private PositionLayer positionLayer;
     private NavigationLayer navigationLayer;
+    private DistanceView distanceView;
 
     private String mapTitle;
     private String geocodeIntent;
@@ -160,6 +162,9 @@ public class NewMap extends AbstractActionBarActivity {
         // Position layer
         positionLayer = new PositionLayer();
         this.mapView.getLayerManager().getLayers().add(positionLayer);
+
+        //Distance view
+        distanceView = new DistanceView(navTarget, (TextView) findViewById(R.id.distance));
 
         resumeSubscription = Subscriptions.from(geoDirUpdate.start(GeoDirHandler.UPDATE_GEODIR));
     }
@@ -332,6 +337,7 @@ public class NewMap extends AbstractActionBarActivity {
                         if (needsRepaintForDistanceOrAccuracy || needsRepaintForHeading) {
 
                             map.navigationLayer.setCoordinates(currentLocation);
+                            map.distanceView.setCoordinates(currentLocation);
                             map.positionLayer.setCoordinates(currentLocation);
                             map.positionLayer.setHeading(currentHeading);
                             map.positionLayer.requestRedraw();
