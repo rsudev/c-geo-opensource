@@ -1,11 +1,13 @@
 package cgeo.geocaching.maps.mapsforge.v5;
 
+import cgeo.geocaching.DataStore;
 import cgeo.geocaching.Intents;
 import cgeo.geocaching.R;
 import cgeo.geocaching.activity.AbstractActionBarActivity;
 import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.enumerations.WaypointType;
 import cgeo.geocaching.location.Geopoint;
+import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.maps.CGeoMap.MapMode;
 import cgeo.geocaching.maps.interfaces.GeoPointImpl;
 import cgeo.geocaching.sensors.GeoData;
@@ -49,6 +51,7 @@ public class NewMap extends AbstractActionBarActivity {
     private TileCache tileCache;
     private TileRendererLayer tileRendererLayer;
     private PositionLayer positionLayer;
+    private NavigationLayer navigationLayer;
 
     private String mapTitle;
     private String geocodeIntent;
@@ -143,6 +146,17 @@ public class NewMap extends AbstractActionBarActivity {
         // only once a layer is associated with a mapView the rendering starts
         this.mapView.getLayerManager().getLayers().add(tileRendererLayer);
 
+        // NavigationLayer
+        Geopoint navTarget = coordsIntent;
+        if (navTarget == null && StringUtils.isNotEmpty(geocodeIntent)) {
+            final Viewport bounds = DataStore.getBounds(geocodeIntent);
+            if (bounds != null) {
+                navTarget = bounds.center;
+            }
+        }
+        navigationLayer = new NavigationLayer(navTarget);
+        this.mapView.getLayerManager().getLayers().add(navigationLayer);
+
         // Position layer
         positionLayer = new PositionLayer();
         this.mapView.getLayerManager().getLayers().add(positionLayer);
@@ -159,6 +173,7 @@ public class NewMap extends AbstractActionBarActivity {
         this.mapView.getLayerManager().getLayers().remove(this.tileRendererLayer);
         this.tileRendererLayer.onDestroy();
         this.mapView.getLayerManager().getLayers().remove(this.positionLayer);
+        this.mapView.getLayerManager().getLayers().remove(this.navigationLayer);
     }
 
     @Override
@@ -316,6 +331,7 @@ public class NewMap extends AbstractActionBarActivity {
 
                         if (needsRepaintForDistanceOrAccuracy || needsRepaintForHeading) {
 
+                            map.navigationLayer.setCoordinates(currentLocation);
                             map.positionLayer.setCoordinates(currentLocation);
                             map.positionLayer.setHeading(currentHeading);
                             map.positionLayer.requestRedraw();
