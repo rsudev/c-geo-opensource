@@ -3,6 +3,7 @@ package cgeo.geocaching.maps.mapsforge.v5;
 import cgeo.geocaching.DataStore;
 import cgeo.geocaching.Intents;
 import cgeo.geocaching.R;
+import cgeo.geocaching.SearchResult;
 import cgeo.geocaching.activity.AbstractActionBarActivity;
 import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.enumerations.WaypointType;
@@ -56,12 +57,14 @@ public class NewMap extends AbstractActionBarActivity {
     private PositionLayer positionLayer;
     private NavigationLayer navigationLayer;
     private DistanceView distanceView;
+    private CachesOverlay searchOverlay;
 
     private DragHandler dragHandler;
 
     private String mapTitle;
     private String geocodeIntent;
     private Geopoint coordsIntent;
+    private SearchResult searchIntent;
 
     final private GeoDirHandler geoDirUpdate = new UpdateLoc(this);
     /**
@@ -82,6 +85,7 @@ public class NewMap extends AbstractActionBarActivity {
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             geocodeIntent = extras.getString(Intents.EXTRA_GEOCODE);
+            searchIntent = extras.getParcelable(Intents.EXTRA_SEARCH);
             coordsIntent = extras.getParcelable(Intents.EXTRA_COORDS);
             mapTitle = extras.getString(Intents.EXTRA_TITLE);
         }
@@ -167,6 +171,13 @@ public class NewMap extends AbstractActionBarActivity {
         navigationLayer = new NavigationLayer(navTarget);
         this.mapView.getLayerManager().getLayers().add(navigationLayer);
 
+        // Caches overlay
+        if (searchIntent != null) {
+            this.searchOverlay = new CachesOverlay(searchIntent, mapView, navigationLayer);
+        } else if (StringUtils.isNotEmpty(geocodeIntent)) {
+            this.searchOverlay = new CachesOverlay(geocodeIntent, mapView, navigationLayer);
+        }
+
         // Position layer
         positionLayer = new PositionLayer();
         this.mapView.getLayerManager().getLayers().add(positionLayer);
@@ -183,10 +194,14 @@ public class NewMap extends AbstractActionBarActivity {
 
         resumeSubscription.unsubscribe();
 
+        this.mapView.getLayerManager().getLayers().remove(this.positionLayer);
+        if (this.searchOverlay != null) {
+            searchOverlay.onDestroy();
+            searchOverlay = null;
+        }
+        this.mapView.getLayerManager().getLayers().remove(this.navigationLayer);
         this.mapView.getLayerManager().getLayers().remove(this.tileRendererLayer);
         this.tileRendererLayer.onDestroy();
-        this.mapView.getLayerManager().getLayers().remove(this.positionLayer);
-        this.mapView.getLayerManager().getLayers().remove(this.navigationLayer);
     }
 
     @Override
