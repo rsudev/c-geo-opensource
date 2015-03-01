@@ -58,6 +58,7 @@ public class NewMap extends AbstractActionBarActivity {
     private NavigationLayer navigationLayer;
     private DistanceView distanceView;
     private CachesOverlay searchOverlay;
+    private LivemapOverlay liveOverlay;
 
     private DragHandler dragHandler;
 
@@ -178,6 +179,11 @@ public class NewMap extends AbstractActionBarActivity {
             this.searchOverlay = new CachesOverlay(geocodeIntent, mapView, navigationLayer);
         }
 
+        // Live map
+        if (/* live mode */true) {
+            liveOverlay = new LivemapOverlay(mapView, navigationLayer);
+        }
+
         // Position layer
         positionLayer = new PositionLayer();
         this.mapView.getLayerManager().getLayers().add(positionLayer);
@@ -198,6 +204,10 @@ public class NewMap extends AbstractActionBarActivity {
         if (this.searchOverlay != null) {
             searchOverlay.onDestroy();
             searchOverlay = null;
+        }
+        if (this.liveOverlay != null) {
+            liveOverlay.onDestroy();
+            liveOverlay = null;
         }
         this.mapView.getLayerManager().getLayers().remove(this.navigationLayer);
         this.mapView.getLayerManager().getLayers().remove(this.tileRendererLayer);
