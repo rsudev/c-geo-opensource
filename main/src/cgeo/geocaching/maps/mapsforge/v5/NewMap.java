@@ -306,6 +306,17 @@ public class NewMap extends AbstractActionBarActivity {
         fromActivity.startActivity(mapIntent);
     }
 
+    public static void startActivitySearch(final Activity fromActivity, final SearchResult search, final String title) {
+        final Intent mapIntent = new Intent(fromActivity, NewMap.class);
+        mapIntent.putExtra(Intents.EXTRA_SEARCH, search);
+        mapIntent.putExtra(Intents.EXTRA_MAP_MODE, MapMode.LIST);
+        mapIntent.putExtra(Intents.EXTRA_LIVE_ENABLED, false);
+        if (StringUtils.isNotBlank(title)) {
+            mapIntent.putExtra(Intents.EXTRA_TITLE, title);
+        }
+        fromActivity.startActivity(mapIntent);
+    }
+
     // class: update location
     private static class UpdateLoc extends GeoDirHandler {
         // use the following constants for fine tuning - find good compromise between smooth updates and as less updates as possible
