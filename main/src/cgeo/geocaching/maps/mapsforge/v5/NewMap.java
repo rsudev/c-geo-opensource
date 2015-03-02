@@ -151,7 +151,7 @@ public class NewMap extends AbstractActionBarActivity {
         final LatLong myCenter = new LatLong(center.getLatitudeE6() / 1.0e6, center.getLongitudeE6() / 1.0e6);
 
         this.mapView.getModel().mapViewPosition.setCenter(myCenter);
-        this.mapView.getModel().mapViewPosition.setZoomLevel((byte) Settings.getMapZoom(MapMode.SINGLE));
+        this.mapView.getModel().mapViewPosition.setZoomLevel((byte) (Settings.getMapZoom(MapMode.SINGLE) - 3));
 
         // tile renderer layer using internal render theme
         this.tileRendererLayer = new TileRendererLayer(tileCache, new MapFile(NewMap.getMapFile()),
