@@ -1,18 +1,19 @@
 package cgeo.geocaching.maps.mapsforge.v5;
 
 import cgeo.geocaching.CgeoApplication;
+import cgeo.geocaching.DataStore;
 import cgeo.geocaching.Geocache;
 import cgeo.geocaching.SearchResult;
 import cgeo.geocaching.Waypoint;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.location.Geopoint;
+import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.MapUtils;
 
 import org.mapsforge.core.graphics.Bitmap;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
-import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.Layers;
 import org.mapsforge.map.layer.overlay.Marker;
@@ -26,18 +27,18 @@ import java.util.Set;
 public class CachesOverlay {
 
     private final SearchResult search;
-    private final MapView mapView;
+    private final MfMapView mapView;
     private final Layer layerAnchor;
     private final List<Layer> layerList = new ArrayList<>();
 
-    public CachesOverlay(final SearchResult search, final MapView mapView, final Layer layerAnchor) {
+    public CachesOverlay(final SearchResult search, final MfMapView mapView, final Layer layerAnchor) {
         this.search = search;
         this.mapView = mapView;
         this.layerAnchor = layerAnchor;
         startDisplay();
     }
 
-    public CachesOverlay(final String geocode, final MapView mapView, final Layer layerAnchor) {
+    public CachesOverlay(final String geocode, final MfMapView mapView, final Layer layerAnchor) {
         this.search = new SearchResult();
         this.search.addGeocode(geocode);
         this.mapView = mapView;
@@ -85,6 +86,16 @@ public class CachesOverlay {
             }
 
             addLayers();
+
+            final Viewport viewport = DataStore.getBounds(search.getGeocodes());
+
+            if (viewport != null) {
+                mapView.getModel().mapViewPosition.setCenter(new LatLong(viewport.center.getLatitude(), viewport.center.getLongitude()));
+                if (viewport.getLatitudeSpan() != 0 && viewport.getLongitudeSpan() != 0) {
+                    mapView.zoomToSpan(viewport.getLatitudeSpan(), viewport.getLongitudeSpan());
+                }
+            }
+            mapView.repaint();
         } finally {
             //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS);
         }

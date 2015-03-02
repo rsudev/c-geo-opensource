@@ -59,7 +59,17 @@ public class MfMapView extends MapView {
     }
 
     public int getMapZoomLevel() {
-        return getModel().mapViewPosition.getZoomLevel();
+        return getModel().mapViewPosition.getZoomLevel() - 3;
+    }
+
+    public void zoomToSpan(final double latSpan, final double lonSpan) {
+
+        if (latSpan != 0 || lonSpan != 0) {
+            // calculate zoomlevel
+            final double distDegree = Math.max(latSpan, lonSpan);
+            final byte zoomLevel = (byte) Math.floor(Math.log(360.0 / distDegree) / Math.log(2));
+            getModel().mapViewPosition.setZoomLevel((byte) (zoomLevel + 3));
+        }
     }
 
 }
