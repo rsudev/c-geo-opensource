@@ -209,6 +209,8 @@ public class LivemapOverlay {
             }
 
             addLayers();
+
+            mapView.repaint();
         } finally {
             //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS);
         }
