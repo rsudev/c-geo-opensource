@@ -151,7 +151,8 @@ public class LiveCachesOverlay {
     private void fill() {
         try {
             //            showProgressHandler.sendEmptyMessage(SHOW_PROGRESS);
-            clearLayers();
+            final Collection<String> removeCodes = layerList.getGeocodes();
+            final Collection<String> newCodes = new HashSet<>();
 
             // display caches
             final Set<Geocache> cachesToDisplay = caches;
@@ -172,18 +173,28 @@ public class LiveCachesOverlay {
                             if (waypoint == null || waypoint.getCoords() == null) {
                                 continue;
                             }
-                            layerList.add(getWaypointItem(waypoint));
+                            if (removeCodes.contains(waypoint.getGeocode())) {
+                                removeCodes.remove(waypoint.getGeocode());
+                            } else {
+                                layerList.add(getWaypointItem(waypoint));
+                                newCodes.add(waypoint.getGeocode());
+                            }
                         }
                     }
 
                     if (cache.getCoords() == null) {
                         continue;
                     }
-                    layerList.add(getCacheItem(cache));
+                    if (removeCodes.contains(cache.getGeocode())) {
+                        removeCodes.remove(cache.getGeocode());
+                    } else {
+                        layerList.add(getCacheItem(cache));
+                        newCodes.add(cache.getGeocode());
+                    }
                 }
             }
 
-            addLayers();
+            syncLayers(removeCodes, newCodes);
 
             mapView.repaint();
         } finally {
@@ -197,10 +208,15 @@ public class LiveCachesOverlay {
         clearLayers();
     }
 
-    private void addLayers() {
+    private void syncLayers(final Collection<String> removeCodes, final Collection<String> newCodes) {
         final Layers layers = this.mapView.getLayerManager().getLayers();
+        for (final String code : removeCodes) {
+            final GeoitemLayer item = layerList.getItem(code);
+            layers.remove(item);
+            layerList.remove(item);
+        }
         final int index = layers.indexOf(layerAnchor) + 1;
-        layers.addAll(index, layerList.getAsLayers());
+        layers.addAll(index, layerList.getMatchingLayers(newCodes));
     }
 
     private void clearLayers() {

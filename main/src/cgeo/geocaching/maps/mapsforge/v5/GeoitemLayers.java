@@ -12,11 +12,25 @@ public class GeoitemLayers implements Collection<GeoitemLayer> {
     final private HashMap<String, GeoitemLayer> geoitems = new HashMap<>();
 
     public Collection<String> getGeocodes() {
-        return geoitems.keySet();
+        return new ArrayList<>(geoitems.keySet());
     }
 
     public Collection<Layer> getAsLayers() {
         return new ArrayList<Layer>(this.geoitems.values());
+    }
+
+    public GeoitemLayer getItem(final String geocode) {
+        return geoitems.get(geocode);
+    }
+
+    public Collection<Layer> getMatchingLayers(final Collection<String> newCodes) {
+        final ArrayList<Layer> result = new ArrayList<>();
+        for (final String code : newCodes) {
+            if (geoitems.containsKey(code)) {
+                result.add(geoitems.get(code));
+            }
+        }
+        return result;
     }
 
     @Override
