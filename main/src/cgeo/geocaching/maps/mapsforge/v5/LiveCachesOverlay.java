@@ -43,14 +43,16 @@ public class LiveCachesOverlay {
     private final MfMapView mapView;
     private final Layer layerAnchor;
     private final GeoitemLayers layerList = new GeoitemLayers();
+    private final TapHandler tapHandler;
     private final Subscription timer;
     private boolean downloading = false;
     public long loadThreadRun = -1;
     private MapTokens tokens;
 
-    public LiveCachesOverlay(final MfMapView mapView, final Layer layerAnchor) {
+    public LiveCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler) {
         this.mapView = mapView;
         this.layerAnchor = layerAnchor;
+        this.tapHandler = tapHandler;
         this.timer = startTimer();
     }
 
@@ -176,7 +178,7 @@ public class LiveCachesOverlay {
                             if (removeCodes.contains(waypoint.getGeocode())) {
                                 removeCodes.remove(waypoint.getGeocode());
                             } else {
-                                layerList.add(getWaypointItem(waypoint));
+                                layerList.add(getWaypointItem(waypoint, this.tapHandler));
                                 newCodes.add(waypoint.getGeocode());
                             }
                         }
@@ -188,7 +190,7 @@ public class LiveCachesOverlay {
                     if (removeCodes.contains(cache.getGeocode())) {
                         removeCodes.remove(cache.getGeocode());
                     } else {
-                        layerList.add(getCacheItem(cache));
+                        layerList.add(getCacheItem(cache, this.tapHandler));
                         newCodes.add(cache.getGeocode());
                     }
                 }
@@ -229,17 +231,17 @@ public class LiveCachesOverlay {
         layerList.clear();
     }
 
-    private static GeoitemLayer getCacheItem(final Geocache cache) {
+    private static GeoitemLayer getCacheItem(final Geocache cache, final TapHandler tapHandler) {
         final Geopoint target = cache.getCoords();
         final Bitmap marker = AndroidGraphicFactory.convertToBitmap(MapUtils.getCacheMarker(CgeoApplication.getInstance().getResources(), cache));
-        final GeoitemLayer item = new GeoitemLayer(cache.getGeocode(), new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
+        final GeoitemLayer item = new GeoitemLayer(cache.getGeocode(), tapHandler, new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
         return item;
     }
 
-    private static GeoitemLayer getWaypointItem(final Waypoint waypoint) {
+    private static GeoitemLayer getWaypointItem(final Waypoint waypoint, final TapHandler tapHandler) {
         final Geopoint target = waypoint.getCoords();
         final Bitmap marker = AndroidGraphicFactory.convertToBitmap(MapUtils.getWaypointMarker(CgeoApplication.getInstance().getResources(), waypoint));
-        final GeoitemLayer item = new GeoitemLayer(waypoint.getGeocode(), new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
+        final GeoitemLayer item = new GeoitemLayer(waypoint.getGeocode(), tapHandler, new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
         return item;
     }
 
