@@ -61,5 +61,4 @@ public class NavigationLayer extends Layer {
 
         canvas.drawLine(pos_x, pos_y, dest_x, dest_y, line);
     }
-
 }

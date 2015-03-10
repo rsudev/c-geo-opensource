@@ -1,11 +1,16 @@
 package cgeo.geocaching.maps.mapsforge.v5;
 
+import cgeo.geocaching.CachePopup;
 import cgeo.geocaching.DataStore;
+import cgeo.geocaching.Geocache;
 import cgeo.geocaching.Intents;
 import cgeo.geocaching.R;
 import cgeo.geocaching.SearchResult;
 import cgeo.geocaching.activity.AbstractActionBarActivity;
 import cgeo.geocaching.activity.ActivityMixin;
+import cgeo.geocaching.connector.gc.GCMap;
+import cgeo.geocaching.enumerations.CacheType;
+import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.enumerations.WaypointType;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
@@ -34,7 +39,10 @@ import rx.subscriptions.Subscriptions;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources.NotFoundException;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,6 +57,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NewMap extends AbstractActionBarActivity {
@@ -62,6 +71,8 @@ public class NewMap extends AbstractActionBarActivity {
     private StoredCachesOverlay storedOverlay;
     private LiveCachesOverlay liveOverlay;
     private final List<SeparatorLayer> separators = new ArrayList<>();
+    private final TapHandler tapHandler = new TapHandler(this);
+    private TapHandlerLayer tapHandlerLayer;
 
     private DistanceView distanceView;
 
@@ -177,11 +188,15 @@ public class NewMap extends AbstractActionBarActivity {
         this.navigationLayer = new NavigationLayer(navTarget);
         this.mapView.getLayerManager().getLayers().add(this.navigationLayer);
 
+        // TapHandler
+        this.tapHandlerLayer = new TapHandlerLayer(this.tapHandler);
+        this.mapView.getLayerManager().getLayers().add(this.tapHandlerLayer);
+
         // Caches overlay
         if (this.searchIntent != null) {
-            this.searchOverlay = new CachesOverlay(this.searchIntent, this.mapView, this.navigationLayer);
+            this.searchOverlay = new CachesOverlay(this.searchIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
         } else if (StringUtils.isNotEmpty(this.geocodeIntent)) {
-            this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.navigationLayer);
+            this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
         }
 
         // Live map
@@ -189,11 +204,11 @@ public class NewMap extends AbstractActionBarActivity {
             final SeparatorLayer separator1 = new SeparatorLayer();
             this.separators.add(separator1);
             this.mapView.getLayerManager().getLayers().add(separator1);
-            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1);
+            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1, this.tapHandler);
             final SeparatorLayer separator2 = new SeparatorLayer();
             this.separators.add(separator2);
             this.mapView.getLayerManager().getLayers().add(separator2);
-            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2);
+            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2, this.tapHandler);
         }
 
         // Position layer
@@ -473,4 +488,107 @@ public class NewMap extends AbstractActionBarActivity {
             return false;
         }
     }
+
+    public void showSelection(final ArrayList<String> geocodes) {
+        try {
+
+            if (geocodes.size() == 0) {
+                return;
+            }
+
+            String geocode = "";
+
+            if (geocodes.size() > 1) {
+
+                final CharSequence[] items = geocodes.toArray(new String[] {});
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Select a cache");
+                builder.setItems(items, new SelectionClickListener(geocodes));
+                builder.show();
+
+            } else {
+                geocode = geocodes.get(0);
+            }
+
+            showPopup(geocode);
+
+        } catch (final NotFoundException e) {
+            Log.e("NewMap.showPopup", e);
+        }
+
+        return;
+    }
+
+    private class SelectionClickListener implements DialogInterface.OnClickListener {
+
+        private final ArrayList<String> items;
+
+        public SelectionClickListener(final ArrayList<String> items) {
+            this.items = items;
+        }
+
+        @Override
+        public void onClick(final DialogInterface dialog, final int which) {
+            if (which >= 0 && which < items.size()) {
+                final String geocode = items.get(which);
+                showPopup(geocode);
+            }
+        }
+
+    }
+
+    private void showPopup(final String geocode) {
+        try {
+
+            if (StringUtils.isEmpty(geocode)) {
+                return;
+            }
+
+            final Geocache cache = DataStore.loadCache(geocode, LoadFlags.LOAD_CACHE_OR_DB);
+
+            if (cache != null) {
+                final RequestDetailsThread requestDetailsThread = new RequestDetailsThread(cache, this);
+                if (!requestDetailsThread.requestRequired()) {
+                    // don't show popup if we have enough details
+                    // progress.dismiss();
+                }
+                requestDetailsThread.start();
+                return;
+            }
+
+        } catch (final NotFoundException e) {
+            Log.e("NewMap.showPopup", e);
+        }
+
+        return;
+    }
+
+    private class RequestDetailsThread extends Thread {
+
+        private final @NonNull Geocache cache;
+        private final @NonNull WeakReference<NewMap> map;
+
+        public RequestDetailsThread(final @NonNull Geocache cache, final @NonNull NewMap map) {
+            this.cache = cache;
+            this.map = new WeakReference<>(map);
+        }
+
+        public boolean requestRequired() {
+            return CacheType.UNKNOWN == cache.getType() || cache.getDifficulty() == 0;
+        }
+
+        @Override
+        public void run() {
+            final NewMap map = this.map.get();
+            if (map == null) {
+                return;
+            }
+            if (requestRequired()) {
+                /* final SearchResult search = */GCMap.searchByGeocodes(Collections.singleton(cache.getGeocode()));
+            }
+            CachePopup.startActivity(map, cache.getGeocode());
+        }
+    }
+
 }
