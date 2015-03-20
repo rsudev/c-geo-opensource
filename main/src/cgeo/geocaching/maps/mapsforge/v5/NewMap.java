@@ -82,6 +82,7 @@ public class NewMap extends AbstractActionBarActivity {
     private String geocodeIntent;
     private Geopoint coordsIntent;
     private SearchResult searchIntent;
+    private MapState mapStateIntent = null;
 
     final private GeoDirHandler geoDirUpdate = new UpdateLoc(this);
     /**
@@ -90,6 +91,8 @@ public class NewMap extends AbstractActionBarActivity {
     private Subscription resumeSubscription = Subscriptions.empty();
     private CheckBox myLocSwitch;
     private static boolean followMyLocation;
+
+    final private static String BUNDLE_MAP_STATE = "mapState";
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -105,9 +108,18 @@ public class NewMap extends AbstractActionBarActivity {
             searchIntent = extras.getParcelable(Intents.EXTRA_SEARCH);
             coordsIntent = extras.getParcelable(Intents.EXTRA_COORDS);
             mapTitle = extras.getString(Intents.EXTRA_TITLE);
+            mapStateIntent = extras.getParcelable(Intents.EXTRA_MAPSTATE);
         }
         if (StringUtils.isBlank(mapTitle)) {
             mapTitle = res.getString(R.string.map_map);
+        }
+
+        // Get fresh map information from the bundle if any
+        if (savedInstanceState != null) {
+            mapStateIntent = savedInstanceState.getParcelable(BUNDLE_MAP_STATE);
+            //            isLiveEnabled = savedInstanceState.getBoolean(BUNDLE_LIVE_ENABLED, false);
+            //            trailHistory = savedInstanceState.getParcelableArrayList(BUNDLE_TRAIL_HISTORY);
+            followMyLocation = mapStateIntent.followsMyLocation();
         }
 
         ActivityMixin.onCreate(this, true);
@@ -162,13 +174,17 @@ public class NewMap extends AbstractActionBarActivity {
     protected void onStart() {
         super.onStart();
 
+        if (mapStateIntent != null) {
+            this.mapView.getModel().mapViewPosition.setCenter(mapStateIntent.getCenter());
+            this.mapView.getModel().mapViewPosition.setZoomLevel((byte) mapStateIntent.getZoomLevel());
+        } else {
         final GeoPointImpl center = Settings.getMapCenter();
 
         final LatLong myCenter = new LatLong(center.getLatitudeE6() / 1.0e6, center.getLongitudeE6() / 1.0e6);
 
         this.mapView.getModel().mapViewPosition.setCenter(myCenter);
         this.mapView.getModel().mapViewPosition.setZoomLevel((byte) (Settings.getMapZoom(MapMode.SINGLE) - 3));
-
+        }
         // tile renderer layer using internal render theme
         this.tileRendererLayer = new TileRendererLayer(tileCache, new MapFile(NewMap.getMapFile()),
                 this.mapView.getModel().mapViewPosition, false, true, AndroidGraphicFactory.INSTANCE);
@@ -259,6 +275,16 @@ public class NewMap extends AbstractActionBarActivity {
         this.mapView.getModel().mapViewPosition.destroy();
         this.mapView.destroy();
         AndroidResourceBitmap.clearResourceBitmaps();
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        final MapState state = new MapState(mapView.getModel().mapViewPosition.getCenter(),
+                mapView.getModel().mapViewPosition.getZoomLevel(),
+                followMyLocation,
+                false);
+        outState.putParcelable(BUNDLE_MAP_STATE, state);
     }
 
     private void centerMap(final Geopoint geopoint) {
