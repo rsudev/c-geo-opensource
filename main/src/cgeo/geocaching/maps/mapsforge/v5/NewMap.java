@@ -65,6 +65,7 @@ public class NewMap extends AbstractActionBarActivity {
     private MfMapView mapView;
     private TileCache tileCache;
     private TileRendererLayer tileRendererLayer;
+    private HistoryLayer historyLayer;
     private PositionLayer positionLayer;
     private NavigationLayer navigationLayer;
     private CachesOverlay searchOverlay;
@@ -83,6 +84,7 @@ public class NewMap extends AbstractActionBarActivity {
     private Geopoint coordsIntent;
     private SearchResult searchIntent;
     private MapState mapStateIntent = null;
+    private ArrayList<Location> trailHistory = null;
 
     final private GeoDirHandler geoDirUpdate = new UpdateLoc(this);
     /**
@@ -92,7 +94,8 @@ public class NewMap extends AbstractActionBarActivity {
     private CheckBox myLocSwitch;
     private static boolean followMyLocation;
 
-    final private static String BUNDLE_MAP_STATE = "mapState";
+    private static final String BUNDLE_MAP_STATE = "mapState";
+    private static final String BUNDLE_TRAIL_HISTORY = "trailHistory";
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -118,7 +121,7 @@ public class NewMap extends AbstractActionBarActivity {
         if (savedInstanceState != null) {
             mapStateIntent = savedInstanceState.getParcelable(BUNDLE_MAP_STATE);
             //            isLiveEnabled = savedInstanceState.getBoolean(BUNDLE_LIVE_ENABLED, false);
-            //            trailHistory = savedInstanceState.getParcelableArrayList(BUNDLE_TRAIL_HISTORY);
+            trailHistory = savedInstanceState.getParcelableArrayList(BUNDLE_TRAIL_HISTORY);
             followMyLocation = mapStateIntent.followsMyLocation();
         }
 
@@ -193,6 +196,10 @@ public class NewMap extends AbstractActionBarActivity {
         // only once a layer is associated with a mapView the rendering starts
         this.mapView.getLayerManager().getLayers().add(this.tileRendererLayer);
 
+        // History Layer
+        this.historyLayer = new HistoryLayer(trailHistory);
+        this.mapView.getLayerManager().getLayers().add(this.historyLayer);
+
         // NavigationLayer
         Geopoint navTarget = this.coordsIntent;
         if (navTarget == null && StringUtils.isNotEmpty(this.geocodeIntent)) {
@@ -262,6 +269,8 @@ public class NewMap extends AbstractActionBarActivity {
         this.separators.clear();
         this.mapView.getLayerManager().getLayers().remove(this.navigationLayer);
         this.navigationLayer = null;
+        this.mapView.getLayerManager().getLayers().remove(this.historyLayer);
+        this.historyLayer = null;
         this.mapView.getLayerManager().getLayers().remove(this.tileRendererLayer);
         this.tileRendererLayer.onDestroy();
         this.tileRendererLayer = null;
@@ -285,6 +294,9 @@ public class NewMap extends AbstractActionBarActivity {
                 followMyLocation,
                 false);
         outState.putParcelable(BUNDLE_MAP_STATE, state);
+        if (historyLayer != null) {
+            outState.putParcelableArrayList(BUNDLE_TRAIL_HISTORY, historyLayer.getHistory());
+        }
     }
 
     private void centerMap(final Geopoint geopoint) {
@@ -443,6 +455,7 @@ public class NewMap extends AbstractActionBarActivity {
 
                         if (needsRepaintForDistanceOrAccuracy || needsRepaintForHeading) {
 
+                            map.historyLayer.setCoordinates(currentLocation);
                             map.navigationLayer.setCoordinates(currentLocation);
                             map.distanceView.setCoordinates(currentLocation);
                             map.positionLayer.setCoordinates(currentLocation);
