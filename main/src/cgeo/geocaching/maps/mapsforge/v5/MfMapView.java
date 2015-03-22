@@ -62,17 +62,26 @@ public class MfMapView extends MapView {
     }
 
     public int getMapZoomLevel() {
-        return getModel().mapViewPosition.getZoomLevel() - 3;
+        return getModel().mapViewPosition.getZoomLevel() + 3;
     }
 
-    public void zoomToSpan(final double latSpan, final double lonSpan) {
+    public void setMapZoomLevel(final int zoomLevel) {
+        getModel().mapViewPosition.setZoomLevel((byte) (zoomLevel - 3));
+    }
 
-        if (latSpan != 0 || lonSpan != 0) {
-            // calculate zoomlevel
-            final double distDegree = Math.max(latSpan, lonSpan);
-            final byte zoomLevel = (byte) Math.floor(Math.log(360.0 / distDegree) / Math.log(2));
-            getModel().mapViewPosition.setZoomLevel((byte) (zoomLevel + 1));
-        }
+    public void zoomToViewport(final Viewport viewport) {
+
+        final int tileSize = getModel().displayModel.getTileSize();
+        final long mapSize = MercatorProjection.getMapSize((byte) 0, tileSize);
+        final double dxMax = MercatorProjection.longitudeToPixelX(viewport.getLongitudeMax(), mapSize) / tileSize;
+        final double dxMin = MercatorProjection.longitudeToPixelX(viewport.getLongitudeMin(), mapSize) / tileSize;
+        final double zoomX = Math.floor(-Math.log(3.8) * Math.log(Math.abs(dxMax - dxMin)) + getWidth() / tileSize);
+        final double dyMax = MercatorProjection.longitudeToPixelX(viewport.getLatitudeMax(), mapSize) / tileSize;
+        final double dyMin = MercatorProjection.longitudeToPixelX(viewport.getLatitudeMin(), mapSize) / tileSize;
+        final double zoomY = Math.floor(-Math.log(3.8) * Math.log(Math.abs(dyMax - dyMin)) + getHeight() / tileSize);
+        final byte newZoom = Double.valueOf(Math.min(zoomX, zoomY)).byteValue();
+        getModel().mapViewPosition.setZoomLevel(newZoom);
+        getModel().mapViewPosition.setCenter(new LatLong(viewport.getCenter().getLatitude(), viewport.getCenter().getLongitude()));
     }
 
 }

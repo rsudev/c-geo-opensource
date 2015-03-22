@@ -92,6 +92,7 @@ public class NewMap extends AbstractActionBarActivity {
      */
     private Subscription resumeSubscription = Subscriptions.empty();
     private CheckBox myLocSwitch;
+    private MapMode mapMode;
     private static boolean followMyLocation;
 
     private static final String BUNDLE_MAP_STATE = "mapState";
@@ -180,14 +181,29 @@ public class NewMap extends AbstractActionBarActivity {
         if (mapStateIntent != null) {
             this.mapView.getModel().mapViewPosition.setCenter(mapStateIntent.getCenter());
             this.mapView.getModel().mapViewPosition.setZoomLevel((byte) mapStateIntent.getZoomLevel());
+        } else if (searchIntent != null) {
+            final Viewport viewport = DataStore.getBounds(searchIntent.getGeocodes());
+
+            if (viewport != null) {
+                mapView.zoomToViewport(viewport);
+            }
+        } else if (StringUtils.isNotEmpty(geocodeIntent)) {
+            final Viewport viewport = DataStore.getBounds(geocodeIntent);
+
+            this.mapView.setMapZoomLevel(Settings.getMapZoom(MapMode.SINGLE));
+
+            if (viewport != null) {
+                this.mapView.getModel().mapViewPosition.setCenter(new LatLong(viewport.center.getLatitude(), viewport.center.getLongitude()));
+            }
         } else {
-        final GeoPointImpl center = Settings.getMapCenter();
+            final GeoPointImpl center = Settings.getMapCenter();
 
-        final LatLong myCenter = new LatLong(center.getLatitudeE6() / 1.0e6, center.getLongitudeE6() / 1.0e6);
+            final LatLong myCenter = new LatLong(center.getLatitudeE6() / 1.0e6, center.getLongitudeE6() / 1.0e6);
 
-        this.mapView.getModel().mapViewPosition.setCenter(myCenter);
-        this.mapView.getModel().mapViewPosition.setZoomLevel((byte) (Settings.getMapZoom(MapMode.SINGLE) - 3));
+            this.mapView.getModel().mapViewPosition.setCenter(myCenter);
+            this.mapView.setMapZoomLevel(Settings.getMapZoom(MapMode.SINGLE));
         }
+
         // tile renderer layer using internal render theme
         this.tileRendererLayer = new TileRendererLayer(tileCache, new MapFile(NewMap.getMapFile()),
                 this.mapView.getModel().mapViewPosition, false, true, AndroidGraphicFactory.INSTANCE);
@@ -245,8 +261,15 @@ public class NewMap extends AbstractActionBarActivity {
     }
 
     @Override
+    public void onPause() {
+
+        savePrefs();
+
+        super.onPause();
+    }
+
+    @Override
     protected void onStop() {
-        super.onStop();
 
         this.resumeSubscription.unsubscribe();
 
@@ -274,16 +297,18 @@ public class NewMap extends AbstractActionBarActivity {
         this.mapView.getLayerManager().getLayers().remove(this.tileRendererLayer);
         this.tileRendererLayer.onDestroy();
         this.tileRendererLayer = null;
+
+        super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-
         this.tileCache.destroy();
         this.mapView.getModel().mapViewPosition.destroy();
         this.mapView.destroy();
         AndroidResourceBitmap.clearResourceBitmaps();
+
+        super.onDestroy();
     }
 
     @Override
@@ -601,6 +626,11 @@ public class NewMap extends AbstractActionBarActivity {
         }
 
         return;
+    }
+
+    private void savePrefs() {
+        Settings.setMapZoom(MapMode.SINGLE, mapView.getMapZoomLevel());
+        Settings.setMapCenter(new MapsforgeGeoPoint(mapView.getModel().mapViewPosition.getCenter()));
     }
 
     private class RequestDetailsThread extends Thread {
