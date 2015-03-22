@@ -1,13 +1,11 @@
 package cgeo.geocaching.maps.mapsforge.v5;
 
 import cgeo.geocaching.CgeoApplication;
-import cgeo.geocaching.DataStore;
 import cgeo.geocaching.Geocache;
 import cgeo.geocaching.SearchResult;
 import cgeo.geocaching.Waypoint;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.location.Geopoint;
-import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.MapUtils;
 
@@ -88,14 +86,6 @@ public class CachesOverlay {
 
             addLayers();
 
-            final Viewport viewport = DataStore.getBounds(search.getGeocodes());
-
-            if (viewport != null) {
-                mapView.getModel().mapViewPosition.setCenter(new LatLong(viewport.center.getLatitude(), viewport.center.getLongitude()));
-                if (viewport.getLatitudeSpan() != 0 && viewport.getLongitudeSpan() != 0) {
-                    mapView.zoomToSpan(viewport.getLatitudeSpan(), viewport.getLongitudeSpan());
-                }
-            }
             mapView.repaint();
         } finally {
             //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS);
