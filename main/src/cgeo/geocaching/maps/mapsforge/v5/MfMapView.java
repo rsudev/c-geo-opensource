@@ -9,7 +9,16 @@ public class MfMapView extends MapView {
 
     public MfMapView(final Context context, final AttributeSet attributeSet) {
         super(context, attributeSet);
-        // TODO Auto-generated constructor stub
+    }
+
+    public double getLongitudeSpan() {
+
+        return getModel().mapViewPosition.getMapLimit().getLongitudeSpan();
+    }
+
+    public double getLatitudeSpan() {
+
+        return getModel().mapViewPosition.getMapLimit().getLatitudeSpan();
     }
 
 }
