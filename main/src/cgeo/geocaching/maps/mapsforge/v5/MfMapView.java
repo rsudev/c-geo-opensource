@@ -4,6 +4,7 @@ import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
 
 import org.mapsforge.core.model.LatLong;
+import org.mapsforge.core.model.Point;
 import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.android.view.MapView;
 
@@ -26,11 +27,12 @@ public class MfMapView extends MapView {
         double span = 0;
 
         final long mapSize = MercatorProjection.getMapSize(getModel().mapViewPosition.getZoomLevel(), getModel().displayModel.getTileSize());
+        final Point center = MercatorProjection.getPixelAbsolute(getModel().mapViewPosition.getCenter(), mapSize);
 
         if (getHeight() > 0) {
 
-            final LatLong low = MercatorProjection.fromPixels(0, 0, mapSize);
-            final LatLong high = MercatorProjection.fromPixels(0, getHeight(), mapSize);
+            final LatLong low = MercatorProjection.fromPixels(center.x, center.y - getHeight() / 2, mapSize);
+            final LatLong high = MercatorProjection.fromPixels(center.x, center.y + getHeight() / 2, mapSize);
 
             if (low != null && high != null) {
                 span = Math.abs(high.latitude - low.latitude);
@@ -45,10 +47,11 @@ public class MfMapView extends MapView {
         double span = 0;
 
         final long mapSize = MercatorProjection.getMapSize(getModel().mapViewPosition.getZoomLevel(), getModel().displayModel.getTileSize());
+        final Point center = MercatorProjection.getPixelAbsolute(getModel().mapViewPosition.getCenter(), mapSize);
 
         if (getWidth() > 0) {
-            final LatLong low = MercatorProjection.fromPixels(0, 0, mapSize);
-            final LatLong high = MercatorProjection.fromPixels(getWidth(), 0, mapSize);
+            final LatLong low = MercatorProjection.fromPixels(center.x - getWidth() / 2, center.y, mapSize);
+            final LatLong high = MercatorProjection.fromPixels(center.x + getWidth() / 2, center.y, mapSize);
 
             if (low != null && high != null) {
                 span = Math.abs(high.longitude - low.longitude);
@@ -68,7 +71,7 @@ public class MfMapView extends MapView {
             // calculate zoomlevel
             final double distDegree = Math.max(latSpan, lonSpan);
             final byte zoomLevel = (byte) Math.floor(Math.log(360.0 / distDegree) / Math.log(2));
-            getModel().mapViewPosition.setZoomLevel((byte) (zoomLevel + 3));
+            getModel().mapViewPosition.setZoomLevel((byte) (zoomLevel + 1));
         }
     }
 

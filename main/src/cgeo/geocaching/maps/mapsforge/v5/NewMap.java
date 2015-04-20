@@ -48,6 +48,8 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewMap extends AbstractActionBarActivity {
 
@@ -56,9 +58,12 @@ public class NewMap extends AbstractActionBarActivity {
     private TileRendererLayer tileRendererLayer;
     private PositionLayer positionLayer;
     private NavigationLayer navigationLayer;
-    private DistanceView distanceView;
     private CachesOverlay searchOverlay;
-    private LivemapOverlay liveOverlay;
+    private StoredCachesOverlay storedOverlay;
+    private LiveCachesOverlay liveOverlay;
+    private final List<SeparatorLayer> separators = new ArrayList<>();
+
+    private DistanceView distanceView;
 
     private DragHandler dragHandler;
 
@@ -159,59 +164,76 @@ public class NewMap extends AbstractActionBarActivity {
         tileRendererLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 
         // only once a layer is associated with a mapView the rendering starts
-        this.mapView.getLayerManager().getLayers().add(tileRendererLayer);
+        this.mapView.getLayerManager().getLayers().add(this.tileRendererLayer);
 
         // NavigationLayer
-        Geopoint navTarget = coordsIntent;
-        if (navTarget == null && StringUtils.isNotEmpty(geocodeIntent)) {
-            final Viewport bounds = DataStore.getBounds(geocodeIntent);
+        Geopoint navTarget = this.coordsIntent;
+        if (navTarget == null && StringUtils.isNotEmpty(this.geocodeIntent)) {
+            final Viewport bounds = DataStore.getBounds(this.geocodeIntent);
             if (bounds != null) {
                 navTarget = bounds.center;
             }
         }
-        navigationLayer = new NavigationLayer(navTarget);
-        this.mapView.getLayerManager().getLayers().add(navigationLayer);
+        this.navigationLayer = new NavigationLayer(navTarget);
+        this.mapView.getLayerManager().getLayers().add(this.navigationLayer);
 
         // Caches overlay
-        if (searchIntent != null) {
-            this.searchOverlay = new CachesOverlay(searchIntent, mapView, navigationLayer);
-        } else if (StringUtils.isNotEmpty(geocodeIntent)) {
-            this.searchOverlay = new CachesOverlay(geocodeIntent, mapView, navigationLayer);
+        if (this.searchIntent != null) {
+            this.searchOverlay = new CachesOverlay(this.searchIntent, this.mapView, this.navigationLayer);
+        } else if (StringUtils.isNotEmpty(this.geocodeIntent)) {
+            this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.navigationLayer);
         }
 
         // Live map
         if (/* live mode */true) {
-            liveOverlay = new LivemapOverlay(mapView, navigationLayer);
+            final SeparatorLayer separator1 = new SeparatorLayer();
+            this.separators.add(separator1);
+            this.mapView.getLayerManager().getLayers().add(separator1);
+            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1);
+            final SeparatorLayer separator2 = new SeparatorLayer();
+            this.separators.add(separator2);
+            this.mapView.getLayerManager().getLayers().add(separator2);
+            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2);
         }
 
         // Position layer
-        positionLayer = new PositionLayer();
+        this.positionLayer = new PositionLayer();
         this.mapView.getLayerManager().getLayers().add(positionLayer);
 
         //Distance view
-        distanceView = new DistanceView(navTarget, (TextView) findViewById(R.id.distance));
+        this.distanceView = new DistanceView(navTarget, (TextView) findViewById(R.id.distance));
 
-        resumeSubscription = Subscriptions.from(geoDirUpdate.start(GeoDirHandler.UPDATE_GEODIR));
+        this.resumeSubscription = Subscriptions.from(this.geoDirUpdate.start(GeoDirHandler.UPDATE_GEODIR));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        resumeSubscription.unsubscribe();
+        this.resumeSubscription.unsubscribe();
 
         this.mapView.getLayerManager().getLayers().remove(this.positionLayer);
         if (this.searchOverlay != null) {
-            searchOverlay.onDestroy();
-            searchOverlay = null;
+            this.searchOverlay.onDestroy();
+            this.searchOverlay = null;
+        }
+        if (this.storedOverlay != null) {
+            this.storedOverlay.onDestroy();
+            this.storedOverlay = null;
         }
         if (this.liveOverlay != null) {
-            liveOverlay.onDestroy();
-            liveOverlay = null;
+            this.liveOverlay.onDestroy();
+            this.liveOverlay = null;
         }
+        for (final SeparatorLayer layer : this.separators) {
+            this.mapView.getLayerManager().getLayers().remove(layer);
+        }
+        this.separators.clear();
         this.mapView.getLayerManager().getLayers().remove(this.navigationLayer);
+        this.navigationLayer = null;
         this.mapView.getLayerManager().getLayers().remove(this.tileRendererLayer);
         this.tileRendererLayer.onDestroy();
+        this.tileRendererLayer = null;
     }
 
     @Override
