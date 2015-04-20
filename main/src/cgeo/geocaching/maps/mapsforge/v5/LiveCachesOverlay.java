@@ -23,7 +23,6 @@ import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.Layers;
-import org.mapsforge.map.layer.overlay.Marker;
 
 import rx.Subscription;
 import rx.functions.Action0;
@@ -38,18 +37,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-public class LivemapOverlay {
+public class LiveCachesOverlay {
 
     private final Set<Geocache> caches = new HashSet<>();
     private final MfMapView mapView;
     private final Layer layerAnchor;
-    private final List<Layer> layerList = new ArrayList<>();
+    private final GeoitemLayers layerList = new GeoitemLayers();
     private final Subscription timer;
     private boolean downloading = false;
     public long loadThreadRun = -1;
     private MapTokens tokens;
 
-    public LivemapOverlay(final MfMapView mapView, final Layer layerAnchor) {
+    public LiveCachesOverlay(final MfMapView mapView, final Layer layerAnchor) {
         this.mapView = mapView;
         this.layerAnchor = layerAnchor;
         this.timer = startTimer();
@@ -61,17 +60,17 @@ public class LivemapOverlay {
 
     private static final class LoadTimerAction implements Action0 {
 
-        @NonNull private final WeakReference<LivemapOverlay> overlayRef;
+        @NonNull private final WeakReference<LiveCachesOverlay> overlayRef;
         private int previousZoom = -100;
         private Viewport previousViewport;
 
-        public LoadTimerAction(@NonNull final LivemapOverlay overlay) {
+        public LoadTimerAction(@NonNull final LiveCachesOverlay overlay) {
             this.overlayRef = new WeakReference<>(overlay);
         }
 
         @Override
         public void call() {
-            final LivemapOverlay overlay = overlayRef.get();
+            final LiveCachesOverlay overlay = overlayRef.get();
             if (overlay == null || overlay.downloading) {
                 return;
             }
@@ -100,7 +99,6 @@ public class LivemapOverlay {
                     if (1000 < (currentTime - overlay.loadThreadRun )) {
                         overlay.downloading = true;
                         previousViewport = viewportNow;
-                        overlay.load();
                         overlay.download();
                         overlay.downloading = false;
                     }
@@ -110,29 +108,6 @@ public class LivemapOverlay {
             } finally {
                 overlay.downloading = false;
             }
-        }
-    }
-
-    private void load() {
-        try {
-            //            showProgressHandler.sendEmptyMessage(SHOW_PROGRESS);
-            loadThreadRun = System.currentTimeMillis();
-
-            final SearchResult searchResult = new SearchResult(DataStore.loadCachedInViewport(mapView.getViewport(), Settings.getCacheType()));
-
-            final Set<Geocache> cachesFromSearchResult = searchResult.getCachesFromSearchResult(LoadFlags.LOAD_WAYPOINTS);
-            // update the caches
-            // new collection type needs to remove first
-            caches.clear();
-            caches.addAll(cachesFromSearchResult);
-
-            filter(caches);
-
-            // render
-            fill();
-
-        } finally {
-            //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS); // hide progress
         }
     }
 
@@ -225,7 +200,7 @@ public class LivemapOverlay {
     private void addLayers() {
         final Layers layers = this.mapView.getLayerManager().getLayers();
         final int index = layers.indexOf(layerAnchor) + 1;
-        layers.addAll(index, layerList);
+        layers.addAll(index, layerList.getAsLayers());
     }
 
     private void clearLayers() {
@@ -238,17 +213,17 @@ public class LivemapOverlay {
         layerList.clear();
     }
 
-    private static Marker getCacheItem(final Geocache cache) {
+    private static GeoitemLayer getCacheItem(final Geocache cache) {
         final Geopoint target = cache.getCoords();
         final Bitmap marker = AndroidGraphicFactory.convertToBitmap(MapUtils.getCacheMarker(CgeoApplication.getInstance().getResources(), cache));
-        final Marker item = new Marker(new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
+        final GeoitemLayer item = new GeoitemLayer(cache.getGeocode(), new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
         return item;
     }
 
-    private static Marker getWaypointItem(final Waypoint waypoint) {
+    private static GeoitemLayer getWaypointItem(final Waypoint waypoint) {
         final Geopoint target = waypoint.getCoords();
         final Bitmap marker = AndroidGraphicFactory.convertToBitmap(MapUtils.getWaypointMarker(CgeoApplication.getInstance().getResources(), waypoint));
-        final Marker item = new Marker(new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
+        final GeoitemLayer item = new GeoitemLayer(waypoint.getGeocode(), new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
         return item;
     }
 
