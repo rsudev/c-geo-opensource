@@ -16,11 +16,9 @@ import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.Layers;
-import org.mapsforge.map.layer.overlay.Marker;
 
 import android.os.AsyncTask;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +27,7 @@ public class CachesOverlay {
     private final SearchResult search;
     private final MfMapView mapView;
     private final Layer layerAnchor;
-    private final List<Layer> layerList = new ArrayList<>();
+    private final GeoitemLayers layerList = new GeoitemLayers();
 
     public CachesOverlay(final SearchResult search, final MfMapView mapView, final Layer layerAnchor) {
         this.search = search;
@@ -109,7 +107,7 @@ public class CachesOverlay {
     private void addLayers() {
         final Layers layers = this.mapView.getLayerManager().getLayers();
         final int index = layers.indexOf(layerAnchor) + 1;
-        layers.addAll(index, layerList);
+        layers.addAll(index, layerList.getAsLayers());
     }
 
     private void clearLayers() {
@@ -122,17 +120,17 @@ public class CachesOverlay {
         layerList.clear();
     }
 
-    private static Marker getCacheItem(final Geocache cache) {
+    private static GeoitemLayer getCacheItem(final Geocache cache) {
         final Geopoint target = cache.getCoords();
         final Bitmap marker = AndroidGraphicFactory.convertToBitmap(MapUtils.getCacheMarker(CgeoApplication.getInstance().getResources(), cache));
-        final Marker item = new Marker(new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
+        final GeoitemLayer item = new GeoitemLayer(cache.getGeocode(), new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
         return item;
     }
 
-    private static Marker getWaypointItem(final Waypoint waypoint) {
+    private static GeoitemLayer getWaypointItem(final Waypoint waypoint) {
         final Geopoint target = waypoint.getCoords();
         final Bitmap marker = AndroidGraphicFactory.convertToBitmap(MapUtils.getWaypointMarker(CgeoApplication.getInstance().getResources(), waypoint));
-        final Marker item = new Marker(new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
+        final GeoitemLayer item = new GeoitemLayer(waypoint.getGeocode(), new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
         return item;
     }
 
