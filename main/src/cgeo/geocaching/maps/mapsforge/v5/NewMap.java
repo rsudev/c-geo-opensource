@@ -1,6 +1,7 @@
 package cgeo.geocaching.maps.mapsforge.v5;
 
 import cgeo.geocaching.CachePopup;
+import cgeo.geocaching.CompassActivity;
 import cgeo.geocaching.DataStore;
 import cgeo.geocaching.Geocache;
 import cgeo.geocaching.Intents;
@@ -9,6 +10,7 @@ import cgeo.geocaching.SearchResult;
 import cgeo.geocaching.activity.AbstractActionBarActivity;
 import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.connector.gc.GCMap;
+import cgeo.geocaching.connector.gc.Tile;
 import cgeo.geocaching.enumerations.CacheType;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.enumerations.WaypointType;
@@ -25,6 +27,7 @@ import cgeo.geocaching.utils.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.graphics.AndroidResourceBitmap;
@@ -32,6 +35,7 @@ import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.reader.MapFile;
+import org.mapsforge.map.rendertheme.ExternalRenderTheme;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
 
 import rx.Subscription;
@@ -55,6 +59,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,6 +98,8 @@ public class NewMap extends AbstractActionBarActivity {
     private Subscription resumeSubscription = Subscriptions.empty();
     private CheckBox myLocSwitch;
     private MapMode mapMode;
+    private boolean isLiveEnabled = false;
+
     private static boolean followMyLocation;
 
     private static final String BUNDLE_MAP_STATE = "mapState";
@@ -108,12 +115,18 @@ public class NewMap extends AbstractActionBarActivity {
         // Get parameters from the intent
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            mapMode = (MapMode) extras.get(Intents.EXTRA_MAP_MODE);
+            isLiveEnabled = extras.getBoolean(Intents.EXTRA_LIVE_ENABLED, false);
             geocodeIntent = extras.getString(Intents.EXTRA_GEOCODE);
             searchIntent = extras.getParcelable(Intents.EXTRA_SEARCH);
             coordsIntent = extras.getParcelable(Intents.EXTRA_COORDS);
             mapTitle = extras.getString(Intents.EXTRA_TITLE);
             mapStateIntent = extras.getParcelable(Intents.EXTRA_MAPSTATE);
+        } else {
+            mapMode = MapMode.LIVE;
+            isLiveEnabled = Settings.isLiveMap();
         }
+
         if (StringUtils.isBlank(mapTitle)) {
             mapTitle = res.getString(R.string.map_map);
         }
@@ -175,6 +188,168 @@ public class NewMap extends AbstractActionBarActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(final Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        try {
+            final MenuItem itemMapLive = menu.findItem(R.id.menu_map_live);
+            if (isLiveEnabled) {
+                itemMapLive.setTitle(res.getString(R.string.map_live_disable));
+            } else {
+                itemMapLive.setTitle(res.getString(R.string.map_live_enable));
+            }
+            itemMapLive.setVisible(coordsIntent == null);
+
+            menu.findItem(R.id.menu_mycaches_mode).setChecked(Settings.isExcludeMyCaches());
+            menu.findItem(R.id.menu_direction_line).setChecked(Settings.isMapDirection());
+            //            menu.findItem(R.id.menu_circle_mode).setChecked(this.searchOverlay.getCircles());
+            menu.findItem(R.id.menu_trail_mode).setChecked(Settings.isMapTrail());
+
+            menu.findItem(R.id.menu_theme_mode).setVisible(true);
+
+            menu.findItem(R.id.menu_hint).setVisible(mapMode == MapMode.SINGLE);
+            menu.findItem(R.id.menu_compass).setVisible(mapMode == MapMode.SINGLE);
+
+        } catch (final RuntimeException e) {
+            Log.e("CGeoMap.onPrepareOptionsMenu", e);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                ActivityMixin.navigateUp(this);
+                return true;
+            case R.id.menu_trail_mode:
+                Settings.setMapTrail(!Settings.isMapTrail());
+                historyLayer.requestRedraw();
+                ActivityMixin.invalidateOptionsMenu(this);
+                return true;
+            case R.id.menu_direction_line:
+                Settings.setMapDirection(!Settings.isMapDirection());
+                navigationLayer.requestRedraw();
+                ActivityMixin.invalidateOptionsMenu(this);
+                return true;
+            case R.id.menu_map_live:
+                isLiveEnabled = !isLiveEnabled;
+                if (mapMode == MapMode.LIVE) {
+                    Settings.setLiveMap(isLiveEnabled);
+                }
+                handleLiveLayers(isLiveEnabled);
+                ActivityMixin.invalidateOptionsMenu(this);
+                if (mapMode != MapMode.SINGLE) {
+                    mapTitle = StringUtils.EMPTY;
+                }
+                return true;
+            case R.id.menu_circle_mode:
+                //                overlayCaches.switchCircles();
+                //                mapView.repaintRequired(overlayCaches);
+                //                ActivityMixin.invalidateOptionsMenu(activity);
+                return true;
+            case R.id.menu_mycaches_mode:
+                Settings.setExcludeMine(!Settings.isExcludeMyCaches());
+                ActivityMixin.invalidateOptionsMenu(this);
+                if (!Settings.isExcludeMyCaches()) {
+                    Tile.cache.clear();
+                }
+                return true;
+            case R.id.menu_theme_mode:
+                selectMapTheme();
+                return true;
+            case R.id.menu_hint:
+                menuShowHint();
+                return true;
+            case R.id.menu_compass:
+                menuCompass();
+                return true;
+        }
+        return false;
+    }
+
+    private void menuCompass() {
+        final Geocache cache = getSingleModeCache();
+        if (cache != null) {
+            CompassActivity.startActivityCache(this, cache);
+        }
+    }
+
+    private void menuShowHint() {
+        final Geocache cache = getSingleModeCache();
+        if (cache != null) {
+            cache.showHintToast(this);
+        }
+    }
+
+    private void selectMapTheme() {
+
+        final File[] themeFiles = Settings.getMapThemeFiles();
+
+        String currentTheme = StringUtils.EMPTY;
+        final String currentThemePath = Settings.getCustomRenderThemeFilePath();
+        if (StringUtils.isNotEmpty(currentThemePath)) {
+            final File currentThemeFile = new File(currentThemePath);
+            currentTheme = currentThemeFile.getName();
+        }
+
+        final List<String> names = new ArrayList<>();
+        names.add(res.getString(R.string.map_theme_builtin));
+        int currentItem = 0;
+        for (final File file : themeFiles) {
+            if (currentTheme.equalsIgnoreCase(file.getName())) {
+                currentItem = names.size();
+            }
+            names.add(file.getName());
+        }
+
+        final int selectedItem = currentItem;
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(R.string.map_theme_select);
+
+        builder.setSingleChoiceItems(names.toArray(new String[names.size()]), selectedItem,
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int newItem) {
+                        if (newItem != selectedItem) {
+                            // Adjust index because of <default> selection
+                            if (newItem > 0) {
+                                Settings.setCustomRenderThemeFile(themeFiles[newItem - 1].getPath());
+                            } else {
+                                Settings.setCustomRenderThemeFile(StringUtils.EMPTY);
+                            }
+                            setMapTheme();
+                        }
+                        dialog.cancel();
+                    }
+                });
+
+        builder.show();
+    }
+
+    protected void setMapTheme() {
+        final String themePath = Settings.getCustomRenderThemeFilePath();
+
+        if (StringUtils.isEmpty(themePath)) {
+            tileRendererLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
+        } else {
+            try {
+                tileRendererLayer.setXmlRenderTheme(new ExternalRenderTheme(new File(themePath)));
+            } catch (final FileNotFoundException e) {
+                Log.w("Failed to set render theme", e);
+                tileRendererLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
+            }
+        }
+        tileCache.destroy();
+        tileRendererLayer.requestRedraw();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
 
@@ -207,7 +382,7 @@ public class NewMap extends AbstractActionBarActivity {
         // tile renderer layer using internal render theme
         this.tileRendererLayer = new TileRendererLayer(tileCache, new MapFile(NewMap.getMapFile()),
                 this.mapView.getModel().mapViewPosition, false, true, AndroidGraphicFactory.INSTANCE);
-        tileRendererLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
+        this.setMapTheme();
 
         // only once a layer is associated with a mapView the rendering starts
         this.mapView.getLayerManager().getLayers().add(this.tileRendererLayer);
@@ -238,17 +413,16 @@ public class NewMap extends AbstractActionBarActivity {
             this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
         }
 
-        // Live map
-        if (/* live mode */true) {
+        // prepare separators
             final SeparatorLayer separator1 = new SeparatorLayer();
             this.separators.add(separator1);
             this.mapView.getLayerManager().getLayers().add(separator1);
-            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1, this.tapHandler);
             final SeparatorLayer separator2 = new SeparatorLayer();
             this.separators.add(separator2);
             this.mapView.getLayerManager().getLayers().add(separator2);
-            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2, this.tapHandler);
-        }
+
+        // Live map
+        handleLiveLayers(isLiveEnabled);
 
         // Position layer
         this.positionLayer = new PositionLayer();
@@ -258,6 +432,24 @@ public class NewMap extends AbstractActionBarActivity {
         this.distanceView = new DistanceView(navTarget, (TextView) findViewById(R.id.distance));
 
         this.resumeSubscription = Subscriptions.from(this.geoDirUpdate.start(GeoDirHandler.UPDATE_GEODIR));
+    }
+
+    private void handleLiveLayers(final boolean enable) {
+        if (enable) {
+            final SeparatorLayer separator1 = this.separators.get(0);
+            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1, this.tapHandler);
+            final SeparatorLayer separator2 = this.separators.get(1);
+            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2, this.tapHandler);
+        } else {
+            if (this.storedOverlay != null) {
+                this.storedOverlay.onDestroy();
+                this.storedOverlay = null;
+            }
+            if (this.liveOverlay != null) {
+                this.liveOverlay.onDestroy();
+                this.liveOverlay = null;
+            }
+        }
     }
 
     @Override
@@ -626,6 +818,13 @@ public class NewMap extends AbstractActionBarActivity {
         }
 
         return;
+    }
+
+    @Nullable
+    private Geocache getSingleModeCache() {
+        final Geocache cache = DataStore.loadCache(geocodeIntent, LoadFlags.LOAD_CACHE_OR_DB);
+
+        return cache;
     }
 
     private void savePrefs() {
