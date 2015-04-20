@@ -41,6 +41,7 @@ import org.mapsforge.map.rendertheme.InternalRenderTheme;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -65,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressLint("ClickableViewAccessibility")
 public class NewMap extends AbstractActionBarActivity {
 
     private MfMapView mapView;

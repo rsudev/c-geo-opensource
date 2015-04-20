@@ -7,6 +7,8 @@ import cgeo.geocaching.enumerations.WaypointType;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.maps.mapsforge.v5.NewMap;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import android.app.Activity;
 
 class InternalMapNew extends AbstractPointNavigationApp {
@@ -21,17 +23,17 @@ class InternalMapNew extends AbstractPointNavigationApp {
     }
 
     @Override
-    public void navigate(final Activity activity, final Geopoint coords) {
+    public void navigate(final @NonNull Activity activity, final @NonNull Geopoint coords) {
         NewMap.startActivityCoords(activity, coords, WaypointType.WAYPOINT, null);
     }
 
     @Override
-    public void navigate(final Activity activity, final Waypoint waypoint) {
+    public void navigate(final @NonNull Activity activity, final @NonNull Waypoint waypoint) {
         NewMap.startActivityCoords(activity, waypoint.getCoords(), waypoint.getWaypointType(), waypoint.getName());
     }
 
     @Override
-    public void navigate(final Activity activity, final Geocache cache) {
+    public void navigate(final @NonNull Activity activity, final @NonNull Geocache cache) {
         NewMap.startActivityGeoCode(activity, cache.getGeocode());
     }
 
