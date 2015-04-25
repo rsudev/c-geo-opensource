@@ -321,12 +321,12 @@ public class CGeoMap extends AbstractMap implements ViewFactory {
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setTitleIceCreamSandwich(final String title) {
-        activity.getActionBar().setTitle(title);
+        //        activity.getActionBar().setTitle(title);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setSubtitleIceCreamSandwich(final String subtitle) {
-        activity.getActionBar().setSubtitle(subtitle);
+        //        activity.getActionBar().setSubtitle(subtitle);
     }
 
     /** Updates the progress. */
@@ -491,7 +491,7 @@ public class CGeoMap extends AbstractMap implements ViewFactory {
         // set layout
         ActivityMixin.setTheme(activity);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            activity.getActionBar().setDisplayHomeAsUpEnabled(true);
+            //            activity.getActionBar().setDisplayHomeAsUpEnabled(true);
         }
         activity.setContentView(mapProvider.getMapLayoutId());
         setTitle();
