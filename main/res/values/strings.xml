@@ -604,6 +604,8 @@
     <string name="feature_search_geocode">Search by geocode</string>
     <string name="feature_search_owner">Search by owner</string>
     <string name="feature_search_finder">Search by finder</string>
+    <string name="init_experimental_title">Experimental features</string>
+    <string name="init_newmap">Use the new map as default (live/lists)</string>
     
     <!-- map sources -->
     <string name="map_source_google_map">Google: Map</string>

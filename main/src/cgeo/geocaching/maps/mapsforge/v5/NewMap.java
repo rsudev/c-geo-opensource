@@ -587,6 +587,12 @@ public class NewMap extends AbstractActionBarActivity {
         return new File(Settings.getMapFile());
     }
 
+    public static Intent getLiveMapIntent(final Activity fromActivity) {
+        return new Intent(fromActivity, NewMap.class)
+                .putExtra(Intents.EXTRA_MAP_MODE, MapMode.LIVE)
+                .putExtra(Intents.EXTRA_LIVE_ENABLED, Settings.isLiveMap());
+    }
+
     public static void startActivityCoords(final Activity fromActivity, final Geopoint coords, final WaypointType type, final String title) {
         final Intent mapIntent = new Intent(fromActivity, NewMap.class);
         mapIntent.putExtra(Intents.EXTRA_MAP_MODE, MapMode.COORDS);
