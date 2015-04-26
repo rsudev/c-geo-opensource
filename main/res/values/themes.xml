@@ -178,19 +178,18 @@
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
-
     </style>
 
-    <style name="cgeo_popup" parent="cgeo.Translucent.Light">
-        <item name="android:windowNoTitle">true</item>
-     </style>
+    <style name="popup_light" parent="cgeo.Translucent.Light">
+		<item name="android:windowNoTitle">true</item>
+    	<item name="windowActionBar">false</item>
+    </style>
 
     <style name="popup_dark" parent="cgeo.Translucent">
+		<item name="android:windowNoTitle">true</item>
+    	<item name="windowActionBar">false</item>
     </style>
 
-    <style name="popup_light" parent="cgeo_popup">
-    </style>
-    
     <style name="settings" parent="@style/Theme.AppCompat">
         <item name="settings_cloud">@drawable/settings_cloud_white</item>
         <item name="settings_details">@drawable/settings_details_white</item>
