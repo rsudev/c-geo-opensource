@@ -5,7 +5,7 @@ import cgeo.geocaching.activity.ShowcaseViewBuilder;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Units;
-import cgeo.geocaching.maps.CGeoMap;
+import cgeo.geocaching.maps.DefaultMap;
 import cgeo.geocaching.sensors.GeoData;
 import cgeo.geocaching.sensors.GeoDirHandler;
 import cgeo.geocaching.sensors.GpsStatusProvider.Status;
@@ -199,13 +199,13 @@ public class CompassActivity extends AbstractActionBarActivity {
         switch (id) {
             case R.id.menu_map:
                 if (waypoint != null) {
-                    CGeoMap.startActivityCoords(this, waypoint.getCoords(), waypoint.getWaypointType(), waypoint.getName());
+                    DefaultMap.startActivityCoords(this, waypoint.getCoords(), waypoint.getWaypointType(), waypoint.getName());
                 }
                 else if (cache != null) {
-                    CGeoMap.startActivityGeoCode(this, cache.getGeocode());
+                    DefaultMap.startActivityGeoCode(this, cache.getGeocode());
                 }
                 else {
-                    CGeoMap.startActivityCoords(this, dstCoords, null, null);
+                    DefaultMap.startActivityCoords(this, dstCoords, null, null);
                 }
                 return true;
             case R.id.menu_tts_start:
