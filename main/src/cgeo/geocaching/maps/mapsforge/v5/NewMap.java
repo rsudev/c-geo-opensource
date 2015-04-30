@@ -90,6 +90,7 @@ public class NewMap extends AbstractActionBarActivity {
     private String geocodeIntent;
     private Geopoint coordsIntent;
     private SearchResult searchIntent;
+    private WaypointType waypointTypeIntent = null;
     private MapState mapStateIntent = null;
     private ArrayList<Location> trailHistory = null;
 
@@ -122,6 +123,7 @@ public class NewMap extends AbstractActionBarActivity {
             geocodeIntent = extras.getString(Intents.EXTRA_GEOCODE);
             searchIntent = extras.getParcelable(Intents.EXTRA_SEARCH);
             coordsIntent = extras.getParcelable(Intents.EXTRA_COORDS);
+            waypointTypeIntent = WaypointType.findById(extras.getString(Intents.EXTRA_WPTTYPE));
             mapTitle = extras.getString(Intents.EXTRA_TITLE);
             mapStateIntent = extras.getParcelable(Intents.EXTRA_MAPSTATE);
         } else {
