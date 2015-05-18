@@ -26,28 +26,28 @@ public class GeoitemLayer extends Marker {
         tapSpanRadius = metrics.densityDpi * tapSpanInches / 2.0;
     }
 
-    private final String geocode;
+    private final GeoitemRef item;
     private final TapHandler tapHandler;
     private final double halfXSpan;
     private final double halfYSpan;
 
-    public GeoitemLayer(final String geocode, final TapHandler tapHandler, final LatLong latLong, final Bitmap bitmap, final int horizontalOffset, final int verticalOffset) {
+    public GeoitemLayer(final GeoitemRef item, final TapHandler tapHandler, final LatLong latLong, final Bitmap bitmap, final int horizontalOffset, final int verticalOffset) {
         super(latLong, bitmap, horizontalOffset, verticalOffset);
 
-        this.geocode = geocode;
+        this.item = item;
         this.tapHandler = tapHandler;
         this.halfXSpan = getBitmap().getWidth() / 2.0;
         this.halfYSpan = getBitmap().getHeight() / 2.0;
     }
 
-    public String getGeocode() {
-        return geocode;
+    public GeoitemRef getItem() {
+        return item;
     }
 
     @Override
     public boolean onTap(final LatLong tapLatLong, final Point layerXY, final Point tapXY) {
         if (isHit(layerXY, tapXY)) {
-            tapHandler.setHit(geocode);
+            tapHandler.setHit(item);
         }
         return super.onTap(tapLatLong, layerXY, tapXY);
     }
@@ -57,5 +57,4 @@ public class GeoitemLayer extends Marker {
 
         return rect.intersectsCircle(tapXY.x, tapXY.y, tapSpanRadius);
     }
-
 }

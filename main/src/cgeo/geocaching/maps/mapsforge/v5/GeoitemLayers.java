@@ -19,8 +19,8 @@ public class GeoitemLayers implements Collection<GeoitemLayer> {
         return new ArrayList<Layer>(this.geoitems.values());
     }
 
-    public GeoitemLayer getItem(final String geocode) {
-        return geoitems.get(geocode);
+    public GeoitemLayer getItem(final String itemCode) {
+        return geoitems.get(itemCode);
     }
 
     public Collection<Layer> getMatchingLayers(final Collection<String> newCodes) {
@@ -35,7 +35,7 @@ public class GeoitemLayers implements Collection<GeoitemLayer> {
 
     @Override
     public boolean add(final GeoitemLayer geoitem) {
-        return geoitems.put(geoitem.getGeocode(), geoitem) != null;
+        return geoitems.put(geoitem.getItem().getItemCode(), geoitem) != null;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class GeoitemLayers implements Collection<GeoitemLayer> {
     public boolean remove(final Object object) {
         if (object instanceof GeoitemLayer) {
             final GeoitemLayer item = (GeoitemLayer) object;
-            return this.geoitems.remove(item.getGeocode()) != null;
+            return this.geoitems.remove(item.getItem().getItemCode()) != null;
 
         }
 

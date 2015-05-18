@@ -1,23 +1,16 @@
 package cgeo.geocaching.maps.mapsforge.v5;
 
-import cgeo.geocaching.CgeoApplication;
 import cgeo.geocaching.DataStore;
 import cgeo.geocaching.Geocache;
 import cgeo.geocaching.SearchResult;
 import cgeo.geocaching.Waypoint;
 import cgeo.geocaching.enumerations.LoadFlags;
-import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.Log;
-import cgeo.geocaching.utils.MapUtils;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.mapsforge.core.graphics.Bitmap;
-import org.mapsforge.core.model.LatLong;
-import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.layer.Layer;
-import org.mapsforge.map.layer.Layers;
 
 import rx.Subscription;
 import rx.functions.Action0;
@@ -31,20 +24,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-public class StoredCachesOverlay {
+public class StoredCachesOverlay extends AbstractCachesOverlay {
 
     private final Set<Geocache> caches = new HashSet<>();
-    private final MfMapView mapView;
-    private final Layer layerAnchor;
-    private final GeoitemLayers layerList = new GeoitemLayers();
     private final Subscription timer;
-    private final TapHandler tapHandler;
 
     public StoredCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler) {
-        this.mapView = mapView;
-        this.layerAnchor = layerAnchor;
+        super(mapView, layerAnchor, tapHandler);
         this.timer = startTimer();
-        this.tapHandler = tapHandler;
     }
 
     private Subscription startTimer() {
@@ -69,10 +56,10 @@ public class StoredCachesOverlay {
             }
             try {
                 // get current viewport
-                final Viewport viewportNow = overlay.mapView.getViewport();
+                final Viewport viewportNow = overlay.getViewport();
                 // Since zoomNow is used only for local comparison purposes,
                 // it is ok to use the Google Maps compatible zoom level of OSM Maps
-                final int zoomNow = overlay.mapView.getMapZoomLevel();
+                final int zoomNow = overlay.getMapZoomLevel();
 
                 // check if map moved or zoomed
                 //TODO Portree Use Rectangle inside with bigger search window. That will stop reloading on every move
@@ -102,7 +89,7 @@ public class StoredCachesOverlay {
     private void load() {
         try {
             //            showProgressHandler.sendEmptyMessage(SHOW_PROGRESS);
-            final SearchResult searchResult = new SearchResult(DataStore.loadCachedInViewport(mapView.getViewport(), Settings.getCacheType()));
+            final SearchResult searchResult = new SearchResult(DataStore.loadCachedInViewport(getViewport(), Settings.getCacheType()));
 
             final Set<Geocache> cachesFromSearchResult = searchResult.getCachesFromSearchResult(LoadFlags.LOAD_WAYPOINTS);
             // update the caches
@@ -123,7 +110,7 @@ public class StoredCachesOverlay {
     private void fill() {
         try {
             //            showProgressHandler.sendEmptyMessage(SHOW_PROGRESS);
-            final Collection<String> removeCodes = layerList.getGeocodes();
+            final Collection<String> removeCodes = getGeocodes();
             final Collection<String> newCodes = new HashSet<>();
 
             // display caches
@@ -148,8 +135,8 @@ public class StoredCachesOverlay {
                             if (removeCodes.contains(waypoint.getGeocode())) {
                                 removeCodes.remove(waypoint.getGeocode());
                             } else {
-                                layerList.add(getWaypointItem(waypoint, this.tapHandler));
-                                newCodes.add(waypoint.getGeocode());
+                                addItem(waypoint);
+                                newCodes.add(waypoint.getGpxId());
                             }
                         }
                     }
@@ -160,7 +147,7 @@ public class StoredCachesOverlay {
                     if (removeCodes.contains(cache.getGeocode())) {
                         removeCodes.remove(cache.getGeocode());
                     } else {
-                        layerList.add(getCacheItem(cache, this.tapHandler));
+                        addItem(cache);
                         newCodes.add(cache.getGeocode());
                     }
                 }
@@ -168,51 +155,17 @@ public class StoredCachesOverlay {
 
             syncLayers(removeCodes, newCodes);
 
-            mapView.repaint();
+            repaint();
         } finally {
             //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS);
         }
     }
 
+    @Override
     public void onDestroy() {
         timer.unsubscribe();
 
-        clearLayers();
-    }
-
-    private void syncLayers(final Collection<String> removeCodes, final Collection<String> newCodes) {
-        final Layers layers = this.mapView.getLayerManager().getLayers();
-        for (final String code : removeCodes) {
-            final GeoitemLayer item = layerList.getItem(code);
-            layers.remove(item);
-            layerList.remove(item);
-        }
-        final int index = layers.indexOf(layerAnchor) + 1;
-        layers.addAll(index, layerList.getMatchingLayers(newCodes));
-    }
-
-    private void clearLayers() {
-        final Layers layers = this.mapView.getLayerManager().getLayers();
-
-        for (final Layer layer : layerList) {
-            layers.remove(layer);
-        }
-
-        layerList.clear();
-    }
-
-    private static GeoitemLayer getCacheItem(final Geocache cache, final TapHandler tapHandler) {
-        final Geopoint target = cache.getCoords();
-        final Bitmap marker = AndroidGraphicFactory.convertToBitmap(MapUtils.getCacheMarker(CgeoApplication.getInstance().getResources(), cache));
-        final GeoitemLayer item = new GeoitemLayer(cache.getGeocode(), tapHandler, new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
-        return item;
-    }
-
-    private static GeoitemLayer getWaypointItem(final Waypoint waypoint, final TapHandler tapHandler) {
-        final Geopoint target = waypoint.getCoords();
-        final Bitmap marker = AndroidGraphicFactory.convertToBitmap(MapUtils.getWaypointMarker(CgeoApplication.getInstance().getResources(), waypoint));
-        final GeoitemLayer item = new GeoitemLayer(waypoint.getGeocode(), tapHandler, new LatLong(target.getLatitude(), target.getLongitude()), marker, 0, -marker.getHeight() / 2);
-        return item;
+        super.onDestroy();
     }
 
     private static synchronized void filter(final Collection<Geocache> caches) {
