@@ -2,6 +2,8 @@ package cgeo.geocaching.maps.mapsforge.v5;
 
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
+import cgeo.geocaching.maps.CGeoMap.MapMode;
+import cgeo.geocaching.settings.Settings;
 
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.Point;
@@ -71,17 +73,20 @@ public class MfMapView extends MapView {
 
     public void zoomToViewport(final Viewport viewport) {
 
-        final int tileSize = getModel().displayModel.getTileSize();
-        final long mapSize = MercatorProjection.getMapSize((byte) 0, tileSize);
-        final double dxMax = MercatorProjection.longitudeToPixelX(viewport.getLongitudeMax(), mapSize) / tileSize;
-        final double dxMin = MercatorProjection.longitudeToPixelX(viewport.getLongitudeMin(), mapSize) / tileSize;
-        final double zoomX = Math.floor(-Math.log(3.8) * Math.log(Math.abs(dxMax - dxMin)) + getWidth() / tileSize);
-        final double dyMax = MercatorProjection.longitudeToPixelX(viewport.getLatitudeMax(), mapSize) / tileSize;
-        final double dyMin = MercatorProjection.longitudeToPixelX(viewport.getLatitudeMin(), mapSize) / tileSize;
-        final double zoomY = Math.floor(-Math.log(3.8) * Math.log(Math.abs(dyMax - dyMin)) + getHeight() / tileSize);
-        final byte newZoom = Double.valueOf(Math.min(zoomX, zoomY)).byteValue();
-        getModel().mapViewPosition.setZoomLevel(newZoom);
+        if (viewport.bottomLeft.equals(viewport.topRight)) {
+            setMapZoomLevel(Settings.getMapZoom(MapMode.SINGLE));
+        } else {
+            final int tileSize = getModel().displayModel.getTileSize();
+            final long mapSize = MercatorProjection.getMapSize((byte) 0, tileSize);
+            final double dxMax = MercatorProjection.longitudeToPixelX(viewport.getLongitudeMax(), mapSize) / tileSize;
+            final double dxMin = MercatorProjection.longitudeToPixelX(viewport.getLongitudeMin(), mapSize) / tileSize;
+            final double zoomX = Math.floor(-Math.log(3.8) * Math.log(Math.abs(dxMax - dxMin)) + getWidth() / tileSize);
+            final double dyMax = MercatorProjection.longitudeToPixelX(viewport.getLatitudeMax(), mapSize) / tileSize;
+            final double dyMin = MercatorProjection.longitudeToPixelX(viewport.getLatitudeMin(), mapSize) / tileSize;
+            final double zoomY = Math.floor(-Math.log(3.8) * Math.log(Math.abs(dyMax - dyMin)) + getHeight() / tileSize);
+            final byte newZoom = Double.valueOf(Math.min(zoomX, zoomY)).byteValue();
+            getModel().mapViewPosition.setZoomLevel(newZoom);
+        }
         getModel().mapViewPosition.setCenter(new LatLong(viewport.getCenter().getLatitude(), viewport.getCenter().getLongitude()));
     }
-
 }

@@ -7,17 +7,18 @@ import cgeo.geocaching.Geocache;
 import cgeo.geocaching.Intents;
 import cgeo.geocaching.R;
 import cgeo.geocaching.SearchResult;
+import cgeo.geocaching.WaypointPopup;
 import cgeo.geocaching.activity.AbstractActionBarActivity;
 import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.connector.gc.GCMap;
 import cgeo.geocaching.connector.gc.Tile;
 import cgeo.geocaching.enumerations.CacheType;
+import cgeo.geocaching.enumerations.CoordinatesType;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.enumerations.WaypointType;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.maps.CGeoMap.MapMode;
-import cgeo.geocaching.maps.interfaces.GeoPointImpl;
 import cgeo.geocaching.sensors.GeoData;
 import cgeo.geocaching.sensors.GeoDirHandler;
 import cgeo.geocaching.sensors.Sensors;
@@ -75,9 +76,10 @@ public class NewMap extends AbstractActionBarActivity {
     private HistoryLayer historyLayer;
     private PositionLayer positionLayer;
     private NavigationLayer navigationLayer;
-    private CachesOverlay searchOverlay;
-    private StoredCachesOverlay storedOverlay;
-    private LiveCachesOverlay liveOverlay;
+    private AbstractCachesOverlay searchOverlay;
+    private AbstractCachesOverlay singlePointOverlay;
+    private AbstractCachesOverlay storedOverlay;
+    private AbstractCachesOverlay liveOverlay;
     private final List<SeparatorLayer> separators = new ArrayList<>();
     private final TapHandler tapHandler = new TapHandler(this);
     private TapHandlerLayer tapHandlerLayer;
@@ -90,6 +92,7 @@ public class NewMap extends AbstractActionBarActivity {
     private String geocodeIntent;
     private Geopoint coordsIntent;
     private SearchResult searchIntent;
+    private WaypointType waypointTypeIntent = null;
     private MapState mapStateIntent = null;
     private ArrayList<Location> trailHistory = null;
 
@@ -122,6 +125,7 @@ public class NewMap extends AbstractActionBarActivity {
             geocodeIntent = extras.getString(Intents.EXTRA_GEOCODE);
             searchIntent = extras.getParcelable(Intents.EXTRA_SEARCH);
             coordsIntent = extras.getParcelable(Intents.EXTRA_COORDS);
+            waypointTypeIntent = WaypointType.findById(extras.getString(Intents.EXTRA_WPTTYPE));
             mapTitle = extras.getString(Intents.EXTRA_TITLE);
             mapStateIntent = extras.getParcelable(Intents.EXTRA_MAPSTATE);
         } else {
@@ -367,18 +371,13 @@ public class NewMap extends AbstractActionBarActivity {
         } else if (StringUtils.isNotEmpty(geocodeIntent)) {
             final Viewport viewport = DataStore.getBounds(geocodeIntent);
 
-            this.mapView.setMapZoomLevel(Settings.getMapZoom(MapMode.SINGLE));
-
             if (viewport != null) {
-                this.mapView.getModel().mapViewPosition.setCenter(new LatLong(viewport.center.getLatitude(), viewport.center.getLongitude()));
+                mapView.zoomToViewport(viewport);
             }
+        } else if (coordsIntent != null) {
+            mapView.zoomToViewport(new Viewport(coordsIntent, 0, 0));
         } else {
-            final GeoPointImpl center = Settings.getMapCenter();
-
-            final LatLong myCenter = new LatLong(center.getLatitudeE6() / 1.0e6, center.getLongitudeE6() / 1.0e6);
-
-            this.mapView.getModel().mapViewPosition.setCenter(myCenter);
-            this.mapView.setMapZoomLevel(Settings.getMapZoom(MapMode.SINGLE));
+            mapView.zoomToViewport(new Viewport(Settings.getMapCenter().getCoords(), 0, 0));
         }
 
         // tile renderer layer using internal render theme
@@ -413,15 +412,17 @@ public class NewMap extends AbstractActionBarActivity {
             this.searchOverlay = new CachesOverlay(this.searchIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
         } else if (StringUtils.isNotEmpty(this.geocodeIntent)) {
             this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
+        } else if (this.coordsIntent != null) {
+            this.singlePointOverlay = new SinglePointOverlay(coordsIntent, waypointTypeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
         }
 
         // prepare separators
-            final SeparatorLayer separator1 = new SeparatorLayer();
-            this.separators.add(separator1);
-            this.mapView.getLayerManager().getLayers().add(separator1);
-            final SeparatorLayer separator2 = new SeparatorLayer();
-            this.separators.add(separator2);
-            this.mapView.getLayerManager().getLayers().add(separator2);
+        final SeparatorLayer separator1 = new SeparatorLayer();
+        this.separators.add(separator1);
+        this.mapView.getLayerManager().getLayers().add(separator1);
+        final SeparatorLayer separator2 = new SeparatorLayer();
+        this.separators.add(separator2);
+        this.mapView.getLayerManager().getLayers().add(separator2);
 
         // Live map
         handleLiveLayers(isLiveEnabled);
@@ -471,6 +472,10 @@ public class NewMap extends AbstractActionBarActivity {
         if (this.searchOverlay != null) {
             this.searchOverlay.onDestroy();
             this.searchOverlay = null;
+        }
+        if (this.singlePointOverlay != null) {
+            this.singlePointOverlay.onDestroy();
+            this.singlePointOverlay = null;
         }
         if (this.storedOverlay != null) {
             this.storedOverlay.onDestroy();
@@ -753,29 +758,29 @@ public class NewMap extends AbstractActionBarActivity {
         }
     }
 
-    public void showSelection(final ArrayList<String> geocodes) {
+    public void showSelection(final ArrayList<GeoitemRef> items) {
         try {
 
-            if (geocodes.size() == 0) {
+            if (items.size() == 0) {
                 return;
             }
 
-            String geocode = "";
+            if (items.size() > 1) {
 
-            if (geocodes.size() > 1) {
-
-                final CharSequence[] items = geocodes.toArray(new String[] {});
+                final ArrayList<String> itemcodes = new ArrayList<>();
+                for (final GeoitemRef item : items) {
+                    itemcodes.add(item.getItemCode());
+                }
+                final CharSequence[] listitems = itemcodes.toArray(new String[] {});
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Select a cache");
-                builder.setItems(items, new SelectionClickListener(geocodes));
+                builder.setTitle("Select an item");
+                builder.setItems(listitems, new SelectionClickListener(items));
                 builder.show();
 
             } else {
-                geocode = geocodes.get(0);
+                showPopup(items.get(0));
             }
-
-            showPopup(geocode);
 
         } catch (final NotFoundException e) {
             Log.e("NewMap.showPopup", e);
@@ -786,38 +791,45 @@ public class NewMap extends AbstractActionBarActivity {
 
     private class SelectionClickListener implements DialogInterface.OnClickListener {
 
-        private final ArrayList<String> items;
+        private final ArrayList<GeoitemRef> items;
 
-        public SelectionClickListener(final ArrayList<String> items) {
+        public SelectionClickListener(final ArrayList<GeoitemRef> items) {
             this.items = items;
         }
 
         @Override
         public void onClick(final DialogInterface dialog, final int which) {
             if (which >= 0 && which < items.size()) {
-                final String geocode = items.get(which);
-                showPopup(geocode);
+                final GeoitemRef item = items.get(which);
+                showPopup(item);
             }
         }
 
     }
 
-    private void showPopup(final String geocode) {
+    private void showPopup(final GeoitemRef item) {
         try {
 
-            if (StringUtils.isEmpty(geocode)) {
+            if (item == null || StringUtils.isEmpty(item.getGeocode())) {
                 return;
             }
 
-            final Geocache cache = DataStore.loadCache(geocode, LoadFlags.LOAD_CACHE_OR_DB);
-
-            if (cache != null) {
-                final RequestDetailsThread requestDetailsThread = new RequestDetailsThread(cache, this);
-                if (!requestDetailsThread.requestRequired()) {
-                    // don't show popup if we have enough details
-                    // progress.dismiss();
+            if (item.getType() == CoordinatesType.CACHE) {
+                final Geocache cache = DataStore.loadCache(item.getGeocode(), LoadFlags.LOAD_CACHE_OR_DB);
+                if (cache != null) {
+                    final RequestDetailsThread requestDetailsThread = new RequestDetailsThread(cache, this);
+                    if (!requestDetailsThread.requestRequired()) {
+                        // don't show popup if we have enough details
+                    }
+                    requestDetailsThread.start();
+                    return;
                 }
-                requestDetailsThread.start();
+                return;
+            }
+
+            if (item.getType() == CoordinatesType.WAYPOINT && item.getId() >= 0) {
+                WaypointPopup.startActivity(this, item.getId(), item.getGeocode());
+            } else {
                 return;
             }
 
