@@ -12,15 +12,19 @@ import android.widget.TextView;
 
 public class DistanceView {
 
-    private final Geopoint destinationCoords;
+    private Geopoint destinationCoords;
 
     @Bind(R.id.distance) protected TextView distanceView;
 
     public DistanceView(final Geopoint destinationCoords, final TextView distanceView) {
 
-        this.destinationCoords = destinationCoords;
         this.distanceView = distanceView;
 
+        setDestination(destinationCoords);
+    }
+
+    public void setDestination(final Geopoint coords) {
+        destinationCoords = coords;
         this.distanceView.setVisibility(destinationCoords != null ? View.VISIBLE : View.GONE);
     }
 

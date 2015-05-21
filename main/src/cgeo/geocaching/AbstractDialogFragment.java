@@ -24,7 +24,9 @@ import rx.functions.Func0;
 import rx.subscriptions.Subscriptions;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,12 +49,13 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
     private Subscription resumeSubscription = Subscriptions.empty();
     private TextView cacheDistance = null;
 
-
     protected static final String GEOCODE_ARG= "GEOCODE";
     protected static final String WAYPOINT_ARG= "WAYPOINT";
 
     protected Geocache cache;
 
+    public final static int RESULT_CODE_SET_TARGET = Activity.RESULT_FIRST_USER;
+    public final static int REQUEST_CODE_COORDINATES = 1;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -78,6 +81,13 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
             }
         });
 
+        final View setAsTargetView = v.findViewById(R.id.setAsTarget);
+        setAsTargetView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                setAsTarget();
+            }
+        });
         final View overflowActionBar = v.findViewById(R.id.overflowActionBar);
         overflowActionBar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,6 +283,17 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
         // do nothing by default
     }
 
+    /**
+     * Set the current popup coordinates as new navigation target on map
+     */
+    private void setAsTarget() {
+        final Activity activity = getActivity();
+        final Intent result = new Intent();
+        result.putExtra(Intents.EXTRA_COORDS, getCoordinates());
+        activity.setResult(RESULT_CODE_SET_TARGET, result);
+        activity.finish();
+    }
+
     @Override
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -329,7 +350,6 @@ public abstract class AbstractDialogFragment extends DialogFragment implements C
     protected abstract Geopoint getCoordinates();
 
     protected abstract void startDefaultNavigation2();
-
 
     @Override
     public void cachesAround() {
