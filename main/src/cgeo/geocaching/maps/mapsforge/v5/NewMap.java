@@ -1,5 +1,6 @@
 package cgeo.geocaching.maps.mapsforge.v5;
 
+import cgeo.geocaching.AbstractDialogFragment;
 import cgeo.geocaching.CachePopup;
 import cgeo.geocaching.CompassActivity;
 import cgeo.geocaching.DataStore;
@@ -879,4 +880,22 @@ public class NewMap extends AbstractActionBarActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AbstractDialogFragment.REQUEST_CODE_COORDINATES && resultCode == AbstractDialogFragment.RESULT_CODE_SET_TARGET) {
+            final Geopoint coords = data.getExtras().getParcelable(Intents.EXTRA_COORDS);
+
+            if (coords != null) {
+                coordsIntent = coords;
+                if (navigationLayer != null) {
+                    navigationLayer.setDestination(coords);
+                }
+                if (distanceView != null) {
+                    distanceView.setDestination(coords);
+                }
+            }
+        }
+    }
 }

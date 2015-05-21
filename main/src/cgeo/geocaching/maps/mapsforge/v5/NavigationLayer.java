@@ -19,7 +19,7 @@ import android.view.WindowManager;
 public class NavigationLayer extends Layer {
 
     private Geopoint currentCoords;
-    private final Geopoint destinationCoords;
+    private Geopoint destinationCoords;
     private final float width;
 
     private Paint line = null;
@@ -33,6 +33,10 @@ public class NavigationLayer extends Layer {
         windowManager.getDefaultDisplay().getMetrics(metrics);
 
         width = 4f * metrics.density;
+    }
+
+    public void setDestination(final Geopoint coords) {
+        destinationCoords = coords;
     }
 
     public void setCoordinates(final Location coordinatesIn) {
