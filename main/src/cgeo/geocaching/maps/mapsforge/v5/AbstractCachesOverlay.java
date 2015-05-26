@@ -1,8 +1,10 @@
 package cgeo.geocaching.maps.mapsforge.v5;
 
 import cgeo.geocaching.CgeoApplication;
+import cgeo.geocaching.DataStore;
 import cgeo.geocaching.Geocache;
 import cgeo.geocaching.Waypoint;
+import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.utils.MapUtils;
@@ -13,6 +15,8 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.Layers;
 
+import android.os.Handler;
+
 import java.util.Collection;
 
 public abstract class AbstractCachesOverlay {
@@ -21,15 +25,25 @@ public abstract class AbstractCachesOverlay {
     private final Layer layerAnchor;
     private final GeoitemLayers layerList = new GeoitemLayers();
     private final TapHandler tapHandler;
+    private final Handler displayHandler;
 
-    public AbstractCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler) {
+    public AbstractCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
         this.mapView = mapView;
         this.layerAnchor = layerAnchor;
         this.tapHandler = tapHandler;
+        this.displayHandler = displayHandler;
     }
 
     public void onDestroy() {
         clearLayers();
+    }
+
+    public int getVisibleItemsCount() {
+        return mapView.getViewport().count(DataStore.loadCaches(getGeocodes(), LoadFlags.LOAD_CACHE_OR_DB));
+    }
+
+    public int getItemsCount() {
+        return layerList.size();
     }
 
     protected void addItem(final Geocache cache) {
@@ -62,7 +76,8 @@ public abstract class AbstractCachesOverlay {
     }
 
     protected void repaint() {
-        mapView.repaint();
+        displayHandler.sendEmptyMessage(NewMap.INVALIDATE_MAP);
+        displayHandler.sendEmptyMessage(NewMap.UPDATE_TITLE);
     }
 
     protected void clearLayers() {

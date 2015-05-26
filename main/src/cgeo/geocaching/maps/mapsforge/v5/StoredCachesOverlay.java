@@ -16,6 +16,8 @@ import rx.Subscription;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
+import android.os.Handler;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,8 +31,8 @@ public class StoredCachesOverlay extends AbstractCachesOverlay {
     private final Set<Geocache> caches = new HashSet<>();
     private final Subscription timer;
 
-    public StoredCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler) {
-        super(mapView, layerAnchor, tapHandler);
+    public StoredCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler);
         this.timer = startTimer();
     }
 
