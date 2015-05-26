@@ -25,6 +25,7 @@ import cgeo.geocaching.sensors.GeoDirHandler;
 import cgeo.geocaching.sensors.Sensors;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.utils.AngleUtils;
+import cgeo.geocaching.utils.Formatter;
 import cgeo.geocaching.utils.Log;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +54,8 @@ import android.content.res.Resources.NotFoundException;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -110,6 +113,8 @@ public class NewMap extends AbstractActionBarActivity {
 
     private static final String BUNDLE_MAP_STATE = "mapState";
     private static final String BUNDLE_TRAIL_HISTORY = "trailHistory";
+    public static final int UPDATE_TITLE = 0;
+    public static final int INVALIDATE_MAP = 1;
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -152,7 +157,7 @@ public class NewMap extends AbstractActionBarActivity {
         ActivityMixin.setTheme(this);
 
         setContentView(R.layout.map_mapsforge_v5);
-        setTitle(res.getString(R.string.map_map));
+        setTitle();
 
         // initialize map
         mapView = (MfMapView) findViewById(R.id.mfmapv5);
@@ -410,11 +415,11 @@ public class NewMap extends AbstractActionBarActivity {
 
         // Caches overlay
         if (this.searchIntent != null) {
-            this.searchOverlay = new CachesOverlay(this.searchIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
+            this.searchOverlay = new CachesOverlay(this.searchIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler);
         } else if (StringUtils.isNotEmpty(this.geocodeIntent)) {
-            this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
+            this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler);
         } else if (this.coordsIntent != null) {
-            this.singlePointOverlay = new SinglePointOverlay(coordsIntent, waypointTypeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler);
+            this.singlePointOverlay = new SinglePointOverlay(coordsIntent, waypointTypeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler);
         }
 
         // prepare separators
@@ -441,9 +446,9 @@ public class NewMap extends AbstractActionBarActivity {
     private void handleLiveLayers(final boolean enable) {
         if (enable) {
             final SeparatorLayer separator1 = this.separators.get(0);
-            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1, this.tapHandler);
+            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1, this.tapHandler, this.displayHandler);
             final SeparatorLayer separator2 = this.separators.get(1);
-            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2, this.tapHandler);
+            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2, this.tapHandler, this.displayHandler);
         } else {
             if (this.storedOverlay != null) {
                 this.storedOverlay.onDestroy();
@@ -591,6 +596,132 @@ public class NewMap extends AbstractActionBarActivity {
 
     private static File getMapFile() {
         return new File(Settings.getMapFile());
+    }
+
+    private final static class DisplayHandler extends Handler {
+
+        private final WeakReference<NewMap> mapRef;
+
+        public DisplayHandler(@NonNull final NewMap map) {
+            this.mapRef = new WeakReference<>(map);
+        }
+
+        @Override
+        public void handleMessage(final Message msg) {
+            final int what = msg.what;
+            final NewMap map = mapRef.get();
+            if (map == null) {
+                return;
+            }
+
+            switch (what) {
+                case UPDATE_TITLE:
+                    map.setTitle();
+                    map.setSubtitle();
+
+                    break;
+                case INVALIDATE_MAP:
+                    map.mapView.repaint();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    final private Handler displayHandler = new DisplayHandler(this);
+
+    private void setTitle() {
+        final String title = calculateTitle();
+
+        getSupportActionBar().setTitle(title);
+    }
+
+    private String calculateTitle() {
+        if (isLiveEnabled) {
+            return res.getString(R.string.map_live);
+        }
+        if (mapMode == MapMode.SINGLE) {
+            final Geocache cache = getSingleModeCache();
+            if (cache != null) {
+                return cache.getName();
+            }
+        }
+        return StringUtils.defaultIfEmpty(mapTitle, res.getString(R.string.map_map));
+    }
+
+    private void setSubtitle() {
+        final String subtitle = calculateSubtitle();
+        if (StringUtils.isEmpty(subtitle)) {
+            return;
+        }
+
+        getSupportActionBar().setSubtitle(subtitle);
+    }
+
+    private String calculateSubtitle() {
+        // count caches in the sub title
+        final int visible = countVisibleCaches();
+        final int total = countTotalCaches();
+
+        final StringBuilder subtitle = new StringBuilder();
+        if (!isLiveEnabled && mapMode == MapMode.SINGLE) {
+            final Geocache cache = getSingleModeCache();
+            if (cache != null) {
+                return Formatter.formatMapSubtitle(cache);
+            }
+        }
+        if (total != 0) {
+
+            if (visible != total && Settings.isDebug()) {
+                subtitle.append(visible).append('/').append(res.getQuantityString(R.plurals.cache_counts, total, total));
+            }
+            else {
+                subtitle.append(res.getQuantityString(R.plurals.cache_counts, visible, visible));
+            }
+        }
+
+        //        if (Settings.isDebug() && lastSearchResult != null && StringUtils.isNotBlank(lastSearchResult.getUrl())) {
+        //            subtitle.append(" [").append(lastSearchResult.getUrl()).append(']');
+        //        }
+
+        return subtitle.toString();
+    }
+
+    private int countVisibleCaches() {
+
+        int res = 0;
+
+        if (searchOverlay != null) {
+            res += searchOverlay.getVisibleItemsCount();
+        }
+        if (storedOverlay != null) {
+            res += storedOverlay.getVisibleItemsCount();
+        }
+        if (liveOverlay != null) {
+            res += liveOverlay.getVisibleItemsCount();
+        }
+
+        return res;
+    }
+
+    private int countTotalCaches() {
+
+        int res = 0;
+
+        if (searchOverlay != null) {
+            res += searchOverlay.getItemsCount();
+        }
+        if (storedOverlay != null) {
+            res += storedOverlay.getItemsCount();
+        }
+        if (liveOverlay != null) {
+            res += liveOverlay.getItemsCount();
+        }
+
+        return res;
     }
 
     public static Intent getLiveMapIntent(final Activity fromActivity) {

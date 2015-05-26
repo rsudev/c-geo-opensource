@@ -9,13 +9,15 @@ import org.mapsforge.map.layer.Layer;
 
 import rx.functions.Action0;
 
+import android.os.Handler;
+
 public class SinglePointOverlay extends AbstractCachesOverlay {
 
     private final Geopoint coords;
     private final WaypointType type;
 
-    public SinglePointOverlay(final Geopoint coords, final WaypointType type, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler) {
-        super(mapView, layerAnchor, tapHandler);
+    public SinglePointOverlay(final Geopoint coords, final WaypointType type, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler);
 
         this.coords = coords;
         this.type = type;

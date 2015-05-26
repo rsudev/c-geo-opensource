@@ -9,6 +9,7 @@ import cgeo.geocaching.settings.Settings;
 import org.mapsforge.map.layer.Layer;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 
 import java.util.List;
 import java.util.Set;
@@ -17,15 +18,15 @@ public class CachesOverlay extends AbstractCachesOverlay {
 
     private final SearchResult search;
 
-    public CachesOverlay(final SearchResult search, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler) {
-        super(mapView, layerAnchor, tapHandler);
+    public CachesOverlay(final SearchResult search, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler);
 
         this.search = search;
         startDisplay();
     }
 
-    public CachesOverlay(final String geocode, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler) {
-        super(mapView, layerAnchor, tapHandler);
+    public CachesOverlay(final String geocode, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler);
 
         this.search = new SearchResult();
         this.search.addGeocode(geocode);
