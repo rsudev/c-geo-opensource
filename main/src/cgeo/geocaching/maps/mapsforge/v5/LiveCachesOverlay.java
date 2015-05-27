@@ -40,8 +40,8 @@ public class LiveCachesOverlay extends AbstractCachesOverlay {
     public long loadThreadRun = -1;
     private MapTokens tokens;
 
-    public LiveCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
-        super(mapView, layerAnchor, tapHandler, displayHandler);
+    public LiveCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler, final Handler showProgressHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler, showProgressHandler);
 
         this.timer = startTimer();
     }
@@ -105,7 +105,7 @@ public class LiveCachesOverlay extends AbstractCachesOverlay {
 
     private void download() {
         try {
-            //            showProgressHandler.sendEmptyMessage(SHOW_PROGRESS); // show progress
+            showProgress();
             if (Settings.isGCConnectorActive()) {
                 if (tokens == null) {
                     tokens = GCLogin.getInstance().getMapTokens();
@@ -135,7 +135,7 @@ public class LiveCachesOverlay extends AbstractCachesOverlay {
             fill();
 
         } finally {
-            //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS); // hide progress
+            hideProgress();
         }
     }
 

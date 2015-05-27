@@ -16,8 +16,8 @@ public class SinglePointOverlay extends AbstractCachesOverlay {
     private final Geopoint coords;
     private final WaypointType type;
 
-    public SinglePointOverlay(final Geopoint coords, final WaypointType type, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
-        super(mapView, layerAnchor, tapHandler, displayHandler);
+    public SinglePointOverlay(final Geopoint coords, final WaypointType type, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler, final Handler showProgressHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler, showProgressHandler);
 
         this.coords = coords;
         this.type = type;
@@ -34,7 +34,8 @@ public class SinglePointOverlay extends AbstractCachesOverlay {
 
     private void fill() {
         try {
-            //            showProgressHandler.sendEmptyMessage(SHOW_PROGRESS);
+            showProgress();
+
             clearLayers();
 
             // construct waypoint
@@ -47,7 +48,7 @@ public class SinglePointOverlay extends AbstractCachesOverlay {
 
             repaint();
         } finally {
-            //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS);
+            hideProgress();
         }
     }
 }

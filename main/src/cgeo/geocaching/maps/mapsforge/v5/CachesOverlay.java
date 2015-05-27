@@ -18,15 +18,15 @@ public class CachesOverlay extends AbstractCachesOverlay {
 
     private final SearchResult search;
 
-    public CachesOverlay(final SearchResult search, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
-        super(mapView, layerAnchor, tapHandler, displayHandler);
+    public CachesOverlay(final SearchResult search, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler, final Handler showProgressHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler, showProgressHandler);
 
         this.search = search;
         startDisplay();
     }
 
-    public CachesOverlay(final String geocode, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
-        super(mapView, layerAnchor, tapHandler, displayHandler);
+    public CachesOverlay(final String geocode, final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler, final Handler showProgressHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler, showProgressHandler);
 
         this.search = new SearchResult();
         this.search.addGeocode(geocode);
@@ -39,7 +39,8 @@ public class CachesOverlay extends AbstractCachesOverlay {
 
     private void fill() {
         try {
-            //            showProgressHandler.sendEmptyMessage(SHOW_PROGRESS);
+            showProgress();
+
             clearLayers();
 
             // display caches
@@ -76,7 +77,7 @@ public class CachesOverlay extends AbstractCachesOverlay {
 
             repaint();
         } finally {
-            //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS);
+            hideProgress();
         }
     }
 
