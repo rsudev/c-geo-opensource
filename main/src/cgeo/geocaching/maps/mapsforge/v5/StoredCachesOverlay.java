@@ -31,8 +31,8 @@ public class StoredCachesOverlay extends AbstractCachesOverlay {
     private final Set<Geocache> caches = new HashSet<>();
     private final Subscription timer;
 
-    public StoredCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
-        super(mapView, layerAnchor, tapHandler, displayHandler);
+    public StoredCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler, final Handler showProgressHandler) {
+        super(mapView, layerAnchor, tapHandler, displayHandler, showProgressHandler);
         this.timer = startTimer();
     }
 
@@ -90,7 +90,8 @@ public class StoredCachesOverlay extends AbstractCachesOverlay {
 
     private void load() {
         try {
-            //            showProgressHandler.sendEmptyMessage(SHOW_PROGRESS);
+            showProgress();
+
             final SearchResult searchResult = new SearchResult(DataStore.loadCachedInViewport(getViewport(), Settings.getCacheType()));
 
             final Set<Geocache> cachesFromSearchResult = searchResult.getCachesFromSearchResult(LoadFlags.LOAD_WAYPOINTS);
@@ -105,7 +106,7 @@ public class StoredCachesOverlay extends AbstractCachesOverlay {
             fill();
 
         } finally {
-            //            showProgressHandler.sendEmptyMessage(HIDE_PROGRESS); // hide progress
+            hideProgress();
         }
     }
 

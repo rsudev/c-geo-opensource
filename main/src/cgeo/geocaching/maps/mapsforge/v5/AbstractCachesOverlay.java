@@ -26,12 +26,14 @@ public abstract class AbstractCachesOverlay {
     private final GeoitemLayers layerList = new GeoitemLayers();
     private final TapHandler tapHandler;
     private final Handler displayHandler;
+    private final Handler showProgressHandler;
 
-    public AbstractCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler) {
+    public AbstractCachesOverlay(final MfMapView mapView, final Layer layerAnchor, final TapHandler tapHandler, final Handler displayHandler, final Handler showProgressHandler) {
         this.mapView = mapView;
         this.layerAnchor = layerAnchor;
         this.tapHandler = tapHandler;
         this.displayHandler = displayHandler;
+        this.showProgressHandler = showProgressHandler;
     }
 
     public void onDestroy() {
@@ -73,6 +75,14 @@ public abstract class AbstractCachesOverlay {
 
     protected int getMapZoomLevel() {
         return this.mapView.getMapZoomLevel();
+    }
+
+    protected void showProgress() {
+        showProgressHandler.sendEmptyMessage(NewMap.SHOW_PROGRESS);
+    }
+
+    protected void hideProgress() {
+        showProgressHandler.sendEmptyMessage(NewMap.HIDE_PROGRESS);
     }
 
     protected void repaint() {

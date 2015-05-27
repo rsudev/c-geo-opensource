@@ -116,8 +116,12 @@ public class NewMap extends AbstractActionBarActivity {
 
     private static final String BUNDLE_MAP_STATE = "mapState";
     private static final String BUNDLE_TRAIL_HISTORY = "trailHistory";
+
+    // Handler messages
     public static final int UPDATE_TITLE = 0;
     public static final int INVALIDATE_MAP = 1;
+    public static final int HIDE_PROGRESS = 0;
+    public static final int SHOW_PROGRESS = 1;
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -459,11 +463,11 @@ public class NewMap extends AbstractActionBarActivity {
 
         // Caches overlay
         if (this.searchIntent != null) {
-            this.searchOverlay = new CachesOverlay(this.searchIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler);
+            this.searchOverlay = new CachesOverlay(this.searchIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler, this.showProgressHandler);
         } else if (StringUtils.isNotEmpty(this.geocodeIntent)) {
-            this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler);
+            this.searchOverlay = new CachesOverlay(this.geocodeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler, this.showProgressHandler);
         } else if (this.coordsIntent != null) {
-            this.singlePointOverlay = new SinglePointOverlay(coordsIntent, waypointTypeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler);
+            this.singlePointOverlay = new SinglePointOverlay(coordsIntent, waypointTypeIntent, this.mapView, this.tapHandlerLayer, this.tapHandler, this.displayHandler, this.showProgressHandler);
         }
 
         // prepare separators
@@ -490,9 +494,9 @@ public class NewMap extends AbstractActionBarActivity {
     private void handleLiveLayers(final boolean enable) {
         if (enable) {
             final SeparatorLayer separator1 = this.separators.get(0);
-            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1, this.tapHandler, this.displayHandler);
+            this.storedOverlay = new StoredCachesOverlay(this.mapView, separator1, this.tapHandler, this.displayHandler, this.showProgressHandler);
             final SeparatorLayer separator2 = this.separators.get(1);
-            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2, this.tapHandler, this.displayHandler);
+            this.liveOverlay = new LiveCachesOverlay(this.mapView, separator2, this.tapHandler, this.displayHandler, this.showProgressHandler);
         } else {
             if (this.storedOverlay != null) {
                 this.storedOverlay.onDestroy();
@@ -767,6 +771,43 @@ public class NewMap extends AbstractActionBarActivity {
 
         return res;
     }
+
+    /** Updates the progress. */
+    private static final class ShowProgressHandler extends Handler {
+        private int counter = 0;
+
+        @NonNull private final WeakReference<NewMap> mapRef;
+
+        public ShowProgressHandler(@NonNull final NewMap map) {
+            this.mapRef = new WeakReference<>(map);
+        }
+
+        @Override
+        public void handleMessage(final Message msg) {
+            final int what = msg.what;
+
+            if (what == HIDE_PROGRESS) {
+                if (--counter == 0) {
+                    showProgress(false);
+                }
+            } else if (what == SHOW_PROGRESS) {
+                showProgress(true);
+                counter++;
+            }
+        }
+
+        private void showProgress(final boolean show) {
+            final NewMap map = mapRef.get();
+            if (map == null) {
+                return;
+            }
+
+            map.setSupportProgressBarIndeterminateVisibility(show);
+        }
+
+    }
+
+    final private Handler showProgressHandler = new ShowProgressHandler(this);
 
     public static Intent getLiveMapIntent(final Activity fromActivity) {
         return new Intent(fromActivity, NewMap.class)
