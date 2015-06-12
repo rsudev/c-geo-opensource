@@ -20,6 +20,9 @@ import cgeo.geocaching.enumerations.WaypointType;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.maps.CGeoMap.MapMode;
+import cgeo.geocaching.maps.MapProviderFactory;
+import cgeo.geocaching.maps.interfaces.MapSource;
+import cgeo.geocaching.maps.mapsforge.MapsforgeMapProvider;
 import cgeo.geocaching.sensors.GeoData;
 import cgeo.geocaching.sensors.GeoDirHandler;
 import cgeo.geocaching.sensors.Sensors;
@@ -35,6 +38,7 @@ import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.graphics.AndroidResourceBitmap;
 import org.mapsforge.map.android.util.AndroidUtil;
+import org.mapsforge.map.layer.Layers;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.reader.MapFile;
@@ -184,6 +188,8 @@ public class NewMap extends AbstractActionBarActivity {
         final boolean result = super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.map_activity, menu);
 
+        MapProviderFactory.addMapviewMenuItems(menu);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             /* if we have an Actionbar find the my position toggle */
             final MenuItem item = menu.findItem(R.id.menu_toggle_mypos);
@@ -202,6 +208,16 @@ public class NewMap extends AbstractActionBarActivity {
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        for (final MapSource mapSource : MapProviderFactory.getMapSources()) {
+            final MenuItem menuItem = menu.findItem(mapSource.getNumericalId());
+            if (menuItem != null) {
+                if (mapSource instanceof MapsforgeMapProvider.OfflineMapSource) {
+                    menuItem.setVisible(mapSource.isAvailable());
+                } else {
+                    menuItem.setVisible(false);
+                }
+            }
+        }
 
         try {
             final MenuItem itemMapLive = menu.findItem(R.id.menu_map_live);
@@ -278,6 +294,13 @@ public class NewMap extends AbstractActionBarActivity {
             case R.id.menu_compass:
                 menuCompass();
                 return true;
+            default:
+                final MapSource mapSource = MapProviderFactory.getMapSource(id);
+                if (mapSource != null) {
+                    item.setChecked(true);
+                    setMapSource(mapSource);
+                    return true;
+                }
         }
         return false;
     }
@@ -359,6 +382,28 @@ public class NewMap extends AbstractActionBarActivity {
         }
         tileCache.destroy();
         tileRendererLayer.requestRedraw();
+    }
+
+    private void setMapSource(final MapSource mapSource) {
+        // Update mapsource in settings
+        Settings.setMapSource(mapSource);
+
+        // Create new render layer
+        final TileRendererLayer newLayer = new TileRendererLayer(tileCache, new MapFile(NewMap.getMapFile()),
+                this.mapView.getModel().mapViewPosition, false, true, AndroidGraphicFactory.INSTANCE);
+
+        // Exchange layer
+        final TileRendererLayer oldLayer = this.tileRendererLayer;
+        final Layers layers = this.mapView.getLayerManager().getLayers();
+        final int index = layers.indexOf(oldLayer) + 1;
+        layers.add(index, newLayer);
+        this.tileRendererLayer = newLayer;
+        this.setMapTheme();
+
+        // Cleanup
+        layers.remove(oldLayer);
+        oldLayer.onDestroy();
+        tileCache.destroy();
     }
 
     @Override
