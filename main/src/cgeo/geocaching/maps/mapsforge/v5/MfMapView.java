@@ -3,6 +3,7 @@ package cgeo.geocaching.maps.mapsforge.v5;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.maps.CGeoMap.MapMode;
+import cgeo.geocaching.maps.interfaces.OnMapDragListener;
 import cgeo.geocaching.settings.Settings;
 
 import org.mapsforge.core.model.LatLong;
@@ -10,13 +11,22 @@ import org.mapsforge.core.model.Point;
 import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.android.view.MapView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.MotionEvent;
 
 public class MfMapView extends MapView {
 
+    private final GestureDetector gestureDetector;
+    private OnMapDragListener onDragListener;
+
     public MfMapView(final Context context, final AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
     public Viewport getViewport() {
@@ -88,5 +98,35 @@ public class MfMapView extends MapView {
             getModel().mapViewPosition.setZoomLevel(newZoom);
         }
         getModel().mapViewPosition.setCenter(new LatLong(viewport.getCenter().getLatitude(), viewport.getCenter().getLongitude()));
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(final MotionEvent ev) {
+        gestureDetector.onTouchEvent(ev);
+        return super.onTouchEvent(ev);
+    }
+
+    private class GestureListener extends SimpleOnGestureListener {
+        @Override
+        public boolean onDoubleTap(final MotionEvent e) {
+            if (onDragListener != null) {
+                onDragListener.onDrag();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(final MotionEvent e1, final MotionEvent e2,
+                final float distanceX, final float distanceY) {
+            if (onDragListener != null) {
+                onDragListener.onDrag();
+            }
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+    }
+
+    public void setOnMapDragListener(final OnMapDragListener onDragListener) {
+        this.onDragListener = onDragListener;
     }
 }
