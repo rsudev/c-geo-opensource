@@ -60,7 +60,8 @@
       <sourceFolder url="file://$MODULE_DIR$/thirdparty" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/rs" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/build/build" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/build/androidannotations.log" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes-proguard" />
@@ -74,6 +75,9 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.3.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/8.3.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/8.3.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.espresso/espresso-runner-runtime/1.1-r3/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.espresso/espresso-runner/1.1-r3/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.espresso/espresso/1.1-r3/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/proguard-rules" />
@@ -91,36 +95,39 @@
     <content url="file://$MODULE_DIR$/../tests/assets">
       <sourceFolder url="file://$MODULE_DIR$/../tests/assets" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../tests/java">
-      <sourceFolder url="file://$MODULE_DIR$/../tests/java" isTestSource="true" />
-    </content>
     <content url="file://$MODULE_DIR$/../tests/jni">
       <sourceFolder url="file://$MODULE_DIR$/../tests/jni" isTestSource="true" />
     </content>
     <content url="file://$MODULE_DIR$/../tests/res">
       <sourceFolder url="file://$MODULE_DIR$/../tests/res" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../tests/resources">
-      <sourceFolder url="file://$MODULE_DIR$/../tests/resources" type="java-test-resource" />
-    </content>
     <content url="file://$MODULE_DIR$/../tests/rs">
       <sourceFolder url="file://$MODULE_DIR$/../tests/rs" isTestSource="true" />
+    </content>
+    <content url="file://$MODULE_DIR$/../tests/src">
+      <sourceFolder url="file://$MODULE_DIR$/../tests/src" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../tests/src" isTestSource="true" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="butterknife-7.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-location-8.3.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="espresso-1.1-r3" level="project" />
     <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
     <orderEntry type="library" exported="" name="mapsforge-map-0.3.0-jar-with-dependencies" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="assertj-core-1.7.0" level="project" />
     <orderEntry type="library" exported="" name="android-integration-3.2.1" level="project" />
     <orderEntry type="library" exported="" name="jsr305-3.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-8.3.0" level="project" />
     <orderEntry type="library" exported="" name="mapsforge-map-release-0.5.2" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="hamcrest-library-1.1" level="project" />
     <orderEntry type="library" exported="" name="locus-api-4.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="hamcrest-integration-1.1" level="project" />
     <orderEntry type="library" exported="" name="jackson-annotations-2.6.3" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="commons-lang3-3.4" level="project" />
     <orderEntry type="library" exported="" name="commons-collections4-4.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="espresso-runner-runtime-1.1-r3" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="mapsforge-map-reader-release-0.5.2" level="project" />
@@ -130,15 +137,20 @@
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="jcip-annotations-1.0" level="project" />
     <orderEntry type="library" exported="" name="httpclientandroidlib-1.1.2" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="dagger-1.2.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="espresso-runner-1.1-r3" level="project" />
     <orderEntry type="library" exported="" name="rxandroid-0.25.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="javax.annotation-api-1.2" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="javax.inject-1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="guava-16.0" level="project" />
     <orderEntry type="library" exported="" name="jackson-databind-2.6.3" level="project" />
     <orderEntry type="library" exported="" name="mapsforge-core-release-0.5.2" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-3.3.2" level="project" />
     <orderEntry type="library" exported="" name="play-services-maps-8.3.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-8.3.0" level="project" />
     <orderEntry type="library" exported="" name="library-1.3" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="assertj-core-2.2.0" level="project" />
     <orderEntry type="library" exported="" name="rxjava-1.0.16" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.1" level="project" />
     <orderEntry type="library" exported="" name="org.eclipse.jdt.annotation-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="mapsforge-map-android-release-0.5.2" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="android-junit-report-1.5.8" level="project" />

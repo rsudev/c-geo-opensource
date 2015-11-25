@@ -48,11 +48,11 @@ public abstract class AbstractCachesOverlay {
         return layerList.size();
     }
 
-    protected void addItem(final Geocache cache) {
+    protected final void addItem(final Geocache cache) {
         layerList.add(getCacheItem(cache, this.tapHandler));
     }
 
-    protected void addItem(final Waypoint waypoint) {
+    protected final void addItem(final Waypoint waypoint) {
         final GeoitemLayer waypointItem = getWaypointItem(waypoint, this.tapHandler);
         if (waypointItem != null) {
             layerList.add(waypointItem);
