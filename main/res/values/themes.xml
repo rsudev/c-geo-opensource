@@ -48,8 +48,8 @@
    <style name="cgeo.base" parent="@style/Theme.AppCompat">
 
        <!-- For some reason we get a different text-size here (bug in abc?), explicitly set text styles -->
-       <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Title</item>
-       <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle</item>
+       <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title</item>
+       <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle</item>
 
        <item name="android:buttonStyle">@style/button</item>
        <item name="android:editTextStyle">@style/edittext</item>
@@ -67,8 +67,8 @@
     <style name="cgeo.base.light" parent="@style/Theme.AppCompat.Light.DarkActionBar">
 
         <!-- For some reason we get the non inversed texts here (bug in abc?), explicitly set text styles -->
-        <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Title.Inverse</item>
-        <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle.Inverse</item>
+        <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse</item>
 
 
         <item name="android:buttonStyle">@style/button</item>
@@ -178,19 +178,18 @@
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
-
     </style>
 
-    <style name="cgeo_popup" parent="cgeo.Translucent.Light">
-        <item name="android:windowNoTitle">true</item>
-     </style>
+    <style name="popup_light" parent="cgeo.Translucent.Light">
+		<item name="android:windowNoTitle">true</item>
+    	<item name="windowActionBar">false</item>
+    </style>
 
     <style name="popup_dark" parent="cgeo.Translucent">
+		<item name="android:windowNoTitle">true</item>
+    	<item name="windowActionBar">false</item>
     </style>
 
-    <style name="popup_light" parent="cgeo_popup">
-    </style>
-    
     <style name="settings" parent="@style/Theme.AppCompat">
         <item name="settings_cloud">@drawable/settings_cloud_white</item>
         <item name="settings_details">@drawable/settings_details_white</item>
