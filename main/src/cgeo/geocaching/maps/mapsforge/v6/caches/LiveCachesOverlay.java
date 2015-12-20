@@ -109,6 +109,9 @@ public class LiveCachesOverlay extends AbstractCachesOverlay {
     private void download() {
         try {
             showProgress();
+
+            final SearchResult searchResult = DataStore.loadCachedInViewport(getViewport(), Settings.getCacheType());
+
             if (Settings.isGCConnectorActive()) {
                 if (tokens == null) {
                     tokens = GCLogin.getInstance().getMapTokens();
@@ -121,7 +124,7 @@ public class LiveCachesOverlay extends AbstractCachesOverlay {
                     }
                 }
             }
-            final SearchResult searchResult = ConnectorFactory.searchByViewport(getViewport().resize(1.2), tokens);
+            searchResult.addSearchResult(ConnectorFactory.searchByViewport(getViewport().resize(1.2), tokens));
 
             final Set<Geocache> result = searchResult.getCachesFromSearchResult(LoadFlags.LOAD_CACHE_OR_DB);
             filter(result);
@@ -130,6 +133,8 @@ public class LiveCachesOverlay extends AbstractCachesOverlay {
             final Set<String> filteredCodes = searchResult.getFilteredGeocodes();
             Log.d("Filtering out " + filteredCodes.size() + " caches: " + filteredCodes.toString());
             DataStore.removeCaches(filteredCodes, EnumSet.of(RemoveFlag.CACHE));
+
+            Log.d(String.format("Live caches found: %d", result.size()));
 
             //render
             fill(result);

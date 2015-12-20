@@ -83,6 +83,14 @@ public class CachesBundle {
         this.baseOverlay = new CachesOverlay(geocode, BASE_OVERLAY_ID, this.geoEntries, this.mapView, separators.get(BASE_SEPARATOR), this.mapHandlers);
     }
 
+    /**
+     * Initialization with single waypoint
+     *
+     * @param coords
+     * @param waypointType
+     * @param mapView
+     * @param mapHandlers
+     */
     public CachesBundle(Geopoint coords, WaypointType waypointType, MfMapView mapView, MapHandlers mapHandlers) {
         this(mapView, mapHandlers);
         this.baseOverlay = new SinglePointOverlay(coords, waypointType, BASE_OVERLAY_ID, this.geoEntries, this.mapView, separators.get(BASE_SEPARATOR), this.mapHandlers);
@@ -93,7 +101,7 @@ public class CachesBundle {
             final SeparatorLayer separator1 = this.separators.get(STORED_SEPARATOR);
             this.storedOverlay = new StoredCachesOverlay(STORED_OVERLAY_ID, this.geoEntries, this.mapView, separator1, this.mapHandlers);
             final SeparatorLayer separator2 = this.separators.get(LIVE_SEPARATOR);
-            this.liveOverlay = new LiveCachesOverlay(STORED_OVERLAY_ID, this.geoEntries, this.mapView, separator2, this.mapHandlers);
+            this.liveOverlay = new LiveCachesOverlay(LIVE_OVERLAY_ID, this.geoEntries, this.mapView, separator2, this.mapHandlers);
         } else {
             if (this.storedOverlay != null) {
                 this.storedOverlay.onDestroy();

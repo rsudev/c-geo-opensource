@@ -11,6 +11,7 @@ import cgeo.geocaching.models.Waypoint;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
+import cgeo.geocaching.utils.Log;
 import cgeo.geocaching.utils.MapUtils;
 
 import org.mapsforge.core.graphics.Bitmap;
@@ -24,15 +25,15 @@ import java.util.Set;
 
 public abstract class AbstractCachesOverlay {
 
-    private final int layerId;
+    private final int overlayId;
     private final Set<GeoEntry> geoEntries;
     private final MfMapView mapView;
     private final Layer anchorLayer;
     private final GeoitemLayers layerList = new GeoitemLayers();
     private final MapHandlers mapHandlers;
 
-    public AbstractCachesOverlay(final int layerId, final Set<GeoEntry> geoEntries, final MfMapView mapView, final Layer anchorLayer, final MapHandlers mapHandlers) {
-        this.layerId = layerId;
+    public AbstractCachesOverlay(final int overlayId, final Set<GeoEntry> geoEntries, final MfMapView mapView, final Layer anchorLayer, final MapHandlers mapHandlers) {
+        this.overlayId = overlayId;
         this.geoEntries = geoEntries;
         this.mapView = mapView;
         this.anchorLayer = anchorLayer;
@@ -52,22 +53,32 @@ public abstract class AbstractCachesOverlay {
     }
 
     protected final boolean addItem(final Geocache cache) {
-        GeoEntry entry = new GeoEntry(cache.getGeocode(), layerId);
+        GeoEntry entry = new GeoEntry(cache.getGeocode(), overlayId);
         if (geoEntries.add(entry)) {
             layerList.add(getCacheItem(cache, this.mapHandlers.getTapHandler()));
+
+            Log.d(String.format("Cache %s for id %d added, geoEntries: %d", entry.geocode, overlayId, geoEntries.size()));
+
             return true;
         }
+
+        Log.d(String.format("Cache %s for id %d not added, geoEntries: %d", entry.geocode, overlayId, geoEntries.size()));
 
         return false;
     }
 
     protected final boolean addItem(final Waypoint waypoint) {
-        GeoEntry entry = new GeoEntry(waypoint.getGpxId(), layerId);
+        GeoEntry entry = new GeoEntry(waypoint.getGpxId(), overlayId);
         final GeoitemLayer waypointItem = getWaypointItem(waypoint, this.mapHandlers.getTapHandler());
         if (waypointItem != null && geoEntries.add(entry)) {
             layerList.add(waypointItem);
+
+            Log.d(String.format("Waypoint %s for id %d added, geoEntries: %d", entry.geocode, overlayId, geoEntries.size()));
+
             return true;
         }
+
+        Log.d(String.format("Waypoint %s for id %d not added, geoEntries: %d", entry.geocode, overlayId, geoEntries.size()));
 
         return false;
     }
@@ -107,23 +118,27 @@ public abstract class AbstractCachesOverlay {
         final Layers layers = this.mapView.getLayerManager().getLayers();
 
         for (final GeoitemLayer layer : layerList) {
-            geoEntries.remove(new GeoEntry(layer.getItemCode(), layerId));
+            geoEntries.remove(new GeoEntry(layer.getItemCode(), overlayId));
             layers.remove(layer);
         }
 
         layerList.clear();
+
+        Log.d(String.format("Layers for id %d cleared, remaining geoEntries: %d", overlayId, geoEntries.size()));
     }
 
     protected void syncLayers(final Collection<String> removeCodes, final Collection<String> newCodes) {
         final Layers layers = this.mapView.getLayerManager().getLayers();
         for (final String code : removeCodes) {
             final GeoitemLayer item = layerList.getItem(code);
-            geoEntries.remove(new GeoEntry(code, layerId));
+            geoEntries.remove(new GeoEntry(code, overlayId));
             layers.remove(item);
             layerList.remove(item);
         }
         final int index = layers.indexOf(anchorLayer) + 1;
         layers.addAll(index, layerList.getMatchingLayers(newCodes));
+
+        Log.d(String.format("Layers for id %d synced. Codes removed: %d, new codes: %d, geoEntries: %d", overlayId, removeCodes.size(), newCodes.size(), geoEntries.size()));
     }
 
     private static GeoitemLayer getCacheItem(final Geocache cache, final TapHandler tapHandler) {

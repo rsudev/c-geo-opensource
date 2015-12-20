@@ -761,11 +761,9 @@ public class NewMap extends AbstractActionBarActivity {
             }
             if (map.myProgress != null) {
                 if (show) {
-                    map.myProgress.setVisible(true);
                     MenuItemCompat.setActionView(map.myProgress, R.layout.actionbar_indeterminate_progress);
                 } else {
                     MenuItemCompat.setActionView(map.myProgress, null);
-                    map.myProgress.setVisible(false);
                 }
             }
         }
