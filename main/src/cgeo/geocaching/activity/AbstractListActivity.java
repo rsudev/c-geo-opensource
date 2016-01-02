@@ -1,5 +1,6 @@
 package cgeo.geocaching.activity;
 
+import android.support.v7.app.AppCompatActivity;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
