@@ -16,7 +16,7 @@
         android:id="@+id/cachelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/abc_ic_search"
+        android:drawableLeft="@drawable/abc_ic_search_api_mtrl_alpha"
         android:gravity="left|center_vertical"
         android:layout_alignParentRight="true"/>
 
