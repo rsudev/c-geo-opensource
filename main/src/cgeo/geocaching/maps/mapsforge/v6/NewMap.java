@@ -1,8 +1,6 @@
 package cgeo.geocaching.maps.mapsforge.v6;
 
-import cgeo.geocaching.AbstractDialogFragment;
-import cgeo.geocaching.CachePopup;
-import cgeo.geocaching.CompassActivity;
+import cgeo.geocaching.*;
 import cgeo.geocaching.maps.mapsforge.v6.caches.CachesBundle;
 import cgeo.geocaching.maps.mapsforge.v6.caches.GeoitemRef;
 import cgeo.geocaching.maps.mapsforge.v6.layers.HistoryLayer;
@@ -11,10 +9,6 @@ import cgeo.geocaching.maps.mapsforge.v6.layers.PositionLayer;
 import cgeo.geocaching.maps.mapsforge.v6.layers.TapHandlerLayer;
 import cgeo.geocaching.storage.DataStore;
 import cgeo.geocaching.models.Geocache;
-import cgeo.geocaching.Intents;
-import cgeo.geocaching.R;
-import cgeo.geocaching.SearchResult;
-import cgeo.geocaching.WaypointPopup;
 import cgeo.geocaching.activity.AbstractActionBarActivity;
 import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.connector.gc.GCMap;
@@ -574,6 +568,13 @@ public class NewMap extends AbstractActionBarActivity {
         myLocSwitch.setChecked(followMyLocation);
         if (followMyLocation) {
             myLocationInMiddle(Sensors.getInstance().currentGeo());
+        }
+    }
+
+    public void showAddWaypoint(LatLong tapLatLong) {
+        Geocache cache = getSingleModeCache();
+        if (cache != null) {
+            EditWaypointActivity.startActivityAddWaypoint(this, cache, new Geopoint(tapLatLong.latitude, tapLatLong.longitude));
         }
     }
 
