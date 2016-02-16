@@ -425,13 +425,6 @@ if (privatePropertiesFile.exists()) {
     android.buildTypes.release.signingConfig android.signingConfigs.release
 }
 
-// check existence of private properties, show an error message
-task verifyPrivateProperties << {
-    if (!rootProject.file('private.properties').exists()) {
-        throw new InvalidUserDataException("For signing the release build you must provide a file private.properties in the root directory. Copy templates/private.properties and change the values.")
-    }
-}
-
 // copy preferences containing user and password to the device
 task copyDefaultPreferencesToAndroid(dependsOn: 'installBasicDebug') {
     doFirst {
@@ -448,16 +441,5 @@ task copyDefaultPreferencesToAndroid(dependsOn: 'installBasicDebug') {
                 print(e.message)
             }
         }
-    }
-}
-
-tasks.whenTaskAdded { theTask ->
-    // only verify the existence of private.properties, when the file is really needed
-    if (theTask.name.equals("packageRelease")) {
-        theTask.dependsOn "verifyPrivateProperties"
-    }
-    // copy default preferences before starting the app
-    if (theTask.name.equals("runBasicDebug") || theTask.name.equals("connectedBasicDebugAndroidTest")) {
-        theTask.dependsOn "copyDefaultPreferencesToAndroid"
     }
 }

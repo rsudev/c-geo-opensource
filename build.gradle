@@ -130,3 +130,17 @@ subprojects {
         downloadSources = true
     }
 }
+
+// check existence of private properties, show an error message
+task verifyPrivateProperties << {
+    if (!rootProject.file('private.properties').exists()) {
+        throw new InvalidUserDataException("For signing the release build you must provide a file private.properties in the root directory. Copy templates/private.properties and change the values.")
+    }
+}
+
+tasks.whenTaskAdded { theTask ->
+    // only verify the existence of private.properties, when the file is really needed
+    if (theTask.name.equals("packageRelease")) {
+        theTask.dependsOn "verifyPrivateProperties"
+    }
+}
