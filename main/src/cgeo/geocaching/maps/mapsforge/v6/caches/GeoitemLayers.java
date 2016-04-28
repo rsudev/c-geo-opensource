@@ -6,12 +6,12 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GeoitemLayers implements Collection<GeoitemLayer> {
 
-    final private HashMap<String, GeoitemLayer> geoitems = new HashMap<>();
+    final private ConcurrentHashMap<String, GeoitemLayer> geoitems = new ConcurrentHashMap<>();
 
     public Collection<String> getGeocodes() {
         return new ArrayList<>(geoitems.keySet());
