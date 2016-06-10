@@ -67,8 +67,10 @@
       <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/dependency-cache" />
       <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/incremental-safeguard" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/instant-run-support" />
       <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/lint" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/pre-dexed" />
       <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/rs" />
       <excludeFolder url="file://$MODULE_DIR$/../../../showcaseview/build/intermediates/shaders" />

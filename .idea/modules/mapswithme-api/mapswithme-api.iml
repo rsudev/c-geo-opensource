@@ -70,8 +70,10 @@
       <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/dependency-cache" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/incremental-safeguard" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/instant-run-support" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/lint" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/pre-dexed" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/rs" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mapswithme-api/build/intermediates/shaders" />
