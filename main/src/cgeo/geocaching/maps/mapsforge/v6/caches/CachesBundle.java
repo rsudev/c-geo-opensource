@@ -173,6 +173,20 @@ public class CachesBundle {
         return result;
     }
 
+    public Set<String> getVisibleGeocodes() {
+
+        final Set<String> result = new HashSet<>();
+
+        if (this.liveOverlay != null) {
+            result.addAll(this.liveOverlay.getVisibleGeocodes());
+        }
+        if (this.storedOverlay != null) {
+            result.addAll(this.storedOverlay.getVisibleGeocodes());
+        }
+
+        return result;
+    }
+
     public int getItemsCount() {
 
         int result = 0;

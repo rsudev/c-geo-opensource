@@ -2,6 +2,7 @@ package cgeo.geocaching.maps.mapsforge.v6;
 
 import cgeo.geocaching.AbstractDialogFragment;
 import cgeo.geocaching.AbstractDialogFragment.TargetInfo;
+import cgeo.geocaching.CacheListActivity;
 import cgeo.geocaching.CachePopup;
 import cgeo.geocaching.CompassActivity;
 import cgeo.geocaching.EditWaypointActivity;
@@ -43,25 +44,6 @@ import cgeo.geocaching.utils.CancellableHandler;
 import cgeo.geocaching.utils.Formatter;
 import cgeo.geocaching.utils.Log;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import org.mapsforge.core.model.LatLong;
-import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
-import org.mapsforge.map.android.graphics.AndroidResourceBitmap;
-import org.mapsforge.map.android.util.AndroidUtil;
-import org.mapsforge.map.layer.Layers;
-import org.mapsforge.map.layer.cache.TileCache;
-import org.mapsforge.map.layer.renderer.TileRendererLayer;
-import org.mapsforge.map.model.DisplayModel;
-import org.mapsforge.map.reader.MapFile;
-import org.mapsforge.map.rendertheme.ExternalRenderTheme;
-import org.mapsforge.map.rendertheme.InternalRenderTheme;
-import org.mapsforge.map.rendertheme.XmlRenderTheme;
-import org.mapsforge.map.rendertheme.rule.RenderThemeHandler;
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -75,6 +57,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -98,6 +82,22 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import butterknife.ButterKnife;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.mapsforge.core.model.LatLong;
+import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
+import org.mapsforge.map.android.graphics.AndroidResourceBitmap;
+import org.mapsforge.map.android.util.AndroidUtil;
+import org.mapsforge.map.layer.Layers;
+import org.mapsforge.map.layer.cache.TileCache;
+import org.mapsforge.map.layer.renderer.TileRendererLayer;
+import org.mapsforge.map.model.DisplayModel;
+import org.mapsforge.map.reader.MapFile;
+import org.mapsforge.map.rendertheme.ExternalRenderTheme;
+import org.mapsforge.map.rendertheme.InternalRenderTheme;
+import org.mapsforge.map.rendertheme.XmlRenderTheme;
+import org.mapsforge.map.rendertheme.rule.RenderThemeHandler;
+import org.xmlpull.v1.XmlPullParserException;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.subscriptions.Subscriptions;
@@ -303,9 +303,7 @@ public class NewMap extends AbstractActionBarActivity {
 
             menu.findItem(R.id.menu_theme_mode).setVisible(true);
 
-            //TODO: menu_as_list
-            menu.findItem(R.id.menu_as_list).setVisible(false);
-            //menu.findItem(R.id.menu_as_list).setVisible(!isLoading() && caches.size() > 1);
+            menu.findItem(R.id.menu_as_list).setVisible(!caches.isDownloading() && caches.getVisibleItemsCount(false) > 0);
 
             menu.findItem(R.id.submenu_strategy).setVisible(isLiveEnabled);
 
@@ -413,8 +411,7 @@ public class NewMap extends AbstractActionBarActivity {
                 selectMapTheme();
                 return true;
             case R.id.menu_as_list: {
-                //TODO: menu_as_list
-                //CacheListActivity.startActivityMap(activity, new SearchResult(getGeocodesForCachesInViewport()));
+                CacheListActivity.startActivityMap(this, new SearchResult(caches.getVisibleGeocodes()));
                 return true;
             }
             case R.id.menu_strategy_fastest: {
