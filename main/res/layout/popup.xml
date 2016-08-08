@@ -35,6 +35,23 @@
                 android:layout_gravity="center_horizontal"
                 android:text="@string/popup_more" />
 
+            <RelativeLayout style="@style/separator_horizontal_layout"
+                android:visibility="visible" >
+
+                <View
+                    android:id="@+id/seperator_last_logs"
+                    style="@style/separator_horizontal" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/last_logs"
+                android:visibility="visible"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal" >
+            </LinearLayout>
+
             <RelativeLayout style="@style/separator_horizontal_layout" >
 
                 <View style="@style/separator_horizontal" />

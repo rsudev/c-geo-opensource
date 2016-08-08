@@ -5,6 +5,7 @@ import cgeo.geocaching.apps.navi.NavigationAppFactory;
 import cgeo.geocaching.compatibility.Compatibility;
 import cgeo.geocaching.list.StoredList;
 import cgeo.geocaching.models.Geocache;
+import cgeo.geocaching.models.LogEntry;
 import cgeo.geocaching.network.Network;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.storage.DataStore;
@@ -23,11 +24,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import butterknife.ButterKnife;
@@ -127,6 +130,9 @@ public class CachePopupFragment extends AbstractDialogFragment {
 
             addCacheDetails();
 
+            // last logs
+            addLastLogs();
+
             // offline use
             CacheDetailActivity.updateOfflineBox(getView(), cache, res, new RefreshCacheClickListener(), new DropCacheClickListener(), new StoreCacheClickListener(), null);
 
@@ -137,6 +143,25 @@ public class CachePopupFragment extends AbstractDialogFragment {
 
         // cache is loaded. remove progress-popup if any there
         progress.dismiss();
+    }
+
+    private void addLastLogs() {
+        // retrieve last logs
+        final List<LogEntry> logs = cache.getLogs();
+        if (logs.size() > 0) {
+            final View separator = ButterKnife.findById(getView(), R.id.seperator_last_logs);
+            separator.setVisibility(View.VISIBLE);
+            final LinearLayout parent = ButterKnife.findById(getView(), R.id.last_logs);
+            parent.setVisibility(View.VISIBLE);
+            for (int i = 0; i < 7 && i < logs.size(); i++) {
+                final int drawableId = logs.get(i).getType().overlayId;
+                if (drawableId != 0) {
+                    final ImageView log = (ImageView) getActivity().getLayoutInflater().inflate(R.layout.cache_popup_lastlog, null, false);
+                    log.setImageDrawable(res.getDrawable(drawableId));
+                    parent.addView(log);
+                }
+            }
+        }
     }
 
     @Override
