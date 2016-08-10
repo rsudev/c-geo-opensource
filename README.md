@@ -69,8 +69,7 @@ For debugging create a Debug Configuration by selecting the cgeo application (in
 - You need to provide several API keys for compiling the app. See next section for details.
 
 ### API keys
-
-Google doesn't hand out new keys for Google Maps v1, you have to use an existing one. You can leave it empty, but then Google Maps doesn't work. 
+Copy [`main/templates/keys.xml`](https://github.com/cgeo/cgeo/blob/master/main/templates/keys.xml) to `main/res/values/`. Then edit `main/res/values/keys.xml` and insert several keys (see comments in the file). Most important is the Google Maps API v2 key. You can leave it empty, but then Google Maps doesn't work.
 
 Request your personal API key for the various [OpenCaching](http://www.opencaching.eu/) sites we support. If you leave these blank, then those networks will remain disabled.
 * [opencaching.de OKAPI signup](http://www.opencaching.de/okapi/signup.html)
