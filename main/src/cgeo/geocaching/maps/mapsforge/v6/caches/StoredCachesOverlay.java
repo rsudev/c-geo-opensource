@@ -11,12 +11,12 @@ import cgeo.geocaching.storage.DataStore;
 import cgeo.geocaching.utils.Log;
 
 import android.support.annotation.NonNull;
-import org.mapsforge.map.layer.Layer;
 
 import java.lang.ref.WeakReference;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.mapsforge.map.layer.Layer;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
@@ -60,7 +60,7 @@ public class StoredCachesOverlay extends AbstractCachesOverlay {
                 // check if map moved or zoomed
                 //TODO Portree Use Rectangle inside with bigger search window. That will stop reloading on every move
                 final boolean moved = overlay.isInvalidated() || previousViewport == null || zoomNow != previousZoom ||
-                        mapMoved(previousViewport, viewportNow) || !previousViewport.includes(viewportNow);
+                        mapMoved(previousViewport, viewportNow);
 
                 // save new values
                 if (moved) {

@@ -14,9 +14,7 @@ import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.storage.DataStore;
 import cgeo.geocaching.utils.Log;
 
-import org.apache.commons.lang3.StringUtils;
 import android.support.annotation.NonNull;
-import org.mapsforge.map.layer.Layer;
 
 import java.lang.ref.WeakReference;
 import java.util.EnumSet;
@@ -24,6 +22,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+import org.mapsforge.map.layer.Layer;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
@@ -71,7 +71,7 @@ public class LiveCachesOverlay extends AbstractCachesOverlay {
                 // check if map moved or zoomed
                 //TODO Portree Use Rectangle inside with bigger search window. That will stop reloading on every move
                 final boolean moved = overlay.isInvalidated() || previousViewport == null || zoomNow != previousZoom ||
-                        mapMoved(previousViewport, viewportNow) || !previousViewport.includes(viewportNow);
+                        mapMoved(previousViewport, viewportNow);
 
                 // save new values
                 if (moved) {
@@ -82,12 +82,15 @@ public class LiveCachesOverlay extends AbstractCachesOverlay {
                         previousZoom = zoomNow;
                         previousViewport = viewportNow;
                         overlay.download();
+                    } else {
+                        return;
                     }
                 }
             } catch (final Exception e) {
                 Log.w("LiveCachesOverlay.startLoadtimer.start", e);
             } finally {
                 overlay.refreshed();
+                overlay.loadThreadRun = System.currentTimeMillis();
                 overlay.downloading = false;
             }
         }
