@@ -102,11 +102,14 @@ import org.mapsforge.map.model.DisplayModel;
 import org.mapsforge.map.rendertheme.ExternalRenderTheme;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
 import org.mapsforge.map.rendertheme.XmlRenderTheme;
+import org.mapsforge.map.rendertheme.XmlRenderThemeMenuCallback;
+import org.mapsforge.map.rendertheme.XmlRenderThemeStyleLayer;
+import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
 import org.mapsforge.map.rendertheme.rule.RenderThemeHandler;
 import org.xmlpull.v1.XmlPullParserException;
 
 @SuppressLint("ClickableViewAccessibility")
-public class NewMap extends AbstractActionBarActivity {
+public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeMenuCallback {
 
     private MfMapView mapView;
     private TileCache tileCache;
@@ -587,7 +590,7 @@ public class NewMap extends AbstractActionBarActivity {
             rendererLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
         } else {
             try {
-                final XmlRenderTheme xmlRenderTheme = new ExternalRenderTheme(new File(themePath));
+                final XmlRenderTheme xmlRenderTheme = new ExternalRenderTheme(new File(themePath),this);
                 // Validate the theme file
                 RenderThemeHandler.getRenderTheme(AndroidGraphicFactory.INSTANCE, new DisplayModel(), xmlRenderTheme);
                 rendererLayer.setXmlRenderTheme(xmlRenderTheme);
@@ -919,6 +922,27 @@ public class NewMap extends AbstractActionBarActivity {
         if (cache != null) {
             EditWaypointActivity.startActivityAddWaypoint(this, cache, new Geopoint(tapLatLong.latitude, tapLatLong.longitude));
         }
+    }
+
+    @Override
+    public Set<String> getCategories(XmlRenderThemeStyleMenu style) {
+        String id = style.getDefaultValue();
+
+        XmlRenderThemeStyleLayer baseLayer = style.getLayer(id);
+        if (baseLayer == null) {
+            Log.w("Invalid style " + id);
+            return null;
+        }
+        Set<String> result = baseLayer.getCategories();
+
+        // add the categories from overlays that are enabled
+//        for (XmlRenderThemeStyleLayer overlay : baseLayer.getOverlays()) {
+//            if (this.sharedPreferences.getBoolean(overlay.getId(), overlay.isEnabled())) {
+//                result.addAll(overlay.getCategories());
+//            }
+//        }
+
+        return result;
     }
 
     // set my location listener
