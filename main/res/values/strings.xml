@@ -1634,5 +1634,6 @@
     <string name="err_logimage_caption_required">A caption is required for the image</string>
     <string name="waypoint_latitude_null">N/S --° --.---</string>
     <string name="waypoint_longitude_null">E/W --° --.---</string>
+    <string name="map_theme_options">Theme Options</string>
 
 </resources>
