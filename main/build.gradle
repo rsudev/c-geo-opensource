@@ -4,7 +4,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
  * Run "gradlew" or "gradlew cgeoHelp" in the parent directory for a help of how to use this build file.
  */
 
-
 /*
  * Android plugin, http://developer.android.com/tools/building/plugin-for-gradle.html
  */
@@ -18,10 +17,10 @@ if (isContinuousIntegrationServer()) {
 }
 
 android {
-    compileSdkVersion "Google Inc.:Google APIs:23"
+    compileSdkVersion "Google Inc.:Google APIs:24"
 
     compileOptions {
-    	// use the diamond operator and some other goodies in Android
+        // use the diamond operator and some other goodies in Android
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
@@ -30,7 +29,7 @@ android {
         // TODO fill this section and remove the values from AndroidManifest only after the full switch to gradle
         // As these values override the manifest, we might otherwise use different values in gradle and non-gradle builds.
         minSdkVersion project.minSdkVersion
-        targetSdkVersion 22
+        targetSdkVersion 24
         versionName versionNameFromDate()
         versionCode versionCodeFromDate(0)
 
@@ -50,7 +49,7 @@ android {
         applicationId = "cgeo.geocaching"
 
         // include only those language resources from libraries which we actively maintain ourself in the translation project
-        resConfigs "en","ca","ceb","cs","da","de","el","es","fi","fr","hu","it","ja","ko","lt","lv","nb","nl","pl","pt","ro","ru","sk","sl","sv","tr"
+        resConfigs "en", "ca", "ceb", "cs", "da", "de", "el", "es", "fi", "fr", "hu", "it", "ja", "ko", "lt", "lv", "nb", "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "tr"
     }
 
     // signing is handled via private.properties
@@ -64,7 +63,7 @@ android {
             versionNameSuffix "-" + gitCommitId().substring(0, 7) + " developer build"
 
             // additional proguard rules just for the test code
-			testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', '../tests/proguard-project.txt'
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', '../tests/proguard-project.txt'
 
             // code coverage
             testCoverageEnabled isContinuousIntegrationServer()
@@ -100,20 +99,22 @@ android {
         // remove unused resources in addition to unused code
         shrinkResources true
 
-		// proguard rules
+        // proguard rules
         buildType.proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
     }
 
     testBuildType "debug" //the default BuildType
 
     sourceSets {
-    	// application sources in source set "main"
+        // application sources in source set "main"
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src', 'thirdparty', '../common/src'] // no need for annotation generated sources
+            java.srcDirs = ['src', 'thirdparty', '../common/src']
+            // no need for annotation generated sources
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
-            aidl.srcDirs = ['src'] // default src/main/aidl creates package name conflicts in Eclipse
+            aidl.srcDirs = ['src']
+            // default src/main/aidl creates package name conflicts in Eclipse
             jni.srcDirs = []
         }
         // local unit tests, which can be executed without a device
@@ -125,7 +126,7 @@ android {
             res.srcDirs = ['../tests/res']
         }
         // device/emulator based instrumentation tests in source set "androidTest"
-        androidTest{
+        androidTest {
             // map tests to the Eclipse style test project instead of the default app/src/androidTest/java
             setRoot("../tests")
             manifest.srcFile '../tests/AndroidManifest.xml'
@@ -148,10 +149,10 @@ android {
     }
 
     lintOptions {
-    	// generally we accept lint errors when building
+        // generally we accept lint errors when building
         abortOnError false
 
-    	// abort release builds in case of FATAL errors
+        // abort release builds in case of FATAL errors
         checkReleaseBuilds true
 
         // recommended by ButterKnife, http://jakewharton.github.io/butterknife/
@@ -244,6 +245,8 @@ android {
 dependencies {
     // AndroidAnnotations, https://github.com/excilys/androidannotations/wiki/building-project-gradle
     def androidAnnotationsVersion = '4.4.0'
+    implementation 'com.android.support:support-v4:23.4.0'
+    implementation 'com.android.support:support-vector-drawable:23.4.0'
     annotationProcessor "org.androidannotations:androidannotations:$androidAnnotationsVersion"
     implementation "org.androidannotations:androidannotations-api:$androidAnnotationsVersion"
 
@@ -264,7 +267,7 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 
     // Findbugs
-    implementation ('com.google.code.findbugs:annotations:3.0.1u2') {
+    implementation('com.google.code.findbugs:annotations:3.0.1u2') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
         exclude group: 'net.jcip', module: 'jcip-annotations'
     }
@@ -374,18 +377,16 @@ dependencies {
  */
 apply plugin: 'de.mobilej.unmock'
 
-
 /*
  * Google Services (App Invite)
  */
 apply plugin: 'com.google.gms.google-services'
 
-
 /*
  * verify existence of the necessary keys for compilation, instead of waiting for a compile error
  */
 
-project.afterEvaluate{
+project.afterEvaluate {
     preBuild.dependsOn("verifyCgeoKeys")
 }
 
@@ -398,7 +399,7 @@ task verifyCgeoKeys {
             if (propertiesFile.exists()) {
                 copy {
                     from "templates/keys.xml"
-                    into ("res/values")
+                    into("res/values")
                     def properties = new Properties()
                     propertiesFile.withInputStream {
                         properties.load(it);
@@ -414,15 +415,15 @@ task verifyCgeoKeys {
     }
 }
 
-configure (verifyCgeoKeys) {
+configure(verifyCgeoKeys) {
     group = 'verification'
     description = 'Checks for the existence of keys.xml to successfully compile cgeo.'
 }
 
-
 /*
  * version number from the current date, plus an offset defined by the build type (to define which versions overwrite each other)
  */
+
 static def versionCodeFromDate(offset) {
     def date = new Date()
     def formattedDate = date.format('yyyyMMdd')
@@ -432,6 +433,7 @@ static def versionCodeFromDate(offset) {
 /*
  * version name based on current date
  */
+
 static def versionNameFromDate() {
     def date = new Date()
     def formattedDate = date.format('yyyy.MM.dd')
@@ -445,6 +447,7 @@ class GitCommit {
 /*
  * get the most recent git commit ID
  */
+
 def gitCommitId() {
     // TODO: someone with proper groovy knowledge should make this a method at the above class
     if (GitCommit.commitId == null) {
@@ -461,6 +464,7 @@ def gitCommitId() {
 /*
  * check whether this is a local build or a CI server build
  */
+
 static def isContinuousIntegrationServer() {
     return System.getenv('BUILD_NUMBER') != null
 }
@@ -496,7 +500,7 @@ android.applicationVariants.all { variant ->
 }
 
 // run device and non device tests together with one task. also fixes the bug that gradle optimizes tests away in repeated runs
-tasks.create(name: "testDebug", dependsOn: [ "testBasicDebugUnitTest", "connectedBasicDebugAndroidTest" ]) {
+tasks.create(name: "testDebug", dependsOn: ["testBasicDebugUnitTest", "connectedBasicDebugAndroidTest"]) {
     group 'cgeo'
     description "Tests the debug build both with device-dependent and device-independent tests."
 }
@@ -555,7 +559,7 @@ task copyDefaultPreferencesToAndroid(dependsOn: 'installBasicDebug') {
                 project.exec {
                     executable = project.android.getAdbExe().toString()
                     args = ['shell', 'getprop', 'ro.build.version.release']
-                 }
+                }
             }
             // we might not actually have permission to copy the preferences on actual devices, let's continue running the app then
             catch (RuntimeException e) {
@@ -595,9 +599,9 @@ def downloadFromMaven(mavenFilePath, localFilePath) {
 def unzipAAR(aarFileName) {
     def dir = new File(".\\libs")
     def aarFile = new File(dir, aarFileName)
-    ant.unzip( src: aarFile, dest: dir, overwrite: "true" ) {
-        patternset( ) {
-            include( name: 'classes.jar' )
+    ant.unzip(src: aarFile, dest: dir, overwrite: "true") {
+        patternset() {
+            include(name: 'classes.jar')
         }
 
     }
@@ -613,11 +617,11 @@ task downloadLibs {
     description "Downloads the dependency JARs for use with Eclipse"
     doFirst {
         configurations.implementation.resolvedConfiguration.resolvedArtifacts.each { ResolvedArtifact artifact ->
-        	if (artifact.extension == 'jar' || artifact.extension == 'aar') {
-	            project.copy {
-	                from artifact.file
-	                into "libs"
-	            }
+            if (artifact.extension == 'jar' || artifact.extension == 'aar') {
+                project.copy {
+                    from artifact.file
+                    into "libs"
+                }
             }
             if (artifact.extension == 'aar') {
                 unzipAAR(artifact.file.name)
@@ -628,7 +632,7 @@ task downloadLibs {
         new File(".\\main\\libs\\src").mkdirs()
         configurations.implementation.dependencies.each { Dependency dependency ->
             try {
-                def vendor = dependency.group.replace(".","/")
+                def vendor = dependency.group.replace(".", "/")
                 def version = dependency.version
                 def name = dependency.name
                 downloadFromMaven("${vendor}/${name}/${version}/${name}-${version}-javadoc.jar", ".\\main\\libs\\src\\${name}-${version}-javadoc.jar")
@@ -648,7 +652,8 @@ task downloadLibs {
         delete fileTree('libs') {
             include '**/library-*' // transitive dependency?
             include '**/xmpcore*' // transitive dependency?
-            include '**/*androidannotations-api-4*' // Eclipse can only deal with AndroidAnnotations 3.x
+            include '**/*androidannotations-api-4*'
+            // Eclipse can only deal with AndroidAnnotations 3.x
             // Play Services are real Eclipse projects
             include '**/*play-services*'
             exclude '**/play-services-appinvite*' // except this one

@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="cgeo.geocaching"
     android:installLocation="auto">
@@ -8,8 +7,8 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="22"
-        tools:overrideLibrary="locus.api.android"/>
-    
+        tools:overrideLibrary="locus.api.android" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -29,12 +28,14 @@
     <uses-feature
         android:name="android.hardware.nfc"
         android:required="false" />
-	<!-- Enforce working on older versions of Chromebook, which don't have a touchscreen, and where the OS does not automatically enable this.
-	https://developer.android.com/topic/arc/index.html -->
+    <!--
+    Enforce working on older versions of Chromebook, which don't have a touchscreen, and where the OS does not automatically enable this.
+	https://developer.android.com/topic/arc/index.html
+    -->
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
-        
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -42,17 +43,20 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".CgeoApplication"
         android:allowBackup="true"
-        android:backupAgent="cgeo.geocaching.backup.CentralBackupAgent"
+        android:backupAgent=".backup.CentralBackupAgent"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/cgeo"
         android:label="@string/app_name"
-        android:theme="@style/cgeo"
-        android:hardwareAccelerated="false"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:largeHeap="true">
-        
+        android:theme="@style/cgeo">
+
         <!-- Optionally use Google Maps, if available on this device -->
         <uses-library
             android:name="com.google.android.maps"
@@ -62,6 +66,7 @@
         <uses-library
             android:name="com.sec.android.app.multiwindow"
             android:required="false" />
+
         <meta-data
             android:name="com.sec.android.support.multiwindow"
             android:value="true" />
@@ -72,11 +77,11 @@
             android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
             android:resource="@dimen/app_defaultsize_h" />
 
-		<!-- Register for global search in Android. https://developer.android.com/guide/topics/search/search-dialog.html -->
+        <!-- Register for global search in Android. https://developer.android.com/guide/topics/search/search-dialog.html -->
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".SearchActivity" />
-        
+
         <!-- Android Backup Service, to restore settings on new devices. https://developer.android.com/google/backup/index.html -->
         <meta-data
             android:name="com.google.android.backup.api_key"
@@ -98,13 +103,13 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/cgeo_main"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-                
+
                 <!-- ProcessPhoenix uses the default flag to recognize which activity to use after restart -->
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -115,21 +120,24 @@
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName="cgeo.geocaching.MainActivity"
-            android:windowSoftInputMode="stateHidden" >
-            
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden">
+
             <!-- keyword based search from search widget -->
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            
-            <!-- This can trigger our app from Google Now by something like "Search for keyword on c:geo".
-            See http://developer.android.com/guide/components/intents-common.html#Search -->
-			<intent-filter>
-		        <action android:name="com.google.android.gms.actions.SEARCH_ACTION"/>
-		        <category android:name="android.intent.category.DEFAULT"/>
-		    </intent-filter>
-    
+
+            <!--
+            This can trigger our app from Google Now by something like "Search for keyword on c:geo".
+            See http://developer.android.com/guide/components/intents-common.html#Search
+            -->
+            <intent-filter>
+                <action android:name="com.google.android.gms.actions.SEARCH_ACTION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.MainActivity" />
@@ -142,24 +150,23 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:theme="@style/popup_dark"
-            android:windowSoftInputMode="stateHidden" >
-        </activity>
+            android:windowSoftInputMode="stateHidden"></activity>
         <activity
             android:name=".AboutActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/about"
-            android:parentActivityName="cgeo.geocaching.MainActivity"
-            android:windowSoftInputMode="stateHidden" >
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.MainActivity" />
         </activity>
         <activity
-            android:name="cgeo.geocaching.helper.UsefulAppsActivity"
+            android:name=".helper.UsefulAppsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/helpers"
-            android:parentActivityName="cgeo.geocaching.MainActivity"
-            android:windowSoftInputMode="stateHidden" >
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.MainActivity" />
@@ -169,7 +176,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/auth_twitter"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -185,25 +192,24 @@
         <activity
             android:name=".EditWaypointActivity_"
             android:label="@string/waypoint_edit_title"
-            android:windowSoftInputMode="stateHidden" >
-        </activity>
+            android:windowSoftInputMode="stateHidden"></activity>
         <activity
             android:name=".NavigateAnyPointActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:label="@string/search_destination"
-            android:parentActivityName="cgeo.geocaching.MainActivity"
-            android:windowSoftInputMode="stateHidden" >
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.MainActivity" />
         </activity>
         <activity
-            android:name="cgeo.geocaching.address.AddressListActivity"
+            android:name=".address.AddressListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/search_address_result"
-            android:parentActivityName="cgeo.geocaching.SearchActivity"
-            android:windowSoftInputMode="stateHidden" >
+            android:parentActivityName=".SearchActivity"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.SearchActivity" />
@@ -212,8 +218,8 @@
             android:name=".settings.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/settings_titlebar"
-            android:parentActivityName="cgeo.geocaching.MainActivity"
-            android:theme="@style/settings" >
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.MainActivity" />
@@ -223,7 +229,9 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:label="@string/app_name">
+
             <!-- don't use fixed parent activity, since we may come from main activity, pocket query activity or search activity -->
+
 
             <!-- intent filter for local gpx files -->
             <intent-filter>
@@ -233,7 +241,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.ALTERNATIVE" />
                 <category android:name="android.intent.category.SELECTED_ALTERNATIVE" />
-                
+
                 <data android:mimeType="*/*" />
                 <data android:scheme="file" />
                 <data android:host="*" />
@@ -244,14 +252,14 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.gpx" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.gpx" />
             </intent-filter>
-            
+
             <!-- intent filter for all gpx links, independent of mime types -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                
+
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="*" />
@@ -261,7 +269,7 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.gpx" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.gpx" />
             </intent-filter>
-            
+
             <!-- intent filter for local ggz files -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -270,7 +278,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.ALTERNATIVE" />
                 <category android:name="android.intent.category.SELECTED_ALTERNATIVE" />
-                
+
                 <data android:mimeType="*/*" />
                 <data android:scheme="file" />
                 <data android:host="*" />
@@ -281,14 +289,14 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.ggz" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ggz" />
             </intent-filter>
-            
+
             <!-- intent filter for GGZ links, independent of mime types -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                
+
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="*" />
@@ -298,7 +306,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.ggz" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ggz" />
             </intent-filter>
-            
 
             <!-- intent filter for ZIP files -->
             <intent-filter>
@@ -308,7 +315,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.ALTERNATIVE" />
                 <category android:name="android.intent.category.SELECTED_ALTERNATIVE" />
-                
+
                 <data android:mimeType="text/xml" />
                 <data android:mimeType="application/xml" />
                 <data android:mimeType="application/zip" />
@@ -322,36 +329,30 @@
             </intent-filter>
         </activity>
         <activity
-            android:exported="true"
             android:name=".maps.MapActivity"
-            android:label="@string/map_map" >
-        </activity>
+            android:exported="true"
+            android:label="@string/map_map"></activity>
         <activity
             android:name=".maps.google.v1.GoogleMapActivity"
-            android:label="@string/map_map" >
-        </activity>
+            android:label="@string/map_map"></activity>
         <activity
             android:name=".maps.mapsforge.MapsforgeMapActivity"
-            android:label="@string/map_map" >
-        </activity>
+            android:label="@string/map_map"></activity>
         <activity
             android:name=".maps.mapsforge.v6.NewMap"
-            android:label="@string/map_map" >
-        </activity>
+            android:label="@string/map_map"></activity>
         <activity
             android:name=".staticmaps.StaticMapsActivity_"
-            android:label="@string/map_static_title" >
-        </activity>
+            android:label="@string/map_static_title"></activity>
         <activity
-            android:name="cgeo.geocaching.log.LogCacheActivity"
-            android:label="@string/log_new_log" >
-        </activity>
+            android:name=".log.LogCacheActivity"
+            android:label="@string/log_new_log"></activity>
         <activity
-            android:name="cgeo.geocaching.log.LogTrackableActivity"
+            android:name=".log.LogTrackableActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/trackable_touch" >
+            android:label="@string/trackable_touch">
 
-            <!-- GeoKrety.org QRCode-->
+            <!-- GeoKrety.org QRCode -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
@@ -369,18 +370,17 @@
         <activity
             android:name=".ImagesActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" >
-        </activity>
+            android:label="@string/app_name"></activity>
         <activity
             android:name=".CacheDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="wikitudeapi.arcallback" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            
+
             <!-- extremcaching.com -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -616,11 +616,10 @@
                 <data android:pathPrefix="/viewcache.php" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="cgeo.geocaching.TrackableActivity"
+            android:name=".TrackableActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
 
             <!-- TravelBug URL via coord.info redirection -->
             <intent-filter>
@@ -684,133 +683,118 @@
                 <data android:pathPrefix="/GK" />
                 <data android:pathPrefix="/gk" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".CompassActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/compass_title" >
-        </activity>
+            android:label="@string/compass_title"></activity>
         <activity
-            android:name="cgeo.geocaching.files.GpxFileListActivity"
+            android:name=".files.GpxFileListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/gpx_import_title" >
-        </activity>
+            android:label="@string/gpx_import_title"></activity>
         <activity
             android:name=".SelectMapfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/map_file_select_title"
-            android:parentActivityName="cgeo.geocaching.settings.SettingsActivity" >
+            android:parentActivityName=".settings.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.settings.SettingsActivity" />
         </activity>
         <activity
-            android:name="WaypointPopup"
+            android:name=".WaypointPopup"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/waypoint"
             android:theme="@style/popup_dark"
-            android:windowSoftInputMode="stateHidden" >
-        </activity>
+            android:windowSoftInputMode="stateHidden"></activity>
         <activity
             android:name=".files.SimpleDirChooser"
-            android:label="@string/simple_dir_chooser_title" >
-        </activity>
+            android:label="@string/simple_dir_chooser_title"></activity>
         <activity
             android:name=".ImageSelectActivity"
-            android:label="@string/log_image" >
-        </activity>
+            android:label="@string/log_image"></activity>
 
         <service
             android:name=".speech.SpeechService"
-            android:label="@string/tts_service" >
-        </service>
+            android:label="@string/tts_service"></service>
 
         <activity
             android:name=".connector.oc.OCAuthorizationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:host="www.cgeo.org"/>
-                <data android:pathPrefix="/opencaching"/>
-                <data android:pathPrefix="/opencache"/>
+                <data android:host="www.cgeo.org" />
+                <data android:pathPrefix="/opencaching" />
+                <data android:pathPrefix="/opencache" />
                 <data android:scheme="callback" />
             </intent-filter>
         </activity>
         <activity
             android:name=".CreateShortcutActivity"
             android:label="@string/cgeo_shortcut"
-            android:parentActivityName="cgeo.geocaching.MainActivity" >
+            android:parentActivityName=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activity.SimpleWebviewActivity"
-                android:label="c:geo internal browser"
-                android:icon="@drawable/ic_launcher_browser">
-
-        </activity>
-
+        <activity
+            android:name=".activity.SimpleWebviewActivity"
+            android:icon="@drawable/ic_launcher_browser"
+            android:label="c:geo internal browser"></activity>
         <activity
             android:name=".filter.FilterActivity_"
-            android:label="@string/caches_filter_title" >
-        </activity>
-
+            android:label="@string/caches_filter_title"></activity>
         <activity
-            android:name="cgeo.geocaching.connector.trackable.GeokretyAuthorizationActivity"
+            android:name=".connector.trackable.GeokretyAuthorizationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="cgeo.geocaching.settings.GCAuthorizationActivity"
+            android:name=".settings.GCAuthorizationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="cgeo.geocaching.settings.ECAuthorizationActivity"
+            android:name=".settings.ECAuthorizationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="cgeo.geocaching.settings.GCVoteAuthorizationActivity"
+            android:name=".settings.GCVoteAuthorizationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -822,18 +806,32 @@
         <provider
             android:name=".search.SuggestionProvider"
             android:authorities="cgeo.geocaching.search.SuggestionProvider" />
-        
+
         <activity
-            android:name="cgeo.geocaching.connector.gc.PocketQueryListActivity"
+            android:name=".connector.gc.PocketQueryListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/search_pocket_title"
-            android:parentActivityName="cgeo.geocaching.MainActivity"            >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.MainActivity" />
         </activity>
-        <activity android:name=".maps.mapsforge.v6.RenderThemeSettings" />
-
+        <activity
+            android:name=".maps.mapsforge.v6.RenderThemeSettings"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="ThemeSettings">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".maps.mapsforge.v6.NewMap" />
+        </activity>
+        <activity
+            android:name=".maps.mapsforge.v6.ThemeSettingsActivity"
+            android:label="@string/title_activity_theme_settings"
+            android:parentActivityName=".maps.mapsforge.v6.NewMap">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cgeo.geocaching.maps.mapsforge.v6.NewMap" />
+        </activity>
     </application>
 
 </manifest>

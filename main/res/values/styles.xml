@@ -196,14 +196,17 @@
         <item name="android:background">@drawable/count_bcg</item>
         <item name="android:text"></item>
     </style>
+
     <style name="icon_mainscreen_cell_counter">
         <item name="android:layout_width">74dip</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
     </style>
+
     <style name="icon_mainscreen_cell" parent="icon_mainscreen_cell_counter">
         <item name="android:layout_margin">4dip</item>
     </style>
+
     <style name="icon_mainscreen_row">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">fill_parent</item>
@@ -321,7 +324,7 @@
         <item name="android:layout_gravity">left|top</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:lines">1</item>
-        <item name="android:scrollHorizontally">true</item> 
+        <item name="android:scrollHorizontally">true</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">?text_color</item>
         <item name="android:textSize">18sp</item>
@@ -359,5 +362,7 @@
         <item name="android:stepSize">0.5</item>
         <item name="android:isIndicator">true</item>
     </style>
-    
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light" />
+
 </resources>

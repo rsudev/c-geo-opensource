@@ -412,11 +412,11 @@ public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeM
                 selectMapTheme();
                 return true;
             case R.id.menu_theme_options:
-                Intent intent = new Intent(this, RenderThemeSettings.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                if (styleMenu != null) {
-                    intent.putExtra(RenderThemeSettings.RENDERTHEME_MENU, styleMenu);
-                }
+                Intent intent = new Intent(this, ThemeSettingsActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+//                if (styleMenu != null) {
+//                    intent.putExtra(RenderThemeSettings.RENDERTHEME_MENU, styleMenu);
+//                }
                 startActivity(intent);
                 return true;
             case R.id.menu_as_list: {

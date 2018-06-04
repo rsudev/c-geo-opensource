@@ -17,6 +17,8 @@ import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
 import java.util.Locale;
 import java.util.Map;
 
+import cgeo.geocaching.R;
+
 public class RenderThemeSettings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String RENDERTHEME_MENU = "renderthememenu";
 
@@ -42,7 +44,10 @@ public class RenderThemeSettings extends PreferenceActivity implements SharedPre
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        addPreferencesFromResource(R.xml.theme_prefs);
 
         // if the render theme has a style menu, its data is delivered via the intent
         renderthemeOptions = (XmlRenderThemeStyleMenu) getIntent().getSerializableExtra(RENDERTHEME_MENU);
