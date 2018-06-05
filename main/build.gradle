@@ -339,7 +339,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
 
     // Support Library. Appcompat
-    implementation 'com.android.support:appcompat-v7:20.0.0'
+    implementation 'com.android.support:appcompat-v7:24.1.0'
 
     // Support Library RecyclerView
     implementation 'com.android.support:recyclerview-v7:22.0.0'
