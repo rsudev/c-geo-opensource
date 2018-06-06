@@ -304,7 +304,7 @@ public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeM
             menu.findItem(R.id.menu_trail_mode).setChecked(Settings.isMapTrail());
 
             menu.findItem(R.id.menu_theme_mode).setVisible(tileLayerHasThemes());
-            menu.findItem(R.id.menu_theme_options).setVisible(tileLayerHasThemes());
+            menu.findItem(R.id.menu_theme_options).setVisible(styleMenu != null);
 
             menu.findItem(R.id.menu_as_list).setVisible(!caches.isDownloading() && caches.getVisibleCachesCount() > 1);
 
@@ -883,6 +883,7 @@ public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeM
     @Override
     protected void onDestroy() {
         Log.d("NewMap: onDestroy");
+        this.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         this.tileCache.destroy();
         this.mapView.getModel().mapViewPosition.destroy();
         this.mapView.destroy();
@@ -948,7 +949,7 @@ public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeM
     @Override
     public Set<String> getCategories(XmlRenderThemeStyleMenu style) {
         styleMenu = style;
-        String id = styleMenu.getDefaultValue();
+        String id = this.sharedPreferences.getString(styleMenu.getId(), styleMenu.getDefaultValue());
 
         XmlRenderThemeStyleLayer baseLayer = styleMenu.getLayer(id);
         if (baseLayer == null) {

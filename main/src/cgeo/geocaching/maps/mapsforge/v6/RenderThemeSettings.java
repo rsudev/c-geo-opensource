@@ -1,5 +1,6 @@
 package cgeo.geocaching.maps.mapsforge.v6;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import cgeo.geocaching.R;
+import cgeo.geocaching.settings.Settings;
 
 public class RenderThemeSettings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String RENDERTHEME_MENU = "renderthememenu";
@@ -33,6 +35,16 @@ public class RenderThemeSettings extends PreferenceActivity implements SharedPre
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return false;
+    }
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences,
                                           String key) {
     if (this.renderthemeOptions != null && this.renderthemeOptions.getId().equals(key)) {
@@ -43,7 +55,14 @@ public class RenderThemeSettings extends PreferenceActivity implements SharedPre
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(Settings.isLightSkin() ? R.style.settings_light : R.style.settings);
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            // Show the Up button in the action bar.
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
