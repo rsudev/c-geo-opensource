@@ -275,7 +275,7 @@ public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeM
         for (final MapSource mapSource : MapProviderFactory.getMapSources()) {
             final MenuItem menuItem = menu.findItem(mapSource.getNumericalId());
             if (menuItem != null) {
-                menuItem.setVisible(mapSource.isAvailable());
+                menuItem.setVisible(mapSource.isAvailable(false));
             }
         }
 

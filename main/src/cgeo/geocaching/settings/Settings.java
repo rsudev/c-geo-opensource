@@ -586,7 +586,7 @@ public class Settings {
     }
 
     public static boolean isValidMapFile(final String mapFileIn) {
-        return MapsforgeMapProvider.isValidMapFile(mapFileIn);
+        return MapsforgeMapProvider.isValidMapFile(mapFileIn, false);
     }
 
     public static boolean isScaleMapsforgeText() {

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 public interface MapSource {
     String getName();
 
-    boolean isAvailable();
+    boolean isAvailable(final boolean oldVersion);
 
     int getNumericalId();
 

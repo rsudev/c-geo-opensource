@@ -596,7 +596,7 @@ public class CGeoMap extends AbstractMap implements ViewFactory {
         for (final MapSource mapSource : MapProviderFactory.getMapSources()) {
             final MenuItem menuItem = menu.findItem(mapSource.getNumericalId());
             if (menuItem != null) {
-                menuItem.setVisible(mapSource.isAvailable());
+                menuItem.setVisible(mapSource.isAvailable(true));
             }
         }
 

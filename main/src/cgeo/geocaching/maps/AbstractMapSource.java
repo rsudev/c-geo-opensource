@@ -24,7 +24,7 @@ public abstract class AbstractMapSource implements MapSource {
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAvailable(final boolean oldVersion) {
         return true;
     }
 
