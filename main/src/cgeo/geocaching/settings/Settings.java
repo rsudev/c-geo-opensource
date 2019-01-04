@@ -765,6 +765,14 @@ public class Settings {
         putBoolean(R.string.pref_maptrail, showTrail);
     }
 
+    public static boolean isPlanningMode() {
+        return getBoolean(R.string.pref_planning_mode, false);
+    }
+
+    public static void setPlanningMode(final boolean planningMode) {
+        putBoolean(R.string.pref_planning_mode, planningMode);
+    }
+
     /**
      * whether to show a direction line on the map
      */

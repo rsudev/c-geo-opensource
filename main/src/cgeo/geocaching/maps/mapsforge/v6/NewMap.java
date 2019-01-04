@@ -299,6 +299,8 @@ public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeM
             //TODO: circles            menu.findItem(R.id.menu_circle_mode).setChecked(this.searchOverlay.getCircles());
             menu.findItem(R.id.menu_circle_mode).setVisible(false);
             menu.findItem(R.id.menu_trail_mode).setChecked(Settings.isMapTrail());
+            menu.findItem(R.id.menu_planning_mode).setVisible(true);
+            menu.findItem(R.id.menu_planning_mode).setChecked(Settings.isPlanningMode());
 
             menu.findItem(R.id.menu_theme_mode).setVisible(tileLayerHasThemes());
             menu.findItem(R.id.menu_theme_options).setVisible(styleMenu != null);
@@ -354,6 +356,11 @@ public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeM
             case R.id.menu_trail_mode:
                 Settings.setMapTrail(!Settings.isMapTrail());
                 historyLayer.requestRedraw();
+                ActivityMixin.invalidateOptionsMenu(this);
+                return true;
+            case R.id.menu_planning_mode:
+                Settings.setPlanningMode(!Settings.isPlanningMode());
+                // TODO redraw map
                 ActivityMixin.invalidateOptionsMenu(this);
                 return true;
             case R.id.menu_direction_line:
