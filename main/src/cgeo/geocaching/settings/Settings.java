@@ -765,12 +765,12 @@ public class Settings {
         putBoolean(R.string.pref_maptrail, showTrail);
     }
 
-    public static boolean isPlanningMode() {
-        return getBoolean(R.string.pref_planning_mode, false);
+    public static boolean isDotMode() {
+        return getBoolean(R.string.pref_dot_mode, false);
     }
 
-    public static void setPlanningMode(final boolean planningMode) {
-        putBoolean(R.string.pref_planning_mode, planningMode);
+    public static void setDotMode(final boolean dotMode) {
+        putBoolean(R.string.pref_dot_mode, dotMode);
     }
 
     /**

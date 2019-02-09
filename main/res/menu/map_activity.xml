@@ -101,12 +101,13 @@
                 app:showAsAction="ifRoom|withText">
             </item>
             <item
-                android:id="@+id/menu_planning_mode"
+                android:id="@+id/menu_dot_mode"
                 android:checkable="true"
-                android:title="@string/map_planning_mode"
+                android:icon="@drawable/ic_menu_dot_mode"
+                android:title="@string/map_dot_mode"
                 android:visible="false"
                 app:showAsAction="ifRoom|withText">
-            </item>              <!--   android:icon="@drawable/ic_menu_planning_mode"  -->
+            </item>
 
         </menu>
     </item>
