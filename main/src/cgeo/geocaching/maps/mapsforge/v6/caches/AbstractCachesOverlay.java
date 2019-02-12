@@ -96,6 +96,11 @@ public abstract class AbstractCachesOverlay {
         invalidate();
     }
 
+    public void invalidateAll() {
+        removeItems(getGeocodes());
+        invalidate();
+    }
+
     protected boolean isInvalidated() {
         return invalidated;
     }

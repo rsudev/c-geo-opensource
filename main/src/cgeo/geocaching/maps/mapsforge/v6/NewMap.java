@@ -361,6 +361,7 @@ public class NewMap extends AbstractActionBarActivity implements XmlRenderThemeM
             case R.id.menu_dot_mode:
                 Settings.setDotMode(!Settings.isDotMode());
                 // TODO redraw map
+                caches.invalidateAll();
                 // caches.invalidate();
                 ActivityMixin.invalidateOptionsMenu(this);
                 return true;

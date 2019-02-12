@@ -105,6 +105,13 @@ public class CachesOverlay extends AbstractCachesOverlay {
     }
 
     @Override
+    public void invalidate() {
+        firstRun = true;
+
+        super.invalidate();
+    }
+
+    @Override
     public void onDestroy() {
         timer.dispose();
 
