@@ -32,6 +32,16 @@ public class SinglePointOverlay extends AbstractCachesOverlay {
     }
 
     @Override
+    void load() {
+
+    }
+
+    @Override
+    void update() {
+
+    }
+
+    @Override
     public int getVisibleCachesCount() {
         // TODO: Check whether the waypoint is within the viewport
         return 1;
@@ -51,7 +61,6 @@ public class SinglePointOverlay extends AbstractCachesOverlay {
 
             addLayers();
 
-            repaint();
         } finally {
             hideProgress();
         }
