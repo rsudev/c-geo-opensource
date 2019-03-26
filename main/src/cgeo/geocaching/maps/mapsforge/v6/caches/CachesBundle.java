@@ -6,36 +6,50 @@ import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
 import cgeo.geocaching.maps.mapsforge.v6.MapHandlers;
 import cgeo.geocaching.maps.mapsforge.v6.MfMapView;
+import cgeo.geocaching.maps.mapsforge.v6.NewMap;
+import cgeo.geocaching.settings.Settings;
+import cgeo.geocaching.utils.Log;
 
+import android.support.annotation.NonNull;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import org.mapsforge.map.layer.LayerManager;
 
 public class CachesBundle {
 
-    private static final int BASE_SEPARATOR = 0;
-    private static final int STORED_SEPARATOR = 1;
-    private static final int LIVE_SEPARATOR = 2;
+    private static final int WP_SEPERATOR = 0;
+    private static final int BASE_SEPARATOR = 1;
+    private static final int STORED_SEPARATOR = 2;
+    private static final int LIVE_SEPARATOR = 3;
 
-    private static final int BASE_OVERLAY_ID = 0;
-    private static final int STORED_OVERLAY_ID = 1;
-    private static final int LIVE_OVERLAY_ID = 2;
+    private static final int WP_OVERLAY_ID = 0;
+    private static final int BASE_OVERLAY_ID = 1;
+    private static final int STORED_OVERLAY_ID = 2;
+    private static final int LIVE_OVERLAY_ID = 3;
 
     private final MfMapView mapView;
     private final MapHandlers mapHandlers;
 
     private static final int INITIAL_ENTRY_COUNT = 200;
-    private final Set<GeoEntry> geoEntries = Collections.synchronizedSet(new HashSet<GeoEntry>(INITIAL_ENTRY_COUNT));
+    private final Set<GeoEntry> geoEntries = Collections.synchronizedSet(new GeoEntrySet(INITIAL_ENTRY_COUNT));
 
+    private WaypointsOverlay wpOverlay;
     private AbstractCachesOverlay baseOverlay;
     private AbstractCachesOverlay storedOverlay;
     private LiveCachesOverlay liveOverlay;
     private final List<SeparatorLayer> separators = new ArrayList<>();
+
+    private final Disposable timer;
 
     /**
      * Base initialization without any caches up-front
@@ -57,6 +71,13 @@ public class CachesBundle {
         final SeparatorLayer separator3 = new SeparatorLayer();
         this.separators.add(separator3);
         this.mapView.getLayerManager().getLayers().add(separator3);
+        final SeparatorLayer separator4 = new SeparatorLayer();
+        this.separators.add(separator4);
+        this.mapView.getLayerManager().getLayers().add(separator4);
+
+        this.wpOverlay = new WaypointsOverlay(WP_OVERLAY_ID, this.geoEntries, this, separators.get(WP_SEPERATOR), this.mapHandlers);
+
+        this.timer = startTimer();
     }
 
     /**
@@ -125,7 +146,110 @@ public class CachesBundle {
         this.storedOverlay = new StoredCachesOverlay(STORED_OVERLAY_ID, this.geoEntries, this, separator1, this.mapHandlers);
     }
 
+    private Disposable startTimer() {
+        return Schedulers.newThread().schedulePeriodicallyDirect(new LoadTimerAction(this), 0, 250, TimeUnit.MILLISECONDS);
+    }
+
+    private static final class LoadTimerAction implements Runnable {
+
+        @NonNull
+        private final WeakReference<CachesBundle> bundleRef;
+        private int previousZoom = -100;
+        private Viewport previousViewport;
+
+        LoadTimerAction(@NonNull final CachesBundle bundle) {
+            this.bundleRef = new WeakReference<>(bundle);
+        }
+
+        @Override
+        public void run() {
+            final CachesBundle bundle = bundleRef.get();
+            if (bundle == null) {
+                return;
+            }
+            try {
+                // get current viewport
+                final Viewport viewportNow = bundle.getViewport();
+                // Since zoomNow is used only for local comparison purposes,
+                // it is ok to use the Google Maps compatible zoom level of OSM Maps
+                final int zoomNow = bundle.getMapZoomLevel();
+
+                // check if map moved or zoomed
+                //TODO Portree Use Rectangle inside with bigger search window. That will stop reloading on every move
+                final boolean moved = bundle.isInvalidated() || previousViewport == null || zoomNow != previousZoom ||
+                        mapMoved(previousViewport, viewportNow);
+
+                // save new values
+                if (moved) {
+
+                    previousZoom = zoomNow;
+                    previousViewport = viewportNow;
+                    // load overlays
+                    if (bundle.baseOverlay != null) {
+                        bundle.baseOverlay.load();
+                    }
+                    if (bundle.storedOverlay != null) {
+                        bundle.storedOverlay.load();
+                    }
+                    if (bundle.liveOverlay != null) {
+                        bundle.liveOverlay.load();
+                    }
+                    // filter bottom up
+                    if (bundle.baseOverlay != null) {
+                        bundle.baseOverlay.update();
+                    }
+                    if (bundle.storedOverlay != null) {
+                        bundle.storedOverlay.update();
+                    }
+                    if (bundle.liveOverlay != null) {
+                        bundle.liveOverlay.update();
+                    }
+                    // possibly load wps
+                    if (bundle.getVisibleCachesCount() < Settings.getWayPointsThreshold()) {
+                        Collection<String> baseCodes = Collections.EMPTY_LIST;
+                        if (bundle.baseOverlay != null) {
+                            baseCodes = bundle.baseOverlay.getGeocodes();
+                        }
+                        bundle.wpOverlay.showWaypoints(baseCodes, bundle.storedOverlay != null);
+                    } else {
+                        bundle.wpOverlay.hideWaypoints();
+                    }
+                    // paint
+                    bundle.repaint();
+                    bundle.refreshed();
+                } else if (!previousViewport.equals(viewportNow)) {
+                    bundle.updateTitle();
+                }
+            } catch (final Exception e) {
+                Log.w("CachesBundle.LoadTimerAction.run", e);
+            }
+        }
+    }
+
+    private void refreshed() {
+        if (baseOverlay != null) {
+            baseOverlay.refreshed();
+        }
+        if (storedOverlay != null) {
+            storedOverlay.refreshed();
+        }
+        if (liveOverlay != null) {
+            liveOverlay.refreshed();
+        }
+    }
+
+    private void repaint() {
+        mapHandlers.sendEmptyDisplayMessage(NewMap.INVALIDATE_MAP);
+        mapHandlers.sendEmptyDisplayMessage(NewMap.UPDATE_TITLE);
+    }
+
+    private void updateTitle() {
+        mapHandlers.sendEmptyDisplayMessage(NewMap.UPDATE_TITLE);
+    }
+
     public void onDestroy() {
+        timer.dispose();
+
         if (this.baseOverlay != null) {
             this.baseOverlay.onDestroy();
             this.baseOverlay = null;
@@ -195,6 +319,16 @@ public class CachesBundle {
         return result;
     }
 
+    private boolean isInvalidated() {
+        if (storedOverlay != null && storedOverlay.isInvalidated()) {
+            return true;
+        }
+        if (liveOverlay != null && liveOverlay.isInvalidated()) {
+            return true;
+        }
+        return false;
+    }
+
     public void invalidate() {
         if (storedOverlay != null) {
             storedOverlay.invalidate();
@@ -227,5 +361,9 @@ public class CachesBundle {
 
     LayerManager getLayerManager() {
         return mapView.getLayerManager();
+    }
+
+    static boolean mapMoved(final Viewport referenceViewport, final Viewport newViewport) {
+        return Math.abs(newViewport.getLatitudeSpan() - referenceViewport.getLatitudeSpan()) > 50e-6 || Math.abs(newViewport.getLongitudeSpan() - referenceViewport.getLongitudeSpan()) > 50e-6 || Math.abs(newViewport.center.getLatitude() - referenceViewport.center.getLatitude()) > referenceViewport.getLatitudeSpan() / 4 || Math.abs(newViewport.center.getLongitude() - referenceViewport.center.getLongitude()) > referenceViewport.getLongitudeSpan() / 4;
     }
 }
