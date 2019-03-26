@@ -1,7 +1,6 @@
 package cgeo.geocaching.maps.mapsforge.v6.caches;
 
 import cgeo.geocaching.CgeoApplication;
-import cgeo.geocaching.enumerations.CacheType;
 import cgeo.geocaching.enumerations.LoadFlags;
 import cgeo.geocaching.location.Geopoint;
 import cgeo.geocaching.location.Viewport;
@@ -87,6 +86,8 @@ public abstract class AbstractCachesOverlay {
         return bundle.getVisibleCachesCount();
     }
 
+    abstract void load();
+
     public void invalidate() {
         invalidated = true;
     }
@@ -109,58 +110,21 @@ public abstract class AbstractCachesOverlay {
         invalidated = false;
     }
 
-    protected void update(final Set<Geocache> caches) {
-        // display caches
-        final Set<Geocache> cachesToDisplay = caches;
-        boolean showWaypoints = false;
+    abstract void update();
 
-        if (!cachesToDisplay.isEmpty()) {
-            // Only show waypoints when less than showWaypointsthreshold Caches to be shown
-            final int newCachesCount = cachesToDisplay.size() - getVisibleCachesCount() + getAllVisibleCachesCount();
-            showWaypoints = newCachesCount < Settings.getWayPointsThreshold();
-        }
-        update(cachesToDisplay, showWaypoints);
-    }
-
-    protected void update(final Set<Geocache> cachesToDisplay, final boolean showWaypoints) {
+    protected void update(final Set<Geocache> cachesToDisplay) {
 
         final Collection<String> removeCodes = getGeocodes();
         final Collection<String> newCodes = new HashSet<>();
 
         if (!cachesToDisplay.isEmpty()) {
             final boolean isDotMode = Settings.isDotMode();
-            Log.d(String.format(Locale.ENGLISH, "CachesToDisplay: %d, showWaypoints: %b", cachesToDisplay.size(), showWaypoints));
+            Log.d(String.format(Locale.ENGLISH, "CachesToDisplay: %d", cachesToDisplay.size()));
 
             for (final Geocache cache : cachesToDisplay) {
 
                 if (cache == null) {
                     continue;
-                }
-                if (showWaypoints) {
-
-                    final Set<Waypoint> waypoints = new HashSet<>(cache.getWaypoints());
-
-                    final CachesBundle bundle = bundleRef.get();
-                    if (bundle != null) {
-                        final boolean excludeMine = Settings.isExcludeMyCaches();
-                        final boolean excludeDisabled = Settings.isExcludeDisabledCaches();
-                        final CacheType type = Settings.getCacheType();
-
-                        final Set<Waypoint> waypointsInViewport = DataStore.loadWaypoints(bundle.getViewport(), excludeMine, excludeDisabled, type);
-                        waypoints.addAll(waypointsInViewport);
-                    }
-                    for (final Waypoint waypoint : waypoints) {
-                        if (waypoint == null || waypoint.getCoords() == null) {
-                            continue;
-                        }
-                        if (removeCodes.contains(waypoint.getGpxId())) {
-                            removeCodes.remove(waypoint.getGpxId());
-                        } else {
-                            if (addItem(waypoint, isDotMode)) {
-                                newCodes.add(waypoint.getGpxId());
-                            }
-                        }
-                    }
                 }
 
                 if (cache.getCoords() == null) {
@@ -177,8 +141,6 @@ public abstract class AbstractCachesOverlay {
         }
 
         syncLayers(removeCodes, newCodes);
-
-        repaint();
     }
 
     protected final boolean addItem(final Geocache cache, final boolean isDotMode) {
@@ -253,15 +215,6 @@ public abstract class AbstractCachesOverlay {
         mapHandlers.sendEmptyProgressMessage(NewMap.HIDE_PROGRESS);
     }
 
-    protected void updateTitle() {
-        mapHandlers.sendEmptyDisplayMessage(NewMap.UPDATE_TITLE);
-    }
-
-    protected void repaint() {
-        mapHandlers.sendEmptyDisplayMessage(NewMap.INVALIDATE_MAP);
-        mapHandlers.sendEmptyDisplayMessage(NewMap.UPDATE_TITLE);
-    }
-
     protected void clearLayers() {
         final Layers layers = getLayers();
         if (layers == null) {
@@ -318,11 +271,7 @@ public abstract class AbstractCachesOverlay {
         return layerManager.getLayers();
     }
 
-    static boolean mapMoved(final Viewport referenceViewport, final Viewport newViewport) {
-        return Math.abs(newViewport.getLatitudeSpan() - referenceViewport.getLatitudeSpan()) > 50e-6 || Math.abs(newViewport.getLongitudeSpan() - referenceViewport.getLongitudeSpan()) > 50e-6 || Math.abs(newViewport.center.getLatitude() - referenceViewport.center.getLatitude()) > referenceViewport.getLatitudeSpan() / 4 || Math.abs(newViewport.center.getLongitude() - referenceViewport.center.getLongitude()) > referenceViewport.getLongitudeSpan() / 4;
-    }
-
-    static synchronized void filter(final Collection<Geocache> caches) {
+    static void filter(final Collection<Geocache> caches) {
         final boolean excludeMine = Settings.isExcludeMyCaches();
         final boolean excludeDisabled = Settings.isExcludeDisabledCaches();
 
