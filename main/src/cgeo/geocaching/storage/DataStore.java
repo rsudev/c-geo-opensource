@@ -2575,6 +2575,8 @@ public class DataStore {
     private static SearchResult loadInViewport(final boolean stored, final Viewport viewport, final CacheType cacheType) {
         final Set<String> geocodes = new HashSet<>();
 
+        Log.d("DataStore.loadInViewport for Viewport: " + viewport + " and type")
+
         // if not stored only, get codes from CacheCache as well
         if (!stored) {
             geocodes.addAll(cacheCache.getInViewport(viewport, cacheType));

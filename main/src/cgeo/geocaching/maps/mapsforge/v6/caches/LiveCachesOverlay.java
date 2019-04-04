@@ -10,6 +10,7 @@ import cgeo.geocaching.maps.mapsforge.v6.MapHandlers;
 import cgeo.geocaching.models.Geocache;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.storage.DataStore;
+import cgeo.geocaching.utils.AndroidRxUtils;
 import cgeo.geocaching.utils.Log;
 
 import java.util.Collections;
@@ -41,12 +42,15 @@ class LiveCachesOverlay extends AbstractCachesOverlay {
 
             if (1000 < (currentTime - loadThreadRun)) {
                 downloading = true;
-                download();
+                AndroidRxUtils.networkScheduler.scheduleDirect(new Runnable() {
+                    @Override
+                    public void run() {
+                        download();
+                    }
+                });
             }
         } catch (final Exception e) {
             Log.w("LiveCachesOverlay.startLoadtimer.start", e);
-        } finally {
-            downloading = false;
         }
     }
 
@@ -90,6 +94,7 @@ class LiveCachesOverlay extends AbstractCachesOverlay {
 
             Log.d(String.format(Locale.ENGLISH, "Live caches found: %d", result.size()));
         } finally {
+            downloading = false;
             loadThreadRun = System.currentTimeMillis();
             hideProgress();
         }
