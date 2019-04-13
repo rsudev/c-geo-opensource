@@ -194,6 +194,8 @@ public class CachesBundle {
                     if (bundle.liveOverlay != null) {
                         bundle.liveOverlay.load();
                     }
+                }
+                if (moved || bundle.isInvalidated()) {
                     // filter bottom up
                     if (bundle.baseOverlay != null) {
                         bundle.baseOverlay.update();
@@ -204,6 +206,8 @@ public class CachesBundle {
                     if (bundle.liveOverlay != null) {
                         bundle.liveOverlay.update();
                     }
+                }
+                if (moved || bundle.isInvalidated() || !previousViewport.equals(viewportNow)) {
                     // possibly load wps
                     if (bundle.getVisibleCachesCount() < Settings.getWayPointsThreshold()) {
                         Collection<String> baseCodes = Collections.EMPTY_LIST;
@@ -217,7 +221,6 @@ public class CachesBundle {
                     // paint
                     bundle.repaint();
                     bundle.refreshed();
-                } else if (!previousViewport.equals(viewportNow)) {
                     bundle.updateTitle();
                 }
             } catch (final Exception e) {

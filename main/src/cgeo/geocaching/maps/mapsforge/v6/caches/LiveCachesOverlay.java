@@ -97,6 +97,7 @@ class LiveCachesOverlay extends AbstractCachesOverlay {
             downloading = false;
             loadThreadRun = System.currentTimeMillis();
             hideProgress();
+            invalidate();
         }
     }
 
