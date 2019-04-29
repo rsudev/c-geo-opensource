@@ -104,7 +104,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
@@ -1970,7 +1969,6 @@ public class CacheDetailActivity extends AbstractViewPagerActivity<CacheDetailAc
                 return null;
             }
 
-
             view = (RecyclerView) getLayoutInflater().inflate(R.layout.cachedetail_inventory_page, parentView, false);
             final RecyclerView recyclerView = ButterKnife.findById(view, R.id.list);
 
@@ -2347,16 +2345,6 @@ public class CacheDetailActivity extends AbstractViewPagerActivity<CacheDetailAc
                 final TextView offlineHintText = ButterKnife.findById(view, R.id.offline_hint_text);
                 offlineHintText.setText(hint);
             }
-        }
-        // adjust right margin of "more details" button to whether a hint button is shown
-        final AppCompatButton moreButton = ButterKnife.findById(view, R.id.more_details);
-        if (null != moreButton) {
-            final float scale = view.getResources().getDisplayMetrics().density;
-            final int rightMargin = (int) (51 * scale + 0.5f);
-            final int otherMargin = (int) (4 * scale + 0.5f);
-            final ViewGroup.MarginLayoutParams lpt = (ViewGroup.MarginLayoutParams) moreButton.getLayoutParams();
-            lpt.setMargins(otherMargin, otherMargin, hintButtonEnabled ? rightMargin : otherMargin, otherMargin);
-            moreButton.setLayoutParams(lpt);
         }
 
         // show or remove clickable hint button

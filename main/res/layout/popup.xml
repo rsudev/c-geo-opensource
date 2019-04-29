@@ -36,8 +36,8 @@
                     style="@style/button_small"
                     android:layout_width="fill_parent"
                     android:layout_height="40dip"
-                    android:layout_marginRight="51dip"
                     android:layout_gravity="center_horizontal"
+                    android:layout_toLeftOf="@id/offline_hint"
                     android:text="@string/popup_more" />
 
                 <ImageButton
@@ -47,6 +47,7 @@
                     android:layout_width="40dip"
                     android:layout_height="40dip"
                     android:layout_alignParentRight="true"
+                    android:layout_marginLeft="0dp"
                     android:visibility="gone"
                     tools:visibility="visible"/>
 
@@ -94,8 +95,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="6dip"
-                    android:layout_marginRight="100dip"
                     android:paddingRight="3dip"
+                    android:layout_toLeftOf="@id/offline_edit"
                     android:textColor="?text_color"
                     android:textIsSelectable="false"
                     android:textSize="14sp"
@@ -107,8 +108,8 @@
                     android:src="@drawable/ic_menu_edit"
                     android:layout_width="40dip"
                     android:layout_height="40dip"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="51dip"
+                    android:layout_toLeftOf="@id/offline_store_drop"
+                    android:layout_marginLeft="0dp"
                     android:visibility="gone"
                     tools:visibility="visible"/>
 
@@ -118,7 +119,7 @@
                     android:src="@drawable/ic_menu_save"
                     android:layout_width="40dip"
                     android:layout_height="40dip"
-                    android:layout_marginLeft="2dip"
+                    android:layout_marginLeft="0dp"
                     android:layout_alignParentRight="true"/>
             </RelativeLayout>
 
