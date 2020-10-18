@@ -1,33 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="cgeo_main.ActionBarStyle" parent="cgeo.ActionBarStyle">
-        <item name="android:background">@drawable/actionbar_dark_bg_main</item>
-        <item name="background">@drawable/actionbar_dark_bg_main</item>
-    </style>
-
-
-    <style name="cgeo_main.base" parent="@style/Theme.AppCompat">
-
-        <!-- copy the style elements of the Wallpaper theme since AppCompat has no Wallpaper theme -->
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowShowWallpaper">true</item>
-
-        <item name="colorAccent">@color/colorAccent</item>
-
-        <!-- system elements -->
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="actionBarStyle">@style/cgeo_main.ActionBarStyle</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/cgeo_main.ActionBarStyle</item>
-
-    </style>
-
-
-    <style name="cgeo_main" parent="cgeo_main.base">
-        <item name="android:windowTranslucentNavigation">true</item>
-    </style>
-
     <style name="cgeo.Widget.AppCompat.Base.ProgressBar.Medium" parent="android:Widget.ProgressBar">
         <item name="android:minWidth">32dip</item>
         <item name="android:maxWidth">32dip</item>
@@ -37,8 +10,6 @@
 
 
     <style name="cgeo.ActionBarStyle" parent="@style/Widget.AppCompat.ActionBar">
-        <item name="indeterminateProgressStyle">@style/cgeo.Widget.AppCompat.Base.ProgressBar.Medium</item>
-        <item name="android:indeterminateProgressStyle" tools:ignore="NewApi">@style/cgeo.Widget.AppCompat.Base.ProgressBar.Medium</item>
         <item name="android:titleTextStyle">@style/cgeo.ActionBarStyle.TitleTextStyle</item>
         <item name="titleTextStyle">@style/cgeo.ActionBarStyle.TitleTextStyle</item>
     </style>
@@ -48,8 +19,6 @@
     </style>
 
     <style name="cgeo.ActionBarStyle.Light.Inverse" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="indeterminateProgressStyle">@style/cgeo.Widget.AppCompat.Base.ProgressBar.Medium</item>
-        <item name="android:indeterminateProgressStyle" tools:ignore="NewApi">@style/cgeo.Widget.AppCompat.Base.ProgressBar.Medium</item>
     </style>
 
     <style name="cgeo_gmap" parent="@android:style/Theme.DeviceDefault">
@@ -119,7 +88,6 @@
         <item name="text_color_hint">@color/text_hint_dark</item>
         <item name="background_color">@color/background_dark</item>
         <item name="background_color_notice">@color/background_dark_notice</item>
-        <item name="background_color_transparent">@color/background_dark_transparent</item>
         <item name="separator_color">@color/separator_dark</item>
 
         <!-- own values: drawables -->
@@ -145,7 +113,6 @@
         <item name="text_color_hint">@color/text_hint_light</item>
         <item name="background_color">@color/background_light</item>
         <item name="background_color_notice">@color/background_light_notice</item>
-        <item name="background_color_transparent">@color/background_light_transparent</item>
         <item name="separator_color">@color/separator_light</item>
 
         <!-- own values: drawables -->
@@ -164,7 +131,6 @@
 
 
     <style name="cgeo.Translucent.Light" parent="light">
-        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
@@ -172,7 +138,6 @@
 
 
     <style name="cgeo.Translucent" parent="dark">
-        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
@@ -190,7 +155,7 @@
     <style name="popup_light" parent="cgeo_popup">
     </style>
 
-    <style name="settings" parent="@android:style/Theme.DeviceDefault">
+    <style name="settings" parent="@style/Theme.AppCompat">
         <item name="settings_cloud">@drawable/settings_cloud_white</item>
         <item name="settings_details">@drawable/settings_details_white</item>
         <item name="settings_eye">@drawable/settings_eye_white</item>
@@ -208,7 +173,7 @@
         <item name="text_color">@color/text_dark</item>
     </style>
 
-    <style name="settings.light" parent="@android:style/Theme.DeviceDefault.Light.DarkActionBar">
+    <style name="settings.light" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="settings_cloud">@drawable/settings_cloud_black</item>
         <item name="settings_details">@drawable/settings_details_black</item>
         <item name="settings_eye">@drawable/settings_eye_black</item>

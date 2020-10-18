@@ -99,7 +99,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/cgeo_main"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -145,7 +144,6 @@
             android:name=".CachePopup"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/popup_dark"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
@@ -226,8 +224,7 @@
             android:name=".settings.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/settings_titlebar"
-            android:parentActivityName="cgeo.geocaching.MainActivity"
-            android:theme="@style/settings" >
+            android:parentActivityName="cgeo.geocaching.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cgeo.geocaching.MainActivity" />
@@ -744,7 +741,6 @@
             android:name="WaypointPopup"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/waypoint"
-            android:theme="@style/popup_dark"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
