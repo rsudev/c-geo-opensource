@@ -26,6 +26,8 @@ import cgeo.geocaching.sensors.GnssStatusProvider.Status;
 import cgeo.geocaching.sensors.Sensors;
 import cgeo.geocaching.settings.Settings;
 import cgeo.geocaching.settings.SettingsActivity;
+import cgeo.geocaching.settings.SettingsActivity2;
+import cgeo.geocaching.settings.SettingsActivity3;
 import cgeo.geocaching.storage.DataStore;
 import cgeo.geocaching.storage.LocalStorage;
 import cgeo.geocaching.storage.extension.FoundNumCounter;
@@ -513,7 +515,7 @@ public class MainActivity extends AbstractActionBarActivity {
                 startActivity(new Intent(this, UsefulAppsActivity.class));
                 return true;
             case R.id.menu_settings:
-                startActivityForResult(new Intent(this, SettingsActivity.class), Intents.SETTINGS_ACTIVITY_REQUEST_CODE);
+                startActivityForResult(new Intent(this, SettingsActivity2.class), Intents.SETTINGS_ACTIVITY_REQUEST_CODE);
                 return true;
             case R.id.menu_backup:
                 SettingsActivity.openForScreen(R.string.preference_screen_backup, this);

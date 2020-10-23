@@ -51,11 +51,11 @@ public class TextPreference extends AbstractAttributeBasedPreference {
         this.text = values.getString(0);
     }
 
-    @Override
+    //@Override
     protected View onCreateView(final ViewGroup parent) {
         this.setSelectable(false);
 
-        final View v = super.onCreateView(parent);
+        final View v = null;//super.onCreateView(parent);
 
         final TextView text = v.findViewById(R.id.textPreferenceText);
         text.setText(this.text);

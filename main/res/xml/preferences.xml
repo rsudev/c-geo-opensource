@@ -505,6 +505,7 @@
     <PreferenceScreen
         android:icon="?attr/settings_details"
         android:title="@string/settings_title_cachedetails"
+        android:key="@string/preference_screen_cache_details"
         android:summary="@string/settings_summary_cachedetails" >
         <CheckBoxPreference
             android:defaultValue="true"
@@ -547,6 +548,7 @@
     <PreferenceScreen
         android:icon="?attr/settings_map"
         android:title="@string/settings_title_map"
+            android:key="@string/preference_screen_map"
         android:summary="@string/settings_summary_map" >
 
         <PreferenceCategory android:title="@string/settings_title_map_data"
@@ -807,6 +809,7 @@
 
     <PreferenceScreen
         android:icon="?attr/settings_pen"
+        android:key="@string/preference_screen_logging"
         android:title="@string/settings_title_logging"
         android:summary="@string/settings_summary_logging" >
 
@@ -843,6 +846,7 @@
 
     <PreferenceScreen
         android:icon="?attr/settings_sdcard"
+        android:key="@string/preference_screen_offline_data"
         android:title="@string/settings_title_offlinedata"
         android:summary="@string/settings_summary_offlinedata" >
         <CheckBoxPreference
@@ -900,6 +904,7 @@
 
     <PreferenceScreen
         android:icon="?attr/settings_arrow"
+        android:key="@string/preference_screen_navigation"
         android:title="@string/settings_title_navigation"
         android:summary="@string/settings_summary_navigation" >
 
@@ -1044,6 +1049,7 @@
 
     <PreferenceScreen
         android:icon="?attr/settings_nut"
+        android:key="@string/preference_screen_system"
         android:title="@string/settings_title_system"
         android:summary="@string/settings_summary_system" >
 

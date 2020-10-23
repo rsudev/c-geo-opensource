@@ -1,7 +1,7 @@
 package cgeo.geocaching.settings;
 
 import android.content.Context;
-import android.preference.EditTextPreference;
+import androidx.preference.EditTextPreference;
 import android.util.AttributeSet;
 
 import org.apache.commons.lang3.StringUtils;

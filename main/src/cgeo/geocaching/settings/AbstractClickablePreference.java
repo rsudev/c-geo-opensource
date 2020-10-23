@@ -4,7 +4,7 @@ import cgeo.geocaching.R;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.preference.Preference;
+import androidx.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +13,19 @@ import android.widget.ListView;
 
 abstract class AbstractClickablePreference extends Preference implements View.OnLongClickListener {
 
-    private final SettingsActivity activity;
+    private final SettingsActivity2 activity;
 
     AbstractClickablePreference(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        activity = (SettingsActivity) context;
+        activity = (SettingsActivity2) context;
     }
 
     AbstractClickablePreference(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
-        activity = (SettingsActivity) context;
+        activity = (SettingsActivity2) context;
     }
 
-    @Override
+    //@Override
     protected View onCreateView(final ViewGroup parent) {
         setOnPreferenceClickListener(getOnPreferenceClickListener(activity));
 
@@ -41,10 +41,10 @@ abstract class AbstractClickablePreference extends Preference implements View.On
             return false;
         });
 
-        return super.onCreateView(parent);
+        return null;// super.onCreateView(parent);
     }
 
-    protected abstract OnPreferenceClickListener getOnPreferenceClickListener(SettingsActivity settingsActivity);
+    protected abstract OnPreferenceClickListener getOnPreferenceClickListener(SettingsActivity2 settingsActivity);
 
     protected boolean isAuthorized() {
         return false;

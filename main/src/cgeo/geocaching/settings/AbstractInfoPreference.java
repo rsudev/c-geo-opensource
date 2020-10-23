@@ -88,9 +88,9 @@ public abstract class AbstractInfoPreference extends AbstractAttributeBasedPrefe
         urlButton = values.getString(2);
     }
 
-    @Override
+    //@Override
     protected View onCreateView(final ViewGroup parent) {
-        super.onCreateView(parent);   // call super to make lint happy
+        //super.onCreateView(parent);   // call super to make lint happy
 
         // show popup when clicked
         setOnPreferenceClickListener(preference -> {
@@ -119,7 +119,7 @@ public abstract class AbstractInfoPreference extends AbstractAttributeBasedPrefe
      *
      */
     protected View addInfoIcon(final ViewGroup parent) {
-        final View preferenceView = super.onCreateView(parent);
+        final View preferenceView = null;// = super.onCreateView(parent);
 
         final ImageView iconView = (ImageView) inflater.inflate(icon, parent, false);
         final LinearLayout frame = preferenceView.findViewById(android.R.id.widget_frame);

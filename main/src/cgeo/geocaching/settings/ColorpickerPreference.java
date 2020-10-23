@@ -11,7 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.preference.DialogPreference;
+import androidx.preference.DialogPreference;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -80,18 +80,18 @@ public class ColorpickerPreference extends DialogPreference {
         }
     }
 
-    @Override
+    //@Override
     protected void onBindView(final View view) {
-        super.onBindView(view);
+        //super.onBindView(view);
         final ImageView colorView = view.findViewById(R.id.colorpicker_item);
         if (colorView != null) {
             setViewColor(colorView, color, false);
         }
     }
 
-    @Override
+    //@Override
     protected void onBindDialogView(final View v) {
-        super.onBindDialogView(v);
+        //super.onBindDialogView(v);
         if (null != v) {
             colorSchemeGrid = v.findViewById(R.id.colorpicker_basegrid);
             colorSchemeGrid.setColumnCount(6);
@@ -172,27 +172,27 @@ public class ColorpickerPreference extends DialogPreference {
         }
     }
 
-    @Override
+    //@Override
     protected void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        if (hasDefaultValue) {
-            builder.setNeutralButton(R.string.reset_to_default, this);
-        }
+        //super.onPrepareDialogBuilder(builder);
+//        if (hasDefaultValue) {
+//            builder.setNeutralButton(R.string.reset_to_default, this);
+//        }
     }
 
-    @Override
+    //@Override
     protected void showDialog(final Bundle bundle) {
-        super.showDialog(bundle);
+        //super.showDialog(bundle);
         if (hasDefaultValue) {
             // override onClick listener to prevent closing dialog on pressing the "default" button
-            ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(v -> {
-                color = defaultColor;
-                final int opaqueness = getOpaqueness();
-                if (null != opaquenessSlider) {
-                    opaquenessSlider.setProgress(opaqueness);
-                }
-                selectOpaqueness(opaqueness);
-            });
+//            ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(v -> {
+//                color = defaultColor;
+//                final int opaqueness = getOpaqueness();
+//                if (null != opaquenessSlider) {
+//                    opaquenessSlider.setProgress(opaqueness);
+//                }
+//                selectOpaqueness(opaqueness);
+//            });
         }
     }
 
@@ -220,9 +220,9 @@ public class ColorpickerPreference extends DialogPreference {
         }
     }
 
-    @Override
+    //@Override
     protected void onDialogClosed(final boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
+        //super.onDialogClosed(positiveResult);
         if (positiveResult) {
             setValue(color);
         } else {

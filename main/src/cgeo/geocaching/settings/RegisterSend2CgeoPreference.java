@@ -27,7 +27,7 @@ public class RegisterSend2CgeoPreference extends AbstractClickablePreference {
     }
 
     @Override
-    protected OnPreferenceClickListener getOnPreferenceClickListener(final SettingsActivity activity) {
+    protected OnPreferenceClickListener getOnPreferenceClickListener(final SettingsActivity2 activity) {
         return preference -> {
             // satisfy static code analysis
             if (activity == null) {

@@ -5,7 +5,7 @@ import cgeo.geocaching.R;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.Preference;
+import androidx.preference.Preference;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.View;
@@ -120,9 +120,9 @@ public class SeekbarPreference extends Preference {
         return valueToProgress(a.getInt(index, defaultValue));
     }
 
-    @Override
+    //@Override
     protected View onCreateView(final ViewGroup parent) {
-        final View v = super.onCreateView(parent);
+        final View v = null; //super.onCreateView(parent);
 
         // get views
         final SeekBar seekBar = v.findViewById(R.id.preference_seekbar);

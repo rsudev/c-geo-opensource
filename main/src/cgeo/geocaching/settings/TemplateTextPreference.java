@@ -9,7 +9,7 @@ import cgeo.geocaching.ui.dialog.Dialogs;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.DialogPreference;
+import androidx.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +25,7 @@ public class TemplateTextPreference extends DialogPreference {
      * default value, if none is given in the preference XML.
      */
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
-    private SettingsActivity settingsActivity;
+    private SettingsActivity2 settingsActivity;
     private EditText editText;
     private String initialValue;
 
@@ -43,9 +43,9 @@ public class TemplateTextPreference extends DialogPreference {
         setDialogLayoutResource(R.layout.template_preference_dialog);
     }
 
-    @Override
+    //@Override
     protected void onBindDialogView(final View view) {
-        settingsActivity = (SettingsActivity) this.getContext();
+        settingsActivity = (SettingsActivity2) this.getContext();
 
         editText = view.findViewById(R.id.signature_dialog_text);
         editText.setText(getPersistedString(initialValue != null ? initialValue : StringUtils.EMPTY));
@@ -68,7 +68,7 @@ public class TemplateTextPreference extends DialogPreference {
             alert.create().show();
         });
 
-        super.onBindDialogView(view);
+        //super.onBindDialogView(view);
     }
 
     private void insertSignatureTemplate(final LogTemplate template) {
@@ -76,14 +76,14 @@ public class TemplateTextPreference extends DialogPreference {
         ActivityMixin.insertAtPosition(editText, insertText, true);
     }
 
-    @Override
+    //@Override
     protected void onDialogClosed(final boolean positiveResult) {
         if (positiveResult) {
             final String text = editText.getText().toString();
             persistString(text);
             callChangeListener(text);
         }
-        super.onDialogClosed(positiveResult);
+        //super.onDialogClosed(positiveResult);
     }
 
     @Override

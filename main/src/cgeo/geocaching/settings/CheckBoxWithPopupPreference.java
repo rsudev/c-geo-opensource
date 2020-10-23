@@ -5,7 +5,7 @@ import cgeo.geocaching.ui.UrlPopup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.CheckBoxPreference;
+import androidx.preference.CheckBoxPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +51,7 @@ public class CheckBoxWithPopupPreference extends CheckBoxPreference {
         types.recycle();
     }
 
-    @Override
+    //@Override
     protected View onCreateView(final ViewGroup parent) {
 
         if (baseOnPrefChangeListener == null) {
@@ -70,7 +70,7 @@ public class CheckBoxWithPopupPreference extends CheckBoxPreference {
             return true;
         });
 
-        return super.onCreateView(parent);
+        return null; //super.onCreateView(parent);
     }
 
 }

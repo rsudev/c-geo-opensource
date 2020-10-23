@@ -2,7 +2,7 @@ package cgeo.geocaching.settings;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.Preference;
+import androidx.preference.Preference;
 import android.util.AttributeSet;
 
 import androidx.annotation.Nullable;

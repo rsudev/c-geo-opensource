@@ -53,6 +53,13 @@
         android:requestLegacyExternalStorage="true">
 
         <!-- Samsung Multi-Window support -->
+        <activity
+                android:name=".settings.SettingsActivity3"
+                android:label="@string/title_activity_settings3"></activity>
+        <activity
+                android:name=".settings.SettingsActivity2"
+                android:parentActivityName=".MainActivity"
+                android:label="@string/title_activity_settings2" /> <!-- Samsung Multi-Window support -->
         <uses-library
             android:name="com.sec.android.app.multiwindow"
             android:required="false" />

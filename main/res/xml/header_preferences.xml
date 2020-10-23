@@ -1,0 +1,15 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+            app:fragment="cgeo.geocaching.settings.SettingsActivity3$MessagesFragment"
+            app:icon="@drawable/messages"
+            app:key="messages_header"
+            app:title="@string/messages_header" />
+
+    <Preference
+            app:fragment="cgeo.geocaching.settings.SettingsActivity3$SyncFragment"
+            app:icon="@drawable/sync"
+            app:key="sync_header"
+            app:title="@string/sync_header" />
+
+</PreferenceScreen>
